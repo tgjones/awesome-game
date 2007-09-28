@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WindowsGame1</RootNamespace>
+    <RootNamespace>AwesomeGame</RootNamespace>
     <AssemblyName>WindowsGame1</AssemblyName>
     <XnaFrameworkVersion>v1.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
@@ -59,22 +59,26 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>GameObjects</Name>
     </Compile>
-    <Compile Include="ObjectManager.cs">
-      <XNAUseContentPipeline>false</XNAUseContentPipeline>
-      <Name>ObjectManager</Name>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Program</Name>
     </Compile>
-    <Compile Include="Game1.cs">
+    <Compile Include="AwesomeGame.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
-      <Name>Game1</Name>
+      <Name>AwesomeGame</Name>
+    </Compile>
+    <Compile Include="Terrain\SimpleTerrain.cs">
+      <SubType>Code</SubType>
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>SimpleTerrain</Name>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Game.ico" />
+    <Content Include="Game.ico">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Game</Name>
+    </Content>
     <Content Include="GameThumbnail.png">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Importer>TextureImporter</Importer>
@@ -88,6 +92,12 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Name>blocky car</Name>
+    </Content>
+    <Content Include="Terrain\SimpleTerrain.fx">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Name>SimpleTerrain</Name>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

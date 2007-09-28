@@ -5,134 +5,142 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace WindowsGame1
+namespace AwesomeGame
 {
-    public abstract class GameObject
-    {
-        public Vector3 position;
-        public Vector3 velocity;
+	public abstract class GameObject : Microsoft.Xna.Framework.DrawableGameComponent
+	{
+		public Vector3 position;
+		public Vector3 velocity;
 
-        public virtual void Initialize(GraphicsDevice graphicsDevice)
-        {
-        }
+		public GameObject(Game game)
+			: base(game)
+		{
 
-        public virtual void Draw(GraphicsDevice graphicsDevice)
-        {
-        }
+		}
 
-        public virtual void Update(GameTime gameTime)
-        {
-        }
+		protected T GetService<T>()
+		{
+			return (T) this.Game.Services.GetService(typeof(T));
+		}
+	}
 
+	public class Triangle : GameObject
+	{
+		private VertexBuffer vertexBuffer;
+		private BasicEffect basicEffect;
+		private VertexDeclaration vertexDeclaration;
+		private Matrix worldMatrix = Matrix.Identity;
 
-    }
+		public Triangle(Game game)
+			: base(game)
+		{
 
-    public class Triangle : GameObject
-    {
-        private VertexBuffer vertexBuffer;
-        private BasicEffect basicEffect;
-        private VertexDeclaration vertexDeclaration;
-        private Matrix worldMatrix = Matrix.Identity;
+		}
 
-        public override void Initialize(GraphicsDevice graphicsDevice)
-        {
-            base.Initialize(graphicsDevice);
-            
-            Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
-            Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), (float) graphicsDevice.Viewport.Width/(float) graphicsDevice.Viewport.Height, 1.0f, 20.0f);
+		protected override void LoadGraphicsContent(bool loadAllContent)
+		{
+			base.LoadGraphicsContent(loadAllContent);
 
-            basicEffect = new BasicEffect(graphicsDevice, null);
-            basicEffect.World = worldMatrix;
-            basicEffect.View = viewMatrix;
-            basicEffect.Projection = projectionMatrix;
-            basicEffect.VertexColorEnabled = true;
+			if (loadAllContent)
+			{
+				Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
+				Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+					MathHelper.ToRadians(45),
+					(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
+					1.0f, 20.0f);
 
-            vertexBuffer = new VertexBuffer(graphicsDevice, typeof (VertexPositionColor), 3, ResourceUsage.None);
-            vertexDeclaration = new VertexDeclaration(graphicsDevice, VertexPositionColor.VertexElements);
-            VertexPositionColor[] vertices = new VertexPositionColor[3];
-            vertices[0] = new VertexPositionColor(new Vector3(0.0f, 0.0f, 0.0f), Color.Blue);
-            vertices[1] = new VertexPositionColor(new Vector3(0.0f, 1.0f, 0.0f), Color.Blue);
-            vertices[2] = new VertexPositionColor(new Vector3(1.0f, 0.0f, 0.0f), Color.Blue);
-            vertexBuffer.SetData <VertexPositionColor> (vertices);
-        }
+				basicEffect = new BasicEffect(this.GraphicsDevice, null);
+				basicEffect.World = worldMatrix;
+				basicEffect.View = viewMatrix;
+				basicEffect.Projection = projectionMatrix;
+				basicEffect.VertexColorEnabled = true;
 
-        public override void Draw(GraphicsDevice graphicsDevice)
-        {
-            base.Draw(graphicsDevice);
+				vertexBuffer = new VertexBuffer(this.GraphicsDevice, typeof(VertexPositionColor), 3, ResourceUsage.None);
+				vertexDeclaration = new VertexDeclaration(this.GraphicsDevice, VertexPositionColor.VertexElements);
+				VertexPositionColor[] vertices = new VertexPositionColor[3];
+				vertices[0] = new VertexPositionColor(new Vector3(0.0f, 0.0f, 0.0f), Color.Blue);
+				vertices[1] = new VertexPositionColor(new Vector3(0.0f, 1.0f, 0.0f), Color.Blue);
+				vertices[2] = new VertexPositionColor(new Vector3(1.0f, 0.0f, 0.0f), Color.Blue);
+				vertexBuffer.SetData<VertexPositionColor>(vertices);
+			}
+		}
 
-            graphicsDevice.VertexDeclaration = vertexDeclaration;
-            basicEffect.Begin();
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-                graphicsDevice.Vertices[0].SetSource(vertexBuffer, 0, VertexPositionColor.SizeInBytes);
-                graphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
-                pass.End();
-            }
-            basicEffect.End();
-        }
+		public override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
+			worldMatrix = Matrix.CreateRotationZ((float) gameTime.TotalRealTime.TotalMilliseconds * 0.0001f);
+			basicEffect.World = worldMatrix;
+		}
 
-            worldMatrix = Matrix.CreateRotationZ((float) gameTime.TotalRealTime.TotalMilliseconds * 0.0001f);
-            basicEffect.World = worldMatrix;
-        }
-    }
+		public override void Draw(GameTime gameTime)
+		{
+			base.Draw(gameTime);
 
-    public class BlockyCar : GameObject
-    {
-        private Model m_model;
-        private GraphicsDevice m_graphics;
-        private Matrix worldMatrix = Matrix.Identity;
+			this.GraphicsDevice.VertexDeclaration = vertexDeclaration;
+			basicEffect.Begin();
+			foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+			{
+				pass.Begin();
+				this.GraphicsDevice.Vertices[0].SetSource(vertexBuffer, 0, VertexPositionColor.SizeInBytes);
+				this.GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
+				pass.End();
+			}
+			basicEffect.End();
+		}
+	}
 
-        public override void Draw(GraphicsDevice graphicsDevice)
-        {
-            if (m_model != null)
-            {
-                //graphicsDevice.VertexDeclaration = vertexDeclaration;
-                graphicsDevice.RenderState.CullMode = CullMode.None;
-                foreach (ModelMesh mm in m_model.Meshes)
-                {
-                    mm.Draw();
-                }
-            }
-            base.Draw(graphicsDevice);
-        }
+	public class Mesh : GameObject
+	{
+		private string _modelAssetName;
+		private Model _model;
+		private Matrix _worldMatrix = Matrix.Identity;
 
-        public override void Initialize(GraphicsDevice graphicsDevice)
-        {
-            m_graphics = graphicsDevice;
-            base.Initialize(graphicsDevice);
-        }
+		public Mesh(Game game, string modelAssetName)
+			: base(game)
+		{
+			_modelAssetName = modelAssetName;
+		}
 
-        public virtual Model model
-        {
-            set
-            {
-                m_model = value;
+		protected override void LoadGraphicsContent(bool loadAllContent)
+		{
+			base.LoadGraphicsContent(loadAllContent);
 
-                if (m_model != null)
-                {
-                    Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
-                    Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), (float)m_graphics.Viewport.Width / (float)m_graphics.Viewport.Height, 1.0f, 20.0f);
+			_model = this.GetService<ContentManager>().Load<Model>(_modelAssetName);
+		}
 
-                    foreach (ModelMesh mm in m_model.Meshes)
-                    {
-                        foreach (ModelMeshPart mmp in mm.MeshParts)
-                        {
-                            ((BasicEffect)mmp.Effect).World = worldMatrix;
-                            ((BasicEffect)mmp.Effect).View = viewMatrix;
-                            ((BasicEffect)mmp.Effect).Projection = projectionMatrix;
-                        }
-                    }
-                }
-            }
-            get
-            {
-                return m_model;
-            }
-        }
-    }
+		public override void Update(GameTime gameTime)
+		{
+			base.Update(gameTime);
+
+			Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
+			Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+				MathHelper.ToRadians(45),
+				(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
+				1.0f, 20.0f);
+
+			foreach (ModelMesh mm in _model.Meshes)
+			{
+				foreach (ModelMeshPart mmp in mm.MeshParts)
+				{
+					((BasicEffect) mmp.Effect).World = _worldMatrix;
+					((BasicEffect) mmp.Effect).View = viewMatrix;
+					((BasicEffect) mmp.Effect).Projection = projectionMatrix;
+				}
+			}
+		}
+
+		public override void Draw(GameTime gameTime)
+		{
+			base.Draw(gameTime);
+
+			//graphicsDevice.VertexDeclaration = vertexDeclaration;
+			this.GraphicsDevice.RenderState.CullMode = CullMode.None;
+			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
+			foreach (ModelMesh mm in _model.Meshes)
+			{
+				mm.Draw();
+			}
+		}
+	}
 }
