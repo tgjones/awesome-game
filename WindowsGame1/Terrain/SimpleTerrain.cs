@@ -19,11 +19,6 @@ namespace AwesomeGame.Terrain
 		private readonly int _numVertices;
 		private readonly int _numIndices;
 
-		/*public override BoundingBox BoundingBox
-		{
-			get { return new BoundingBox(new Vector3(0, 0, -_size), new Vector3(_size, 1, 0)); }
-		}*/
-
 		public SimpleTerrain(Game game, int size, string textureAssetName)
 			: base(game)
 		{

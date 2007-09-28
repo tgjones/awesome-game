@@ -27,9 +27,9 @@ namespace AwesomeGame
 
 			this.Services.AddService(typeof(ContentManager), content);
 
+			this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
 			this.Components.Add(new Triangle(this));
 			this.Components.Add(new Mesh(this, @"Models\blocky car"));
-			this.Components.Add(new Terrain.SimpleTerrain(this, 8, null));
 		}
 
 

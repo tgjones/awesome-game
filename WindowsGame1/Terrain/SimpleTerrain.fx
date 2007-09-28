@@ -79,7 +79,8 @@ VertexShaderOutput VertexShader(VertexShaderInput input)
 PixelShaderOutput PixelShader(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
-	output.Colour = float4(1, 0, 0, 1);
+	//output.Colour = float4(1, 0, 0, 1);
+	output.Colour = tex2D(GrassSampler, input.TexCoords).rgba;
 	return output;
 }
 
@@ -93,8 +94,8 @@ technique Normal
 	pass Pass0
 	{
 		ZEnable = true;
-		FillMode = WIREFRAME;
-		CullMode = NONE;
+		FillMode = SOLID;
+		CullMode = CCW;
 		VertexShader = compile vs_1_1 VertexShader();
 		PixelShader = compile ps_1_1 PixelShader();
 	}
