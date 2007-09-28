@@ -93,6 +93,12 @@
       <Processor>ModelProcessor</Processor>
       <Name>blocky car</Name>
     </Content>
+    <Content Include="Models\Lessblockycar.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>Lessblockycar</Name>
+    </Content>
     <Content Include="Terrain\SimpleTerrain.fx">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>EffectImporter</Importer>

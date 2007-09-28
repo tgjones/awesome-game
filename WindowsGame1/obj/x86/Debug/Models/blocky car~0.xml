@@ -3,7 +3,7 @@
   <Asset Type="Graphics:NodeContent">
     <Name>Cylinder_3-0</Name>
     <Identity>
-      <SourceFilename>\\dan\Awesome Game\WindowsGame1\Models\blocky car.x</SourceFilename>
+      <SourceFilename>C:\Documents and Settings\Daniel\My Documents\Visual Studio 2005\Projects\Awesome Game\WindowsGame1\Models\blocky car.x</SourceFilename>
       <SourceTool>XImporter</SourceTool>
     </Identity>
     <Transform>0 0 1 0 -1 0 0 0 0 -1 0 0 -3 0 1 1</Transform>
@@ -32,7 +32,7 @@
   <Resources>
     <Resource ID="#Resource1" Type="Graphics:BasicMaterialContent">
       <Identity>
-        <SourceFilename>\\dan\Awesome Game\WindowsGame1\Models\blocky car.x</SourceFilename>
+        <SourceFilename>C:\Documents and Settings\Daniel\My Documents\Visual Studio 2005\Projects\Awesome Game\WindowsGame1\Models\blocky car.x</SourceFilename>
         <SourceTool>XImporter</SourceTool>
       </Identity>
       <OpaqueData>

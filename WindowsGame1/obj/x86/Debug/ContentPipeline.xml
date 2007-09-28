@@ -8,25 +8,63 @@
       <Processor>ModelProcessor</Processor>
       <Options>None</Options>
       <Output>bin\x86\Debug\Models\blocky car.xnb</Output>
-      <Time>2007-09-28T20:28:46.46875+01:00</Time>
+      <Time>2007-09-28T22:50:32.765625+01:00</Time>
       <Dependency>
         <Key>obj\x86\Debug\Models\blocky car~0.xml</Key>
-        <Value>2007-09-28T22:05:16.40625+01:00</Value>
+        <Value>2007-09-28T23:43:41.8125+01:00</Value>
       </Dependency>
+    </Item>
+    <Item>
+      <Source>Terrain\SimpleTerrain.fx</Source>
+      <Name>Terrain\SimpleTerrain</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>bin\x86\Debug\Terrain\SimpleTerrain.xnb</Output>
+      <Time>2007-09-29T00:38:25.796875+01:00</Time>
     </Item>
     <Item>
       <Source>Models\blocky car.x</Source>
       <Importer>XImporter</Importer>
       <Options>IntermediateFile, DontCacheImportedData</Options>
       <Output>obj\x86\Debug\Models\blocky car~0.xml</Output>
-      <Time>2007-09-28T20:28:46.46875+01:00</Time>
+      <Time>2007-09-28T22:50:32.765625+01:00</Time>
+    </Item>
+    <Item>
+      <Source>Models\Lessblockycar.x</Source>
+      <Name>Models\Lessblockycar</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Options>None</Options>
+      <Output>bin\x86\Debug\Models\Lessblockycar.xnb</Output>
+      <Time>2007-09-28T23:59:25.96875+01:00</Time>
+      <Dependency>
+        <Key>obj\x86\Debug\Models\Lessblockycar~0.xml</Key>
+        <Value>2007-09-28T23:59:49.390625+01:00</Value>
+      </Dependency>
+    </Item>
+    <Item>
+      <Source>Models\Lessblockycar.x</Source>
+      <Importer>XImporter</Importer>
+      <Options>IntermediateFile, DontCacheImportedData</Options>
+      <Output>obj\x86\Debug\Models\Lessblockycar~0.xml</Output>
+      <Time>2007-09-28T23:59:25.96875+01:00</Time>
+    </Item>
+    <Item>
+      <Source>Terrain\Textures\grass.bmp</Source>
+      <Name>Terrain\Textures\grass</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>bin\x86\Debug\Terrain\Textures\grass.xnb</Output>
+      <Time>2007-09-29T00:38:25.640625+01:00</Time>
     </Item>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>
       <BuildConfiguration>Debug</BuildConfiguration>
-      <RootDirectory>\\dan\Awesome Game\WindowsGame1\</RootDirectory>
-      <IntermediateDirectory>\\dan\Awesome Game\WindowsGame1\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>\\dan\Awesome Game\WindowsGame1\bin\x86\Debug\</OutputDirectory>
+      <RootDirectory>C:\Documents and Settings\Daniel\My Documents\Visual Studio 2005\Projects\Awesome Game\WindowsGame1\</RootDirectory>
+      <IntermediateDirectory>C:\Documents and Settings\Daniel\My Documents\Visual Studio 2005\Projects\Awesome Game\WindowsGame1\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Documents and Settings\Daniel\My Documents\Visual Studio 2005\Projects\Awesome Game\WindowsGame1\bin\x86\Debug\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
@@ -47,7 +85,7 @@
       </Assembly>
       <Assembly>
         <Key>C:\WINDOWS\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\1.0.0.0__6d5c3888ef60e27d\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2007-09-28T22:02:01.1875+01:00</Value>
+        <Value>2007-09-24T10:35:55.03125+01:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>
