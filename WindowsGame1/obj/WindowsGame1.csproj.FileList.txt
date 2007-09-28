@@ -1,0 +1,6 @@
+bin\x86\Debug\WindowsGame1.exe
+bin\x86\Debug\WindowsGame1.pdb
+obj\x86\Debug\ResolveAssemblyReference.cache
+obj\x86\Debug\WindowsGame1.exe
+obj\x86\Debug\WindowsGame1.pdb
+bin\x86\Debug\Models\blocky car.xnb
