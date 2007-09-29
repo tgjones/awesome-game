@@ -63,7 +63,7 @@ namespace AwesomeGame
 			course.addCheckpoint(checkpoint);
 			this.Components.Add(checkpoint);
 
-			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Box.xml"));
+			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
 		}
 
 

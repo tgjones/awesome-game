@@ -20,7 +20,7 @@ namespace AwesomeGame.Physics
 		public ParticleSystem(Game game, string configFile)
 			: base(game)
 		{
-			SolverIterations = 10;
+			SolverIterations = 20;
 			_particles = new List<Particle>();
 			_constraints = new List<Constraint>();
 
@@ -37,15 +37,17 @@ namespace AwesomeGame.Physics
 			XmlDocument doc = new XmlDocument();
 			doc.Load(configFile);
 
+			// load transforms
+			Vector3 translation = GetVectorFromString(doc.SelectSingleNode("/ParticleSystem/Transform").Attributes["Translation"].Value);
+			Vector3 scale = GetVectorFromString(doc.SelectSingleNode("/ParticleSystem/Transform").Attributes["Scale"].Value);
+
 			// load particles
 			foreach (XmlElement particleElement in doc.SelectNodes("/ParticleSystem/Particles/Particle"))
 			{
-				string positionString = particleElement.Attributes["Position"].Value;
-				string[] positionArray = positionString.Split(',');
-				Vector3 position = new Vector3(Convert.ToSingle(positionArray[0]), Convert.ToSingle(positionArray[1]), Convert.ToSingle(positionArray[2]));
-				position *= 3;
-				position.X += 5;
-				position.Y += 50;
+				Vector3 position = GetVectorFromString(particleElement.Attributes["Position"].Value);
+				position *= scale;
+				position += translation;
+
 				Particle particle = new Particle(position, this.Game);
 				if (particleElement.HasAttribute("Mass"))
 				{
@@ -88,6 +90,15 @@ namespace AwesomeGame.Physics
 			}
 		}
 
+		private static Vector3 GetVectorFromString(string value)
+		{
+			string[] array = value.Split(',');
+			return new Vector3(
+				Convert.ToSingle(array[0]),
+				Convert.ToSingle(array[1]),
+				Convert.ToSingle(array[2]));
+		}
+
 		protected override void LoadGraphicsContent(bool loadAllContent)
 		{
 			if (loadAllContent)
@@ -115,7 +126,7 @@ namespace AwesomeGame.Physics
 				p.Velocity += deltaTime * p.InverseMass * CalculateExternalForces(p);
 
 			// line 6
-			//DampVelocities();
+			DampVelocities();
 
 			// line 7
 			foreach (Particle p in _particles)
@@ -144,7 +155,11 @@ namespace AwesomeGame.Physics
 			}
 
 			// line 16
-			//VelocityUpdate();
+			VelocityUpdate();
+
+			// reset
+			foreach (Particle p in _particles)
+				p.WasInvolvedInCollision = false;
 
 			Camera camera = (Camera) this.Game.Services.GetService(typeof(Camera));
 			_basicEffect.World = Matrix.Identity;
@@ -160,7 +175,10 @@ namespace AwesomeGame.Physics
 			{
 				float terrainHeight = terrain.GetHeight(p.CandidatePosition.X, p.CandidatePosition.Z);
 				if (p.CandidatePosition.Y < terrainHeight)
+				{
 					collisionConstraints.Add(new GroundCollisionConstraint(this, p, terrainHeight));
+					p.WasInvolvedInCollision = true;
+				}
 			}
 
 			// collide with meshes
@@ -170,7 +188,10 @@ namespace AwesomeGame.Physics
 				{
 					Mesh mesh = (Mesh) gameComponent;
 					if (mesh.BoundingSphere.Contains(p.CandidatePosition) == ContainmentType.Contains)
+					{
 						collisionConstraints.Add(new SphereCollisionConstraint(this, p, mesh.BoundingSphere));
+						p.WasInvolvedInCollision = true;
+					}
 				}
 			}
 		}
@@ -179,6 +200,80 @@ namespace AwesomeGame.Physics
 		{
 			// not efficient at all
 			return new Vector3(0, -1f * p.Mass, 0);
+		}
+
+		private void DampVelocities()
+		{
+			const float DAMPING = 0.01f;
+
+			// calculate position of, and velocity at, centre of mass
+			Vector3 sumPositionTimesMass = Vector3.Zero, sumVelocityTimesMass = Vector3.Zero; float sumMass = 0;
+			foreach (Particle p in _particles)
+			{
+				sumPositionTimesMass += p.Position * p.Mass;
+				sumVelocityTimesMass += p.Velocity * p.Mass;
+				sumMass += p.Mass;
+			}
+			Vector3 positionCM = sumPositionTimesMass / sumMass;
+			Vector3 velocityCM = sumVelocityTimesMass / sumMass;
+
+			// calculate angular momentum and inertia
+			Vector3 angularMomentum = Vector3.Zero; Matrix inertia = Matrix.Identity;
+			foreach (Particle p in _particles)
+			{
+				Vector3 r = p.Position - positionCM;
+				angularMomentum += Vector3.Cross(r, p.Velocity * p.Mass);
+
+				//inertia += p.Mass * r.LengthSquared();
+
+				/*Vector3 crossedR = Vector3.Cross(r, p.Velocity);
+
+				Matrix rMatrix = Matrix.Identity;
+				rMatrix.M11 = (p.Velocity.X != 0) ? crossedR.X / p.Velocity.X : 0;
+				rMatrix.M22 = (p.Velocity.Y != 0) ? crossedR.Y / p.Velocity.Y : 0;
+				rMatrix.M33 = (p.Velocity.Z != 0) ? crossedR.Z / p.Velocity.Z : 0;
+
+				inertia += rMatrix * Matrix.Transpose(rMatrix) * p.Mass;*/
+
+				inertia.M11 += p.Mass * (r.Y * r.Y + r.Z * r.Z);
+				inertia.M22 += p.Mass * (r.X * r.X + r.Z * r.Z);
+				inertia.M33 += p.Mass * (r.X * r.X + r.Y * r.Y);
+
+				inertia.M12 = inertia.M21 = p.Mass * r.X * r.Y;
+				inertia.M13 = inertia.M31 = p.Mass * r.X * r.Z;
+				inertia.M23 = inertia.M32 = p.Mass * r.Y * r.Z;
+			}
+
+			inertia.M12 *= -1;
+			inertia.M21 *= -1;
+			inertia.M13 *= -1;
+			inertia.M31 *= -1;
+			inertia.M23 *= -1;
+			inertia.M32 *= -1;
+
+			// calculate angular velocity
+			Vector3 angularVelocity = Vector3.Transform(angularMomentum, Matrix.Invert(inertia));
+
+			// damp velocities
+			foreach (Particle p in _particles)
+			{
+				Vector3 r = p.Position - positionCM;
+				Vector3 deltaVelocity = velocityCM + Vector3.Cross(angularVelocity, r) - p.Velocity;
+				p.Velocity += DAMPING * deltaVelocity;
+			}
+		}
+
+		private void VelocityUpdate()
+		{
+			const float DAMPING = 0.9f;
+			foreach (Particle p in _particles)
+			{
+				if (p.WasInvolvedInCollision)
+				{
+					p.Velocity.X *= DAMPING;
+					p.Velocity.Z *= DAMPING;
+				}
+			}
 		}
 
 		public override void Draw(GameTime gameTime)

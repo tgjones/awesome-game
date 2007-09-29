@@ -15,6 +15,8 @@ namespace AwesomeGame.Physics
 		public Vector3 Velocity;
 		public Vector3 CandidatePosition;
 
+		public bool WasInvolvedInCollision;
+
 		private Mesh _mesh;
 
 		public Vector3 Position
@@ -23,7 +25,7 @@ namespace AwesomeGame.Physics
 			set
 			{
 				_position = value;
-				_mesh.InitialTransformationMatrix = Matrix.CreateScale(0.3f) * Matrix.CreateTranslation(_position);
+				_mesh.InitialTransformationMatrix = Matrix.CreateScale(0.08f) * Matrix.CreateTranslation(_position);
 			}
 		}
 

@@ -109,7 +109,7 @@ namespace AwesomeGame
 		{
 			get
 			{
-				BoundingSphere boundingSphere = new BoundingSphere(this.position, 3);
+				BoundingSphere boundingSphere = new BoundingSphere(this.position, 4.5f);
 				return boundingSphere;
 			}
 		}
@@ -203,7 +203,7 @@ namespace AwesomeGame
 
 			//graphicsDevice.VertexDeclaration = vertexDeclaration;
 			this.GraphicsDevice.RenderState.CullMode = CullMode.None;
-			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
+			this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 			foreach (ModelMesh mm in _model.Meshes)
 			{
 				mm.Draw();

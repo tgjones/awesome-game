@@ -254,6 +254,11 @@
       <Processor>ModelProcessor</Processor>
       <Name>Schoolbus</Name>
     </Content>
+    <Content Include="Physics\Cone.xml">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Cone</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Terrain\Textures\level1_gameobjects.bmp">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>TextureImporter</Importer>
