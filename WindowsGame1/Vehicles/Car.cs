@@ -17,10 +17,21 @@ namespace AwesomeGame.Vehicles
 		
 		public Vector3 velocity;
 
+		private GameObject nextCheckpoint;
+		private Mesh nextCheckpointArrow;
+
 		public Car(Game game)
 			: base(game, @"Models\Lessblockycar2", Matrix.CreateRotationY(MathHelper.ToRadians(90)))
 		{
 
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			nextCheckpoint = this.GetService<Course>().getFirstCheckpoint();
+			nextCheckpointArrow = new Mesh(this.Game, @"Models\DirectionArrow");
 		}
 
 		public override void Update(GameTime gameTime)
@@ -81,6 +92,16 @@ namespace AwesomeGame.Vehicles
 			}
 
 			position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
+
+			if (false)
+			{
+				//we hit the checkpoint
+				//nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint);
+			}
+
+			nextCheckpointArrow.position = this.position;
+			//nextCheckpointArrow.Update(gameTime);
+
 			base.Update(gameTime);
 		}
 
@@ -137,6 +158,13 @@ namespace AwesomeGame.Vehicles
 			if (keyState.IsKeyDown(Keys.Left)) controlState.Y -= 1.0f;
 
 			return controlState;
+		}
+
+		public override void Draw(GameTime gameTime)
+		{
+			base.Draw(gameTime);
+
+			//nextCheckpointArrow.Draw(gameTime);
 		}
 	}
 }
