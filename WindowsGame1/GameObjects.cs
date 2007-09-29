@@ -135,9 +135,25 @@ namespace AwesomeGame
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
-					((BasicEffect) mmp.Effect).World = _initialTranformationMatrix * _worldMatrix;
-					((BasicEffect) mmp.Effect).View = viewMatrix;
-					((BasicEffect) mmp.Effect).Projection = projectionMatrix;
+					BasicEffect effect = (BasicEffect)mmp.Effect;
+					effect.World = _initialTranformationMatrix * _worldMatrix;
+					effect.View = viewMatrix;
+					effect.Projection = projectionMatrix;
+
+					effect.EmissiveColor = new Vector3(0.0f, 0.0f, 5.0f);
+					if (mm.MeshParts.IndexOf(mmp) != 0)
+						effect.EmissiveColor = new Vector3(0.1f, 0.1f, 0.1f);
+
+					effect.DiffuseColor = effect.EmissiveColor;
+					effect.SpecularColor = new Vector3(0.2f, 0.2f, 0.2f);
+					effect.SpecularPower = 1.0f;
+
+					effect.DirectionalLight0.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
+					effect.DirectionalLight0.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
+					effect.DirectionalLight0.Direction = new Vector3(1.0f, 0.0f, 0.0f);
+					effect.DirectionalLight0.Enabled = true;
+					effect.LightingEnabled = true;
+					effect.PreferPerPixelLighting = true;
 				}
 			}
 		}
