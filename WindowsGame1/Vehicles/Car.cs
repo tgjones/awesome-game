@@ -9,7 +9,7 @@ namespace AwesomeGame.Vehicles
 		public Vector3 velocity;
 
 		public Car(Game game)
-			: base(game, @"Models\Lessblockycar", Matrix.CreateRotationX(MathHelper.ToRadians(180)) * Matrix.CreateRotationY(MathHelper.ToRadians(270)))
+			: base(game, @"Models\Lessblockycar", Matrix.CreateRotationY(MathHelper.ToRadians(90)))
 		{
 
 		}
