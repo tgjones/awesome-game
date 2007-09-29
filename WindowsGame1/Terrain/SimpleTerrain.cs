@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,9 +14,12 @@ namespace AwesomeGame.Terrain
 		private int _size;
 		private string _textureAssetName;
 		private string _heightMapName;
+		private string _objectMapName;
+
 		private Texture2D _texture;
 		private Texture2D _normalMap;
-		private float[] _heightMap;
+		private float[] _heightMap;		//height map
+
 		private Matrix translationMatrix = Matrix.Identity;		//where to put the terrain (so it gets centered)
 		private Effect _effect;
 		
@@ -38,11 +42,12 @@ namespace AwesomeGame.Terrain
 			_textureAssetName = textureAssetName;
 		}
 
-		public SimpleTerrain(Game game, string heightMapAssetName , string textureAssetName)
+		public SimpleTerrain(Game game, string heightMapAssetName , string textureAssetName, string objectMapName)
 			: base(game)
 		{
 			_textureAssetName = textureAssetName;
 			_heightMapName = heightMapAssetName;
+			_objectMapName = objectMapName;
 		}
 
 		public Vector3 GetPosition(int x, int z)
@@ -83,6 +88,7 @@ namespace AwesomeGame.Terrain
 						_heightMap[i] = heights[i].R;
 					}
 				}
+
 				_numVertices = _size * _size;
 				int numInternalRows = _size - 2;
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
@@ -90,8 +96,31 @@ namespace AwesomeGame.Terrain
 				//our map is square
 				const int MAPDIMENSION = 2000;
 				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 1.0f, MAPDIMENSION / (float)_size);
-				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 1.0f, MAPDIMENSION / (float)_size);
 				_mapOffset = new Vector3(-MAPDIMENSION / 2, 1, -MAPDIMENSION / 2);	//move to origin
+
+				
+				//get our map objects
+				Texture2D objectMapTexture = content.Load<Texture2D>(_objectMapName);
+				int objectMapSize = objectMapTexture.Width;
+				Color[] objects = new Color[objectMapSize * objectMapSize];
+				objectMapTexture.GetData<Color>(objects);
+				Vector3 objectScale = new Vector3(MAPDIMENSION / (float)objectMapSize, 1.0f, MAPDIMENSION / (float)objectMapSize);
+
+				//take the red values for height data
+				int coneCount = 0;
+				for (int i = 0; i < objectMapSize * objectMapSize; i++)
+				{
+					if (objects[i].R == 255 & objects[i].G == 0 && objects[i].B == 0 && coneCount < 50)
+					{
+						//this is a cone
+						Vector3 newCone = new Vector3(i % objectMapSize, 0.0f, (int)(i / objectMapSize));
+						newCone *= objectScale;
+						newCone += _mapOffset;
+						newCone.Y = GetHeight(newCone.X, newCone.Z);
+						this.Game.Components.Add(new Mesh(this.Game, @"Models\Cone", Matrix.CreateTranslation(newCone)));
+						++coneCount;
+					}
+				}
 
 				//generate texture vertices
 				NormalMap normalMap = new NormalMap(this);

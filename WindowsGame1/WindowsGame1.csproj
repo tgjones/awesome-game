@@ -254,6 +254,12 @@
       <Processor>ModelProcessor</Processor>
       <Name>Schoolbus</Name>
     </Content>
+    <Content Include="Terrain\Textures\level1_gameobjects.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>level1_gameobjects</Name>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA\Game Studio Express\v1.0\Microsoft.Xna.ContentPipeline.targets" />

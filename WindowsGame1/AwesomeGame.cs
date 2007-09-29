@@ -34,7 +34,7 @@ namespace AwesomeGame
 			this.Services.AddService(typeof(Camera), camera);
 
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
-			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\level1_heightmap", @"Terrain\Textures\level1_texture");
+			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\level1_heightmap", @"Terrain\Textures\level1_texture", @"Terrain\Textures\level1_gameobjects");
 			this.Components.Add(gameTerrain);							//add terrain to component manager
 			this.Services.AddService(typeof(Terrain.SimpleTerrain), gameTerrain);		//make terrain available as a service.
 
@@ -47,9 +47,9 @@ namespace AwesomeGame
 			GameObject axes = new Mesh(this, @"Models\Axes");
 			this.Components.Add(axes);
 			//camera.AddViewObject(axes);
-			
-			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
-			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
+
+			//this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
+			//this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
 			
 			// Get some sort of checkpoint based course going on
 			course = new Course(this);
