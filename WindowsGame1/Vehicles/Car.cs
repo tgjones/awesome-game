@@ -39,15 +39,17 @@ namespace AwesomeGame.Vehicles
 				if (position.Y < landHeight)
 					position.Y = landHeight;
 
+				double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
 				double acceleration = 0;
+
 				if (position.Y <= landHeight + 0.01f)
 				{
 					acceleration = controlState.X * 1.0f;
 					if (acceleration < 0.0f) acceleration *= 3.0f;
-					orientation.Y -= controlState.Y * 0.03f;
+
+					orientation.Y -= controlState.Y * (float)(speed > 10.0f ? 10.0f : speed) / 200f;
 				}
 
-				double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
 				speed += acceleration * deltaTime;
 
 				velocity.X = (float)(speed * Math.Cos(orientation.Y));
@@ -61,18 +63,16 @@ namespace AwesomeGame.Vehicles
 				else
 					velocity = Vector3.Zero;
 
-				position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
-
 				// Locate wheels
-				float flHeight = GetWheelHeight(position, orientation.Y, true, true);
-				float frHeight = GetWheelHeight(position, orientation.Y, true, false);
-				float rlHeight = GetWheelHeight(position, orientation.Y, false, true);
-				float rrHeight = GetWheelHeight(position, orientation.Y, false, false);
+				float flHeight = GetGroundHeight(position, orientation.Y, true, true);
+				float frHeight = GetGroundHeight(position, orientation.Y, true, false);
+				float rlHeight = GetGroundHeight(position, orientation.Y, false, true);
+				float rrHeight = GetGroundHeight(position, orientation.Y, false, false);
 
-				ApplyWheelTransform(MESHIDX_REAR_AXLE, position.Y - ((rlHeight + rrHeight) / 2), 0.0f);
-				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - flHeight, controlState.Y);
-				ApplyWheelTransform(MESHIDX_FRONT_RIGHT_WHEEL, position.Y - frHeight, controlState.Y);
-
+				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - flHeight, controlState.Y, 0.0f);
+				ApplyWheelTransform(MESHIDX_FRONT_RIGHT_WHEEL, position.Y - frHeight, controlState.Y, 0.0f);
+				ApplyWheelTransform(MESHIDX_REAR_AXLE, position.Y - ((rlHeight + rrHeight) / 2), 0.0f,
+					(float)Math.Atan((rlHeight - rrHeight) / WHEELBASE_TRACK / 2));
 				ApplyBodyTransform(
 					Matrix.CreateRotationZ((float)Math.Atan((flHeight + rlHeight - (frHeight + rrHeight)) / WHEELBASE_TRACK / 2)) *
 					Matrix.CreateRotationX((float)Math.Atan((rlHeight + rrHeight - (flHeight + frHeight)) / WHEELBASE_LENGTH / 2)) *
@@ -80,10 +80,11 @@ namespace AwesomeGame.Vehicles
 				);
 			}
 
+			position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 			base.Update(gameTime);
 		}
 
-		private float GetWheelHeight(Vector3 pos, float ori, bool front, bool left)
+		private float GetGroundHeight(Vector3 pos, float ori, bool front, bool left)
 		{
 			float x = FRONT_AXLE_POS;
 			if (!front) x -= WHEELBASE_LENGTH;
@@ -109,11 +110,13 @@ namespace AwesomeGame.Vehicles
 			_partTransformationMatrices[4] = transform;
 		}
 
-		private void ApplyWheelTransform(int index, float height, float steer)
+		private void ApplyWheelTransform(int index, float height, float steer, float yaw)
 		{
 			_partTransformationMatrices[index] =
-				Matrix.CreateTranslation(0.0f, -height, 0.0f) *
-				Matrix.CreateRotationY(steer * -0.2f);
+				Matrix.CreateRotationZ(yaw) *
+				Matrix.CreateTranslation(steer != 0 ? -FRONT_AXLE_POS : 0, 0, 0) *
+				Matrix.CreateRotationY(steer * -0.1f) *
+				Matrix.CreateTranslation(steer != 0 ? FRONT_AXLE_POS : 0, -height, 0);
 		}
 
 		public Vector2 GetControlState(PlayerIndex playerIndex)
