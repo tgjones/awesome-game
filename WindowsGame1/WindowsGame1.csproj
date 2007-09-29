@@ -139,12 +139,6 @@
       <Processor>ModelProcessor</Processor>
       <Name>Cone</Name>
     </Content>
-    <Content Include="Models\xwing.x">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <Name>xwing</Name>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA\Game Studio Express\v1.0\Microsoft.Xna.ContentPipeline.targets" />

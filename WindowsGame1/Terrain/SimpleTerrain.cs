@@ -66,13 +66,17 @@ namespace AwesomeGame.Terrain
 					//take the red values for height data
 					for (int i = 0; i < _size * _size; i++)
 					{
-						_heightMap[i] = heights[i].R * 0.02f;
+						_heightMap[i] = heights[i].R;
 					}
 
 				}
 				_numVertices = _size * _size;
 				int numInternalRows = _size - 2;
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
+
+				//our map is 500 units square
+				Vector3 mapScale = new Vector3(500.0f / (float)_size, 0.02f, 500.0f / (float)_size);
+				Vector3 mapOffset = new Vector3(-250, -10, -250);	//move to origin
 
 				//generate texture vertices
 				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
@@ -83,7 +87,7 @@ namespace AwesomeGame.Terrain
 						float height = GetHeight(x, z);
 
 						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
-							new Vector3(x , height, z),
+							(new Vector3((float)x, height, (float)z) * mapScale) + mapOffset,
 							new Vector3(0, 1, 0),
 							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
 					}
