@@ -93,7 +93,7 @@ namespace AwesomeGame.Terrain
 							(new Vector3((float)x, height, (float)z) * _mapScale) + _mapOffset,
 							new Vector3(0, 1, 0),
 							//new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
-							new Vector2(x , z ));
+							new Vector2(2.0f * x / _size , 2.0f * z / _size ));
 					}
 				}
 
@@ -220,7 +220,15 @@ namespace AwesomeGame.Terrain
 		private float GetHeight(int x, int z)
 		{
 			//this takes coordinates in the height map geometry
-			return _heightMap[GetIndex(x, z)];
+			if (x >= 0 && x < _size && z >= 0 && z < _size)
+			{
+				return _heightMap[GetIndex(x, z)];
+			}
+			else
+			{
+				// car is off the map
+				return 0;
+			}
 			
 		}
 	}
