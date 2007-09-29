@@ -39,11 +39,11 @@ namespace AwesomeGame
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
-			GameObject axes = new Mesh(this, @"Models\Axes3", 1, Matrix.Identity);
+			GameObject axes = new Mesh(this, @"Models\Axes3");
 			this.Components.Add(axes);
 			camera.AddViewObject(axes);
 			
-			this.Components.Add(new Mesh(this, @"Models\Cone", 1, Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 5.0f))));
+			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 5.0f))));
 		}
 
 

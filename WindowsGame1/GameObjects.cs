@@ -95,15 +95,20 @@ namespace AwesomeGame
 		private string _modelAssetName;
 		private Model _model;
 		protected Matrix _worldMatrix = Matrix.Identity;
-		private float _scaleFactor;
-		private Matrix _rotationMatrix;
+		private Matrix _initialTranformationMatrix;
 
-		public Mesh(Game game, string modelAssetName, float scaleFactor, Matrix initialTransformationMatrix)
+		public Mesh(Game game, string modelAssetName)
 			: base(game)
 		{
 			_modelAssetName = modelAssetName;
-			_scaleFactor = scaleFactor;
-			_rotationMatrix = initialTransformationMatrix;
+			_initialTranformationMatrix = Matrix.Identity;
+		}
+
+		public Mesh(Game game, string modelAssetName, Matrix initialTransformationMatrix)
+			: base(game)
+		{
+			_modelAssetName = modelAssetName;
+			_initialTranformationMatrix = initialTransformationMatrix;
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
@@ -130,7 +135,7 @@ namespace AwesomeGame
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
-					((BasicEffect) mmp.Effect).World = _rotationMatrix * Matrix.CreateScale(_scaleFactor) * _worldMatrix;
+					((BasicEffect) mmp.Effect).World = _initialTranformationMatrix * _worldMatrix;
 					((BasicEffect) mmp.Effect).View = viewMatrix;
 					((BasicEffect) mmp.Effect).Projection = projectionMatrix;
 				}
