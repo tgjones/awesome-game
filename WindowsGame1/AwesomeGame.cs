@@ -37,7 +37,10 @@ namespace AwesomeGame
 			GameObject car = new Vehicles.Car(this);
 			this.Components.Add(car);
 			camera.AddViewObject(car);
-			this.Components.Add(new Mesh(this, @"Models\Axes3", 1, Matrix.Identity));
+			GameObject axes = new Mesh(this, @"Models\Axes3", 1, Matrix.Identity);
+			this.Components.Add(axes);
+			camera.AddViewObject(axes);
+			//this.Components.Add(new Mesh(this, @"Models\Axes3", 1, Matrix.Identity));
 		}
 
 

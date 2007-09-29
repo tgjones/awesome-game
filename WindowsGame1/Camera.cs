@@ -25,23 +25,35 @@ namespace AwesomeGame
 
 		public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
 		{
-			//rotate the camera around
-			//position = Vector3.Transform(new Vector3(20, 20, 0), Matrix.CreateRotationY(-(float)gameTime.TotalRealTime.TotalMilliseconds * 0.0001f));
 			Vector3 position;
 			float sumX = 0;
 			float sumY = 0;
 			float sumZ = 0;
-			//float maxX = 0, minX = 0;
-			//float maxZ = 0, minZ = 0;
-			
+			float maxX = 0, minX = 0;
+			float maxZ = 0, minZ = 0;
+
+			GameObject[] gameObjects = viewObjects.ToArray();
+			maxX = minX = gameObjects[0].position.X;
+			maxZ = minZ = gameObjects[0].position.Z;
+
 			foreach(GameObject gameObject in viewObjects)
 			{
 				sumX += gameObject.position.X;
 				sumY += gameObject.position.Y;
 				sumZ += gameObject.position.Z;
+
+				if (gameObject.position.X > maxX)
+					maxX = gameObject.position.X;
+				if (gameObject.position.Z > maxZ)
+					maxZ = gameObject.position.Z;
+
+				if (gameObject.position.X < minX)
+					minX = gameObject.position.X;
+				if (gameObject.position.Z < minZ)
+					minZ = gameObject.position.Z;
 			}
 
-			position = new Vector3(sumX / viewObjects.Count, 20, sumZ / viewObjects.Count);
+			position = new Vector3((float)sumX / viewObjects.Count, (float)((maxX-minX) * Math.Tan(MathHelper.ToRadians(45f))) + 20 + (sumY / viewObjects.Count), (float)sumZ / viewObjects.Count);
 			lookAt = new Vector3(sumX / viewObjects.Count, sumY / viewObjects.Count, sumZ / viewObjects.Count);
 			cameraUp = new Vector3(0, 0, -1);
 
