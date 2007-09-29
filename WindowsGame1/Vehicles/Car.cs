@@ -21,9 +21,24 @@ namespace AwesomeGame.Vehicles
 				float deltaTime = (float) (1.0f / gameTime.ElapsedGameTime.TotalMilliseconds);
 				Vector2 controlState = GetControlState(PlayerIndex.One);
 
-				double acceleration = controlState.X * 1.0f;
-				if (acceleration < 0.0f) acceleration *= 3.0f;
+				//check that we are on/near the ground
+				float landHeight = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
+				//stick it on the terrain
+				if (position.Y > landHeight) position.Y -= 0.08f;
+				if (position.Y < landHeight) position.Y = landHeight;
 
+				double acceleration;
+				if (position.Y <= landHeight + 0.01f)
+				{
+
+					acceleration = controlState.X * 1.0f;
+					if (acceleration < 0.0f) acceleration *= 3.0f;
+					orientation.Y -= controlState.Y * 0.03f;
+				}
+				else
+				{
+					acceleration = -1;
+				}
 				double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
 				speed += acceleration * deltaTime;
 
@@ -31,12 +46,7 @@ namespace AwesomeGame.Vehicles
 				velocity.Z = -(float)(speed * Math.Sin(orientation.Y));
 
 				position += velocity * deltaTime;
-
-				//stick it on the terrain
-				position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
-
-				orientation.Y -= controlState.Y * 0.03f;
-
+			
 				_partTransformationMatrices[3] = Matrix.CreateRotationY(-controlState.Y * 0.2f);
 			}
 
