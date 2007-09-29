@@ -127,6 +127,10 @@ namespace AwesomeGame
 			_initialTranformationMatrix = initialTransformationMatrix;
 			_partTransformationMatrices = new List<Matrix>();
 			_modelMeshPartEffects = new List<BasicEffect>();
+
+			Vector3 scale;
+			Quaternion rotation;
+			initialTransformationMatrix.Decompose(out scale, out rotation, out position);
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
