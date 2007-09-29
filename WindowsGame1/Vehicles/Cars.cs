@@ -16,6 +16,6 @@ namespace AwesomeGame.Vehicles
 
 	public class SchoolBus : Car
 	{
-		public SchoolBus(Game game) : base(game, @"Models\Schoolbus", 2, 1, 0) { }
+		public SchoolBus(Game game) : base(game, @"Models\Schoolbus", 6, 5, 4) { }
 	}
 }
