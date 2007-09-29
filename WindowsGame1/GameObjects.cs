@@ -98,12 +98,12 @@ namespace AwesomeGame
 		private float _scaleFactor;
 		private Matrix _rotationMatrix;
 
-		public Mesh(Game game, string modelAssetName, float scaleFactor, Matrix rotationMatrix)
+		public Mesh(Game game, string modelAssetName, float scaleFactor, Matrix initialTransformationMatrix)
 			: base(game)
 		{
 			_modelAssetName = modelAssetName;
 			_scaleFactor = scaleFactor;
-			_rotationMatrix = rotationMatrix;
+			_rotationMatrix = initialTransformationMatrix;
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
