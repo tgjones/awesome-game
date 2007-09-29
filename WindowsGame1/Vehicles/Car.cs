@@ -32,6 +32,9 @@ namespace AwesomeGame.Vehicles
 
 				position += velocity * deltaTime;
 
+				//stick it on the terrain
+				position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
+
 				orientation.Y -= controlState.Y * 0.03f;
 			}
 

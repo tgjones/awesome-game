@@ -17,6 +17,9 @@ namespace AwesomeGame.Terrain
 		private float[] _heightMap;
 		private Matrix translationMatrix = Matrix.Identity;		//where to put the terrain (so it gets centered)
 		private Effect _effect;
+		
+		private Vector3 _mapScale = Vector3.One;	//scale texture map data by this
+		private Vector3 _mapOffset = Vector3.Zero;	//offset texture map data by this
 
 		private int _numVertices;
 		private int _numIndices;
@@ -75,8 +78,8 @@ namespace AwesomeGame.Terrain
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
 
 				//our map is 500 units square
-				Vector3 mapScale = new Vector3(500.0f / (float)_size, 0.02f, 500.0f / (float)_size);
-				Vector3 mapOffset = new Vector3(-250, -10, -250);	//move to origin
+				_mapScale = new Vector3(500.0f / (float)_size, 0.02f, 500.0f / (float)_size);
+				_mapOffset = new Vector3(-250, 0, -250);	//move to origin
 
 				//generate texture vertices
 				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
@@ -87,9 +90,10 @@ namespace AwesomeGame.Terrain
 						float height = GetHeight(x, z);
 
 						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
-							(new Vector3((float)x, height, (float)z) * mapScale) + mapOffset,
+							(new Vector3((float)x, height, (float)z) * _mapScale) + _mapOffset,
 							new Vector3(0, 1, 0),
-							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
+							//new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
+							new Vector2(x , z ));
 					}
 				}
 
@@ -181,31 +185,42 @@ namespace AwesomeGame.Terrain
 			_effect.End();
 		}
 
-		//public float GetHeight(float x, float z)
-		//{
-		//    int integerX = MathsHelper.FloorToInt(x);
-		//    int integerZ = MathsHelper.FloorToInt(z);
-		//    float fractionalX = x - integerX;
-		//    float fractionalZ = z - integerZ;
-
-		//    float v1 = GetHeight(integerX, integerZ);
-		//    float v2 = GetHeight(integerX + 1, integerZ);
-		//    float v3 = GetHeight(integerX, integerZ + 1);
-		//    float v4 = GetHeight(integerX + 1, integerZ + 1);
-
-		//    //float i1 = v1 + (v1, v2, fractionalX);
-		//    //float i2 = PerlinNoise.Interpolate(v3, v4, fractionalX);
-		//    //return PerlinNoise.Interpolate(i1, i2, fractionalZ);
-
-		//    float i1 = v1 + ((v2 - v1) * fractionalX);
-		//    float i2 = v3 + ((v4 - v3) * fractionalX);
-
-		//    return i1 + ((i2 - i1) * fractionalZ);
-		//}
-
-		public float GetHeight(int x, int z)
+		public float GetHeight(float x, float z)
 		{
-			return 0;// _heightMap[GetIndex(x, z)];
+			//this takes coordinates in world geometry
+			
+			//convert to heightmap coordinate space
+			x = (x - _mapOffset.X) / _mapScale.X;
+			z = (z - _mapOffset.Z) / _mapScale.Z;
+			
+			int integerX = (int)Math.Floor(x);
+			int integerZ = (int)Math.Floor(z);
+			float fractionalX = x - integerX;
+			float fractionalZ = z - integerZ;
+
+			float v1 = GetHeight(integerX, integerZ);
+			float v2 = GetHeight(integerX + 1, integerZ);
+			float v3 = GetHeight(integerX, integerZ + 1);
+			float v4 = GetHeight(integerX + 1, integerZ + 1);
+
+			//float i1 = v1 + (v1, v2, fractionalX);
+			//float i2 = PerlinNoise.Interpolate(v3, v4, fractionalX);
+			//return PerlinNoise.Interpolate(i1, i2, fractionalZ);
+
+			float i1 = v1 + ((v2 - v1) * fractionalX);
+			float i2 = v3 + ((v4 - v3) * fractionalX);
+
+			//convert back to world coordinates
+			float height = i1 + ((i2 - i1) * fractionalZ);
+			height = (height * _mapScale.Y) + _mapOffset.Y;
+
+			return height;
+		}
+
+		private float GetHeight(int x, int z)
+		{
+			//this takes coordinates in the height map geometry
+			return _heightMap[GetIndex(x, z)];
 			
 		}
 	}

@@ -32,7 +32,10 @@ namespace AwesomeGame
 			this.Services.AddService(typeof(Camera), camera);
 
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
-			this.Components.Add(new Terrain.SimpleTerrain(this, @"Terrain\Textures\heightmap_128", @"Terrain\Textures\grass"));
+			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\heightmap_128", @"Terrain\Textures\grass");
+			this.Components.Add(gameTerrain);							//add terrain to component manager
+			this.Services.AddService(typeof(Terrain.SimpleTerrain), gameTerrain);		//make terrain available as a service.
+
 			//this.Components.Add(new Triangle(this));
 
 			GameObject car = new Vehicles.Car(this);
@@ -43,7 +46,7 @@ namespace AwesomeGame
 			this.Components.Add(axes);
 			camera.AddViewObject(axes);
 			
-			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 5.0f))));
+			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 0.0f))));
 		}
 
 

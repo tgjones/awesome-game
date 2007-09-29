@@ -95,12 +95,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\Axes3.x">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-      <Name>Axes3</Name>
-    </Content>
     <Content Include="Models\blocky car.x">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>XImporter</Importer>
@@ -138,6 +132,14 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Name>Cone</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Axes.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>Axes</Name>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
