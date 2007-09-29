@@ -15,7 +15,7 @@ namespace AwesomeGame.Terrain
 		private string _heightMapName;
 		private Texture2D _texture;
 		private float[] _heightMap;
-
+		private Matrix translationMatrix = Matrix.Identity;		//where to put the terrain (so it gets centered)
 		private Effect _effect;
 
 		private int _numVertices;
@@ -55,6 +55,9 @@ namespace AwesomeGame.Terrain
 					//take the size from the height map (we're assuming it is square)
 					_size = _heightmapTexture.Width;
 
+					//translationMatrix = Matrix.CreateTranslation(-_size / 2, 0, -_size / 2);
+					//translationMatrix = Matrix.CreateTranslation(0, 0, 0);
+
 					//get the heights from the height map
 					Color[] heights = new Color[_size * _size];
 					_heightmapTexture.GetData<Color>(heights);
@@ -73,16 +76,16 @@ namespace AwesomeGame.Terrain
 
 				//generate texture vertices
 				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
-				for (int y = 0; y < _size; y++)
+				for (int z = 0; z < _size; z++)
 				{
 					for (int x = 0; x < _size; x++)
 					{
-						float height = GetHeight(x, y);
+						float height = GetHeight(x, z);
 
-						vertices[GetIndex(x, y)] = new VertexPositionNormalTexture(
-							new Vector3(x , y , height),
-							new Vector3(0, 0, 1),
-							new Vector2(x / (float) (_size - 1), y / (float) (_size - 1)));
+						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
+							new Vector3(x , height, z),
+							new Vector3(0, 1, 0),
+							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
 					}
 				}
 
@@ -96,21 +99,21 @@ namespace AwesomeGame.Terrain
 
 				short[] indices = new short[_numIndices]; int indexCounter = 0;
 
-				for (int y = 0; y < _size - 1; y++)
+				for (int z = 0; z < _size - 1; z++)
 				{
 					// insert index for degenerate triangle
-					if (y > 0)
-						indices[indexCounter++] = GetIndex(0, y);
+					if (z > 0)
+						indices[indexCounter++] = GetIndex(0, z);
 
 					for (int x = 0; x < _size; x++)
 					{
-						indices[indexCounter++] = GetIndex(x, y);
-						indices[indexCounter++] = GetIndex(x, y + 1);
+						indices[indexCounter++] = GetIndex(x, z);
+						indices[indexCounter++] = GetIndex(x, z + 1);
 					}
 
 					// insert index for degenerate triangle
-					if (y < _size - 2)
-						indices[indexCounter++] = GetIndex(_size - 1, y);
+					if (z < _size - 2)
+						indices[indexCounter++] = GetIndex(_size - 1, z);
 				}
 
 				_indexBuffer = new IndexBuffer(
@@ -134,28 +137,19 @@ namespace AwesomeGame.Terrain
 			}
 		}
 
-		private short GetIndex(int x, int y)
+		private short GetIndex(int x, int z)
 		{
-			return (short) ((y * _size) + x);
+			return (short) ((z * _size) + x);
 		}
 
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
 
-			//Matrix viewMatrix = Matrix.CreateLookAt(
-			//    new Vector3(0.0f, 250.0f, 250),
-			//    Vector3.Zero,
-			//    new Vector3(0.0f, 1.0f, 0.0f));
-			//Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-			//    MathHelper.ToRadians(45),
-			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-			//    1.0f, 1000.0f);
-
 			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
 			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
-			
-			_effect.Parameters["WorldViewProjection"].SetValue(viewMatrix * projectionMatrix);
+
+			_effect.Parameters["WorldViewProjection"].SetValue(translationMatrix * viewMatrix * projectionMatrix);
 		}
 
 		public override void Draw(GameTime gameTime)
@@ -183,27 +177,31 @@ namespace AwesomeGame.Terrain
 			_effect.End();
 		}
 
-		/*public override float GetHeight(float x, float z)
+		//public float GetHeight(float x, float z)
+		//{
+		//    int integerX = MathsHelper.FloorToInt(x);
+		//    int integerZ = MathsHelper.FloorToInt(z);
+		//    float fractionalX = x - integerX;
+		//    float fractionalZ = z - integerZ;
+
+		//    float v1 = GetHeight(integerX, integerZ);
+		//    float v2 = GetHeight(integerX + 1, integerZ);
+		//    float v3 = GetHeight(integerX, integerZ + 1);
+		//    float v4 = GetHeight(integerX + 1, integerZ + 1);
+
+		//    //float i1 = v1 + (v1, v2, fractionalX);
+		//    //float i2 = PerlinNoise.Interpolate(v3, v4, fractionalX);
+		//    //return PerlinNoise.Interpolate(i1, i2, fractionalZ);
+
+		//    float i1 = v1 + ((v2 - v1) * fractionalX);
+		//    float i2 = v3 + ((v4 - v3) * fractionalX);
+
+		//    return i1 + ((i2 - i1) * fractionalZ);
+		//}
+
+		public float GetHeight(int x, int z)
 		{
-			int integerX = MathsHelper.FloorToInt(x);
-			int integerZ = MathsHelper.FloorToInt(z);
-			float fractionalX = x - integerX;
-			float fractionalZ = z - integerZ;
-
-			float v1 = GetHeight(integerX, integerZ);
-			float v2 = GetHeight(integerX + 1, integerZ);
-			float v3 = GetHeight(integerX, integerZ + 1);
-			float v4 = GetHeight(integerX + 1, integerZ + 1);
-
-			float i1 = PerlinNoise.Interpolate(v1, v2, fractionalX);
-			float i2 = PerlinNoise.Interpolate(v3, v4, fractionalX);
-
-			return PerlinNoise.Interpolate(i1, i2, fractionalZ);
-		}
-*/
-		public float GetHeight(int x, int y)
-		{
-			return _heightMap[GetIndex(x, y)];
+			return 0;// _heightMap[GetIndex(x, z)];
 			
 		}
 	}

@@ -94,7 +94,7 @@ technique Normal
 	{
 		ZEnable = true;
 		FillMode = SOLID;
-		CullMode = CCW;
+		CullMode = CW;
 		VertexShader = compile vs_1_1 VertexShader();
 		PixelShader = compile ps_1_1 PixelShader();
 	}
