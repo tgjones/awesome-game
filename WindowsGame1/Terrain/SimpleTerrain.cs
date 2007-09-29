@@ -94,7 +94,7 @@ namespace AwesomeGame.Terrain
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
 
 				//our map is square
-				const int MAPDIMENSION = 2000;
+				const int MAPDIMENSION = 2048;
 				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 1.0f, MAPDIMENSION / (float)_size);
 				_mapOffset = new Vector3(-MAPDIMENSION / 2, 1, -MAPDIMENSION / 2);	//move to origin
 
@@ -116,6 +116,8 @@ namespace AwesomeGame.Terrain
 						Vector3 newCone = new Vector3(i % objectMapSize, 0.0f, (int)(i / objectMapSize));
 						newCone *= objectScale;
 						newCone += _mapOffset;
+
+						//newCone = newCone * 0.3f;
 						newCone.Y = GetHeight(newCone.X, newCone.Z);
 						this.Game.Components.Add(new Mesh(this.Game, @"Models\Cone", Matrix.CreateTranslation(newCone)));
 						++coneCount;

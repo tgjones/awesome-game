@@ -153,7 +153,7 @@ technique PerPixelLighting
 	pass Pass0
 	{
 		ZEnable = true;
-		FillMode = SOLID;
+		FillMode = WIREFRAME;
 		CullMode = CW;
 		VertexShader = compile vs_1_1 VertexShader20();
 		PixelShader = compile ps_2_0 PixelShader20();

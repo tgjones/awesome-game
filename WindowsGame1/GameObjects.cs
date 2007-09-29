@@ -131,6 +131,7 @@ namespace AwesomeGame
 			Vector3 scale;
 			Quaternion rotation;
 			initialTransformationMatrix.Decompose(out scale, out rotation, out position);
+			_initialTranformationMatrix = Matrix.CreateFromQuaternion(rotation) * Matrix.CreateScale(scale);
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
