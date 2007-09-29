@@ -13,7 +13,7 @@ namespace AwesomeGame.Vehicles
 		private const float WHEELBASE_TRACK = 6;
 		private const float WHEELBASE_LENGTH = 6;
 		private const float FRONT_AXLE_POS = 3;
-		private const float RIDE_HEIGHT = 1.5f;
+		private const float RIDE_HEIGHT = 1.0f;
 		
 		public Vector3 velocity;
 
@@ -31,7 +31,7 @@ namespace AwesomeGame.Vehicles
 				Vector2 controlState = GetControlState(PlayerIndex.One);
 
 				//check that we are on/near the ground
-				float landHeight = RIDE_HEIGHT + this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
+				float landHeight = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 
 				//stick it on the terrain
 				if (position.Y > landHeight)
@@ -61,39 +61,43 @@ namespace AwesomeGame.Vehicles
 				else
 					velocity = Vector3.Zero;
 
-				// Locate front left wheel position
-				float flHeight = this.GetService<Terrain.SimpleTerrain>().GetHeight(
-					(float)(position.X
-					+ FRONT_AXLE_POS * Math.Cos(orientation.Y)
-					- WHEELBASE_TRACK * Math.Sin(orientation.Y) / 2),
-					(float)(position.Z
-					- FRONT_AXLE_POS * Math.Sin(orientation.Y)
-					+ WHEELBASE_TRACK * Math.Cos(orientation.Y) / 2));
+				position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 
-				// Locate front right wheel position
-				float frHeight = this.GetService<Terrain.SimpleTerrain>().GetHeight(
-					(float)(position.X
-					+ FRONT_AXLE_POS * Math.Cos(orientation.Y)
-					- WHEELBASE_TRACK * Math.Sin(orientation.Y) / -2),
-					(float)(position.Z
-					- FRONT_AXLE_POS * Math.Sin(orientation.Y)
-					+ WHEELBASE_TRACK * Math.Cos(orientation.Y) / -2));
+				// Locate wheels
+				float flHeight = GetWheelHeight(position, orientation.Y, true, true);
+				float frHeight = GetWheelHeight(position, orientation.Y, true, false);
+				float rlHeight = GetWheelHeight(position, orientation.Y, false, true);
+				float rrHeight = GetWheelHeight(position, orientation.Y, false, false);
 
-				// Locate rear wheel positions
-				float rHeight = this.GetService<Terrain.SimpleTerrain>().GetHeight(
-					(float)(position.X + (FRONT_AXLE_POS - WHEELBASE_LENGTH) * Math.Cos(orientation.Y)),
-					(float)(position.Z - (FRONT_AXLE_POS - WHEELBASE_LENGTH) * Math.Sin(orientation.Y)));
-
-				ApplyWheelTransform(MESHIDX_REAR_AXLE, position.Y - rHeight, 0.0f);
+				ApplyWheelTransform(MESHIDX_REAR_AXLE, position.Y - ((rlHeight + rrHeight) / 2), 0.0f);
 				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - flHeight, controlState.Y);
 				ApplyWheelTransform(MESHIDX_FRONT_RIGHT_WHEEL, position.Y - frHeight, controlState.Y);
+
 				ApplyBodyTransform(
-					Matrix.CreateRotationZ((float)Math.Atan((flHeight - frHeight)) / WHEELBASE_TRACK) *
-					Matrix.CreateRotationX((float)Math.Atan((rHeight - (flHeight + frHeight) / 2) / WHEELBASE_LENGTH)));
+					Matrix.CreateRotationZ((float)Math.Atan((flHeight + rlHeight - (frHeight + rrHeight)) / WHEELBASE_TRACK / 2)) *
+					Matrix.CreateRotationX((float)Math.Atan((rlHeight + rrHeight - (flHeight + frHeight)) / WHEELBASE_LENGTH / 2)) *
+					Matrix.CreateTranslation(0.0f, RIDE_HEIGHT, 0.0f)
+				);
 			}
 
-			position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 			base.Update(gameTime);
+		}
+
+		private float GetWheelHeight(Vector3 pos, float ori, bool front, bool left)
+		{
+			float x = FRONT_AXLE_POS;
+			if (!front) x -= WHEELBASE_LENGTH;
+
+			float y = WHEELBASE_TRACK / 2;
+			if (left) y *= -1;
+
+			return this.GetService<Terrain.SimpleTerrain>().GetHeight(
+				(float)(pos.X
+				+ x * Math.Cos(ori)
+				+ y * Math.Sin(ori)),
+				(float)(pos.Z
+				- x * Math.Sin(ori)
+				+ y * Math.Cos(ori)));
 		}
 
 		private void ApplyBodyTransform(Matrix transform)
