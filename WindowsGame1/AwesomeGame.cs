@@ -59,19 +59,49 @@ namespace AwesomeGame
 			course = new Course(this);
 			this.Services.AddService(typeof(Course), course);
 
-			course.addCheckpoint(axes);
+			//course.addCheckpoint(axes);
 
 			Mesh checkpoint;
-			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-20.0f, 15.0f, -2.0f)));
-			//course.addCheckpoint(checkpoint);
+			// Lower down the hill
+			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-63f,148f,300f)));
+			course.addCheckpoint(checkpoint);
+			//camera.AddViewObject(checkpoint);
+
 			this.Components.Add(checkpoint);
-			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(-145.0f, 6.0f, -130.0f)));
-			//course.addCheckpoint(checkpoint);
+
+			// On top of the hill
+			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(230f, 230f, 68f)));
+			course.addCheckpoint(checkpoint);
 			this.Components.Add(checkpoint);
 
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
 		}
 
+		public bool CheckForCollisions(Mesh object1, Mesh object2 )
+		{
+			for (int i = 0; i < object1._model.Meshes.Count; i++)
+			{
+				// Check whether the bounding boxes of the two cubes intersect.
+				BoundingSphere object1BoundingSphere = object1._model.Meshes[i].BoundingSphere;
+				object1BoundingSphere.Center += object1.position;
+
+				for (int j = 0; j < object2._model.Meshes.Count; j++)
+				{
+					BoundingSphere object2BoundingSphere = object2._model.Meshes[j].BoundingSphere;
+					object2BoundingSphere.Center += object2.position;
+
+					if (object1BoundingSphere.Intersects(object2BoundingSphere))
+					{
+						//c2.ReverseVelocity();
+						//c1.Backup();
+						//c1.ReverseVelocity();
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
 
 		/// <summary>
 		/// Allows the game to perform any initialization it needs to before starting to run.

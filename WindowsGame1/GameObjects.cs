@@ -93,7 +93,7 @@ namespace AwesomeGame
 	public class Mesh : GameObject
 	{
 		private string _modelAssetName;
-		private Model _model;
+		public Model _model;
 		public Matrix WorldMatrix = Matrix.Identity;
 		protected List<Matrix> _partTransformationMatrices;
 		protected List<BoundingBox> _partBoundingBoxes;

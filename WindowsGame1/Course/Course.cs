@@ -23,10 +23,10 @@ namespace AwesomeGame
 
 		public GameObject getFirstCheckpoint()
 		{
-			return checkpoints.Find(new Predicate<GameObject>(blah));
+			return checkpoints.Find(new Predicate<GameObject>(indexFind));
 		}
 
-		private bool blah(GameObject go)
+		private bool indexFind(GameObject go)
 		{
 			return true;
 		}
@@ -35,11 +35,15 @@ namespace AwesomeGame
 		{
 			if (currentCheckpoint == null)
 			{
-				return checkpoints.Find(new Predicate<GameObject>(blah));
+				return checkpoints.Find(new Predicate<GameObject>(indexFind));
 			}
 			else
 			{
-				return checkpoints.Find(new Predicate<GameObject>(blah));
+				int current = checkpoints.IndexOf(currentCheckpoint);
+				//return checkpoints.FindLast(new Predicate<GameObject>(blah));
+				int newCheckpoint =  (current + 1) % checkpoints.Count;
+				return checkpoints[newCheckpoint];
+				
 			}
 		}
 	}

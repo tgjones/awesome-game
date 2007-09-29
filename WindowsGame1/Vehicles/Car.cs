@@ -153,7 +153,7 @@ namespace AwesomeGame.Vehicles
 				);
 			}
 
-			if (false)
+			if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)this.nextCheckpoint))
 			{
 				// If we hit the checkpoint
 				this.nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint);
