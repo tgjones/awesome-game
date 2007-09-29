@@ -40,7 +40,7 @@ namespace AwesomeGame
 
 			//this.Components.Add(new Triangle(this));
 
-			GameObject car = new Vehicles.SchoolBus(this);
+			GameObject car = new Vehicles.Blocky(this);
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
