@@ -43,7 +43,7 @@ namespace AwesomeGame
 			this.Components.Add(axes);
 			camera.AddViewObject(axes);
 			
-			this.Components.Add(new Mesh(this, @"Models\Cone", 1, Matrix.Identity));
+			this.Components.Add(new Mesh(this, @"Models\Cone", 1, Matrix.CreateTranslation(new Vector3(0.0f, 0.0f, 5.0f))));
 		}
 
 
