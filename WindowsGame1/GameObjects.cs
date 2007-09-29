@@ -95,6 +95,7 @@ namespace AwesomeGame
 		private string _modelAssetName;
 		private Model _model;
 		protected Matrix _worldMatrix = Matrix.Identity;
+		protected List<Matrix> _partTransformationMatrices;
 		private Matrix _initialTranformationMatrix;
 
 		public Mesh(Game game, string modelAssetName)
@@ -102,6 +103,7 @@ namespace AwesomeGame
 		{
 			_modelAssetName = modelAssetName;
 			_initialTranformationMatrix = Matrix.Identity;
+			_partTransformationMatrices = new List<Matrix>();
 		}
 
 		public Mesh(Game game, string modelAssetName, Matrix initialTransformationMatrix)
@@ -109,6 +111,7 @@ namespace AwesomeGame
 		{
 			_modelAssetName = modelAssetName;
 			_initialTranformationMatrix = initialTransformationMatrix;
+			_partTransformationMatrices = new List<Matrix>();
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
@@ -116,6 +119,11 @@ namespace AwesomeGame
 			base.LoadGraphicsContent(loadAllContent);
 
 			_model = this.GetService<ContentManager>().Load<Model>(_modelAssetName);
+
+			_partTransformationMatrices.Clear();
+			foreach (ModelMesh mesh in _model.Meshes)
+				foreach (ModelMeshPart part in mesh.MeshParts)
+					_partTransformationMatrices.Add(Matrix.Identity);
 		}
 
 		public override void Update(GameTime gameTime)
@@ -131,12 +139,13 @@ namespace AwesomeGame
 			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
 			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
 
+			int meshPartIndex = 0;
 			foreach (ModelMesh mm in _model.Meshes)
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
 					BasicEffect effect = (BasicEffect)mmp.Effect;
-					effect.World = _initialTranformationMatrix * _worldMatrix;
+					effect.World = _partTransformationMatrices[meshPartIndex++] * _initialTranformationMatrix * _worldMatrix;
 					effect.View = viewMatrix;
 					effect.Projection = projectionMatrix;
 

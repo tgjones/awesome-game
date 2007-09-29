@@ -36,6 +36,8 @@ namespace AwesomeGame.Vehicles
 				position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 
 				orientation.Y -= controlState.Y * 0.03f;
+
+				_partTransformationMatrices[3] = Matrix.CreateRotationY(-controlState.Y * 0.2f);
 			}
 
 			base.Update(gameTime);
