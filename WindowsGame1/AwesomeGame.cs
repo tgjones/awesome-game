@@ -47,6 +47,8 @@ namespace AwesomeGame
 			//camera.AddViewObject(axes);
 			
 			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 0.0f))));
+
+			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Box.xml"));
 		}
 
 

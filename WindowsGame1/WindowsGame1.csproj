@@ -63,6 +63,30 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>GameObjects</Name>
     </Compile>
+    <Compile Include="Physics\Constraint.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Constraint</Name>
+    </Compile>
+    <Compile Include="Physics\SphereCollisionConstraint.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>SphereCollisionConstraint</Name>
+    </Compile>
+    <Compile Include="Physics\DistanceConstraint.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>DistanceConstraint</Name>
+    </Compile>
+    <Compile Include="Physics\GroundCollisionConstraint.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>GroundCollisionConstraint</Name>
+    </Compile>
+    <Compile Include="Physics\Particle.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Particle</Name>
+    </Compile>
+    <Compile Include="Physics\ParticleSystem.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>ParticleSystem</Name>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
@@ -152,6 +176,24 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Name>Lessblockycar2</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Sphere0.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>Sphere0</Name>
+    </Content>
+    <Content Include="Physics\Box.xml">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Box</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Physics\DanglingRope.xml">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>DanglingRope</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

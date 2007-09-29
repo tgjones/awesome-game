@@ -77,6 +77,7 @@ namespace AwesomeGame.Vehicles
 					Matrix.CreateRotationZ(controlState.Y * -0.1f));
 			}
 
+			position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 			base.Update(gameTime);
 		}
 

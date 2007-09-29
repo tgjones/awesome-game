@@ -94,16 +94,30 @@ namespace AwesomeGame
 	{
 		private string _modelAssetName;
 		private Model _model;
-		protected Matrix _worldMatrix = Matrix.Identity;
+		public Matrix WorldMatrix = Matrix.Identity;
 		protected List<Matrix> _partTransformationMatrices;
 		private Matrix _initialTranformationMatrix;
+		private List<BasicEffect> _modelMeshPartEffects;
+
+		public Matrix InitialTransformationMatrix
+		{
+			get { return _initialTranformationMatrix; }
+			set { _initialTranformationMatrix = value; }
+		}
+
+		public BoundingSphere BoundingSphere
+		{
+			get
+			{
+				BoundingSphere boundingSphere = new BoundingSphere(this.position, 3);
+				return boundingSphere;
+			}
+		}
 
 		public Mesh(Game game, string modelAssetName)
-			: base(game)
+			: this(game, modelAssetName, Matrix.Identity)
 		{
-			_modelAssetName = modelAssetName;
-			_initialTranformationMatrix = Matrix.Identity;
-			_partTransformationMatrices = new List<Matrix>();
+			
 		}
 
 		public Mesh(Game game, string modelAssetName, Matrix initialTransformationMatrix)
@@ -112,6 +126,7 @@ namespace AwesomeGame
 			_modelAssetName = modelAssetName;
 			_initialTranformationMatrix = initialTransformationMatrix;
 			_partTransformationMatrices = new List<Matrix>();
+			_modelMeshPartEffects = new List<BasicEffect>();
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
@@ -121,9 +136,15 @@ namespace AwesomeGame
 			_model = this.GetService<ContentManager>().Load<Model>(_modelAssetName);
 
 			_partTransformationMatrices.Clear();
+			_modelMeshPartEffects.Clear();
 			foreach (ModelMesh mesh in _model.Meshes)
+			{
 				foreach (ModelMeshPart part in mesh.MeshParts)
+				{
 					_partTransformationMatrices.Add(Matrix.Identity);
+					_modelMeshPartEffects.Add(part.Effect.Clone(this.GraphicsDevice) as BasicEffect);
+				}
+			}
 		}
 
 		public override void Update(GameTime gameTime)
@@ -135,17 +156,17 @@ namespace AwesomeGame
 			//    MathHelper.ToRadians(45),
 			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
 			//    1.0f, 20.0f);
-			_worldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
+			WorldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
 			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
 			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
 
-			int meshPartIndex = 0;
+			int meshPartIndex = 0; int counter = 0;
 			foreach (ModelMesh mm in _model.Meshes)
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
-					BasicEffect effect = (BasicEffect)mmp.Effect;
-					effect.World = _partTransformationMatrices[meshPartIndex++] * _initialTranformationMatrix * _worldMatrix;
+					BasicEffect effect = _modelMeshPartEffects[counter++];
+					effect.World = _partTransformationMatrices[meshPartIndex++] * _initialTranformationMatrix * WorldMatrix;
 					effect.View = viewMatrix;
 					effect.Projection = projectionMatrix;
 
@@ -170,6 +191,11 @@ namespace AwesomeGame
 		public override void Draw(GameTime gameTime)
 		{
 			base.Draw(gameTime);
+
+			int counter = 0;
+			foreach (ModelMesh mm in _model.Meshes)
+				foreach (ModelMeshPart mmp in mm.MeshParts)
+					mmp.Effect = _modelMeshPartEffects[counter++];
 
 			//graphicsDevice.VertexDeclaration = vertexDeclaration;
 			this.GraphicsDevice.RenderState.CullMode = CullMode.None;
