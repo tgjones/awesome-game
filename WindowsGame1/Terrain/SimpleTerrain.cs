@@ -14,7 +14,7 @@ namespace AwesomeGame.Terrain
 		private string _textureAssetName;
 		private string _heightMapName;
 		private Texture2D _texture;
-		private int[] _heightMap;
+		private float[] _heightMap;
 
 		private Effect _effect;
 
@@ -59,11 +59,11 @@ namespace AwesomeGame.Terrain
 					Color[] heights = new Color[_size * _size];
 					_heightmapTexture.GetData<Color>(heights);
 
-					_heightMap = new int[_size * _size];
+					_heightMap = new float[_size * _size];
 					//take the red values for height data
 					for (int i = 0; i < _size * _size; i++)
 					{
-						_heightMap[i] = heights[i].R;
+						_heightMap[i] = heights[i].R * 0.02f;
 					}
 
 				}
@@ -73,16 +73,16 @@ namespace AwesomeGame.Terrain
 
 				//generate texture vertices
 				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
-				for (int z = 0; z < _size; z++)
+				for (int y = 0; y < _size; y++)
 				{
 					for (int x = 0; x < _size; x++)
 					{
-						float height = GetHeight(x, z);
-						//float height = 0;
+						float height = GetHeight(x, y);
 
-						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
-							new Vector3(x, height, -z), new Vector3(0, 1, 0),
-							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
+						vertices[GetIndex(x, y)] = new VertexPositionNormalTexture(
+							new Vector3(x , y , height),
+							new Vector3(0, 0, 1),
+							new Vector2(x / (float) (_size - 1), y / (float) (_size - 1)));
 					}
 				}
 
@@ -96,21 +96,21 @@ namespace AwesomeGame.Terrain
 
 				short[] indices = new short[_numIndices]; int indexCounter = 0;
 
-				for (int z = 0; z < _size - 1; z++)
+				for (int y = 0; y < _size - 1; y++)
 				{
 					// insert index for degenerate triangle
-					if (z > 0)
-						indices[indexCounter++] = GetIndex(0, z);
+					if (y > 0)
+						indices[indexCounter++] = GetIndex(0, y);
 
 					for (int x = 0; x < _size; x++)
 					{
-						indices[indexCounter++] = GetIndex(x, z);
-						indices[indexCounter++] = GetIndex(x, z + 1);
+						indices[indexCounter++] = GetIndex(x, y);
+						indices[indexCounter++] = GetIndex(x, y + 1);
 					}
 
 					// insert index for degenerate triangle
-					if (z < _size - 2)
-						indices[indexCounter++] = GetIndex(_size - 1, z);
+					if (y < _size - 2)
+						indices[indexCounter++] = GetIndex(_size - 1, y);
 				}
 
 				_indexBuffer = new IndexBuffer(
@@ -134,23 +134,27 @@ namespace AwesomeGame.Terrain
 			}
 		}
 
-		private short GetIndex(int x, int z)
+		private short GetIndex(int x, int y)
 		{
-			return (short) ((z * _size) + x);
+			return (short) ((y * _size) + x);
 		}
 
 		public override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
 
-			Matrix viewMatrix = Matrix.CreateLookAt(
-				new Vector3(0.0f, 250.0f, 250),
-				Vector3.Zero,
-				new Vector3(0.0f, 1.0f, 0.0f));
-			Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-				MathHelper.ToRadians(45),
-				(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-				1.0f, 1000.0f);
+			//Matrix viewMatrix = Matrix.CreateLookAt(
+			//    new Vector3(0.0f, 250.0f, 250),
+			//    Vector3.Zero,
+			//    new Vector3(0.0f, 1.0f, 0.0f));
+			//Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+			//    MathHelper.ToRadians(45),
+			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
+			//    1.0f, 1000.0f);
+
+			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
+			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
+			
 			_effect.Parameters["WorldViewProjection"].SetValue(viewMatrix * projectionMatrix);
 		}
 
@@ -197,9 +201,9 @@ namespace AwesomeGame.Terrain
 			return PerlinNoise.Interpolate(i1, i2, fractionalZ);
 		}
 */
-		public float GetHeight(int x, int z)
+		public float GetHeight(int x, int y)
 		{
-			return _heightMap[GetIndex(x, z)] * 0.2f ;
+			return _heightMap[GetIndex(x, y)];
 			
 		}
 	}

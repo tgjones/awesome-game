@@ -43,16 +43,16 @@ namespace AwesomeGame
 
 			if (loadAllContent)
 			{
-				Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
-				Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-					MathHelper.ToRadians(45),
-					(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-					1.0f, 20.0f);
+				//Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
+				//Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+				//	MathHelper.ToRadians(45),
+					//(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
+					//1.0f, 20.0f);
 
 				basicEffect = new BasicEffect(this.GraphicsDevice, null);
 				basicEffect.World = worldMatrix;
-				basicEffect.View = viewMatrix;
-				basicEffect.Projection = projectionMatrix;
+				basicEffect.View = this.GetService<Camera>().ViewMatrix;
+				basicEffect.Projection = this.GetService<Camera>().ProjectionMatrix;
 				basicEffect.VertexColorEnabled = true;
 
 				vertexBuffer = new VertexBuffer(this.GraphicsDevice, typeof(VertexPositionColor), 3, ResourceUsage.None);
@@ -117,11 +117,13 @@ namespace AwesomeGame
 		{
 			base.Update(gameTime);
 
-			Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
-			Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-				MathHelper.ToRadians(45),
-				(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-				1.0f, 20.0f);
+			//Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
+			//Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
+			//    MathHelper.ToRadians(45),
+			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
+			//    1.0f, 20.0f);
+			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
+			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
 
 			foreach (ModelMesh mm in _model.Meshes)
 			{

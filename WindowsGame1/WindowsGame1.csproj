@@ -55,6 +55,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Camera</Name>
+    </Compile>
     <Compile Include="GameObjects.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>GameObjects</Name>

@@ -18,17 +18,22 @@ namespace AwesomeGame
 	{
 		GraphicsDeviceManager graphics;
 		ContentManager content;
+		Camera camera;
 
 		public AwesomeGame()
 		{
 			graphics = new GraphicsDeviceManager(this);
 			content = new ContentManager(Services);
-
+			
 			this.Services.AddService(typeof(ContentManager), content);
+
+			//create the camera and add it as a service
+			camera = new Camera();
+			this.Services.AddService(typeof(Camera), camera);
 
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
 			this.Components.Add(new Terrain.SimpleTerrain(this, @"Terrain\Textures\heightmap_128", @"Terrain\Textures\grass"));
-			this.Components.Add(new Triangle(this));
+			//this.Components.Add(new Triangle(this));
 			this.Components.Add(new Mesh(this, @"Models\Lessblockycar", 0.2f, Matrix.CreateRotationX(MathHelper.ToRadians(45))));
 		}
 
@@ -41,8 +46,7 @@ namespace AwesomeGame
 		/// </summary>
 		protected override void Initialize()
 		{
-			
-
+			camera.Initialize();
 			base.Initialize();
 		}
 
@@ -100,6 +104,9 @@ namespace AwesomeGame
 			// Allows the game to exit
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 				this.Exit();
+
+			//update the camera
+			camera.Update(gameTime, graphics.GraphicsDevice);
 
 			base.Update(gameTime);
 		}

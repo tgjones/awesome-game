@@ -79,7 +79,6 @@ VertexShaderOutput VertexShader(VertexShaderInput input)
 PixelShaderOutput PixelShader(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
-	//output.Colour = float4(1, 0, 0, 1);
 	output.Colour = tex2D(GrassSampler, input.TexCoords).rgba;
 	return output;
 }
