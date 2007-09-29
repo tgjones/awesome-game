@@ -10,7 +10,6 @@ namespace AwesomeGame
 	public abstract class GameObject : Microsoft.Xna.Framework.DrawableGameComponent
 	{
 		public Vector3 position;
-		public Vector3 velocity;
 
 		public GameObject(Game game)
 			: base(game)
@@ -94,7 +93,7 @@ namespace AwesomeGame
 	{
 		private string _modelAssetName;
 		private Model _model;
-		private Matrix _worldMatrix = Matrix.Identity;
+		protected Matrix _worldMatrix = Matrix.Identity;
 		private float _scaleFactor;
 		private Matrix _rotationMatrix;
 
@@ -122,6 +121,7 @@ namespace AwesomeGame
 			//    MathHelper.ToRadians(45),
 			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
 			//    1.0f, 20.0f);
+			_worldMatrix = Matrix.CreateTranslation(position);
 			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
 			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
 
@@ -129,7 +129,7 @@ namespace AwesomeGame
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
-					((BasicEffect) mmp.Effect).World = _worldMatrix * _rotationMatrix * Matrix.CreateScale(_scaleFactor);
+					((BasicEffect) mmp.Effect).World = _rotationMatrix * Matrix.CreateScale(_scaleFactor) * _worldMatrix;
 					((BasicEffect) mmp.Effect).View = viewMatrix;
 					((BasicEffect) mmp.Effect).Projection = projectionMatrix;
 				}

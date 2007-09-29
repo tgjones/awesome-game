@@ -77,6 +77,10 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>SimpleTerrain</Name>
     </Compile>
+    <Compile Include="Vehicles\Car.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Car</Name>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico">

@@ -25,7 +25,7 @@ namespace AwesomeGame
 		public void Update(GameTime gameTime, GraphicsDevice graphicsDevice)
 		{
 			//rotate the camera around
-			position = Vector3.Transform(new Vector3(20, 20, 0), Matrix.CreateRotationY((float)gameTime.TotalRealTime.TotalMilliseconds * 0.0001f));
+			position = Vector3.Transform(new Vector3(20, 20, 0), Matrix.CreateRotationY(-(float)gameTime.TotalRealTime.TotalMilliseconds * 0.0001f));
 			cameraUp = new Vector3(0, 0, -1);
 
 			_viewMatrix = Matrix.CreateLookAt(position, lookAt, cameraUp);

@@ -93,7 +93,7 @@ technique Normal
 	pass Pass0
 	{
 		ZEnable = true;
-		FillMode = SOLID;
+		FillMode = WIREFRAME;
 		CullMode = CW;
 		VertexShader = compile vs_1_1 VertexShader();
 		PixelShader = compile ps_1_1 PixelShader();
