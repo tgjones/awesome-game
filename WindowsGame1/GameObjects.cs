@@ -20,7 +20,7 @@ namespace AwesomeGame
 
 		protected T GetService<T>()
 		{
-			return (T) this.Game.Services.GetService(typeof(T));
+			return (T)this.Game.Services.GetService(typeof(T));
 		}
 	}
 
@@ -46,8 +46,8 @@ namespace AwesomeGame
 				//Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
 				//Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
 				//	MathHelper.ToRadians(45),
-					//(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-					//1.0f, 20.0f);
+				//(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
+				//1.0f, 20.0f);
 
 				basicEffect = new BasicEffect(this.GraphicsDevice, null);
 				basicEffect.World = worldMatrix;
@@ -69,7 +69,7 @@ namespace AwesomeGame
 		{
 			base.Update(gameTime);
 
-			worldMatrix = Matrix.CreateRotationZ((float) gameTime.TotalRealTime.TotalMilliseconds * 0.0001f);
+			worldMatrix = Matrix.CreateRotationZ((float)gameTime.TotalRealTime.TotalMilliseconds * 0.0001f);
 			basicEffect.World = worldMatrix;
 		}
 
@@ -96,8 +96,9 @@ namespace AwesomeGame
 		private Model _model;
 		public Matrix WorldMatrix = Matrix.Identity;
 		protected List<Matrix> _partTransformationMatrices;
+		protected List<BoundingBox> _partBoundingBoxes;
+		protected List<BasicEffect> _modelMeshPartEffects;
 		private Matrix _initialTranformationMatrix;
-		private List<BasicEffect> _modelMeshPartEffects;
 
 		public Matrix InitialTransformationMatrix
 		{
@@ -117,7 +118,8 @@ namespace AwesomeGame
 		public Mesh(Game game, string modelAssetName)
 			: this(game, modelAssetName, Matrix.Identity)
 		{
-			
+
+			_partBoundingBoxes = new List<BoundingBox>();
 		}
 
 		public Mesh(Game game, string modelAssetName, Matrix initialTransformationMatrix)
@@ -126,6 +128,7 @@ namespace AwesomeGame
 			_modelAssetName = modelAssetName;
 			_initialTranformationMatrix = initialTransformationMatrix;
 			_partTransformationMatrices = new List<Matrix>();
+			_partBoundingBoxes = new List<BoundingBox>();
 			_modelMeshPartEffects = new List<BasicEffect>();
 
 			Vector3 scale;
@@ -146,11 +149,27 @@ namespace AwesomeGame
 			{
 				foreach (ModelMeshPart part in mesh.MeshParts)
 				{
+					// Common lighting parameters
+					BasicEffect effect = part.Effect.Clone(this.GraphicsDevice) as BasicEffect;
+					effect.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
+					effect.EmissiveColor = new Vector3(0.0f, 0.0f, 0.0f);
+					effect.DirectionalLight0.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
+					effect.DirectionalLight0.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
+					effect.DirectionalLight0.Direction = new Vector3(1.0f, -1.0f, 0.0f);
+					effect.DirectionalLight0.Direction.Normalize();
+					effect.DirectionalLight0.Enabled = true;
+					effect.LightingEnabled = true;
+					effect.PreferPerPixelLighting = true;
+
+					_modelMeshPartEffects.Add(effect);
 					_partTransformationMatrices.Add(Matrix.Identity);
-					_modelMeshPartEffects.Add(part.Effect.Clone(this.GraphicsDevice) as BasicEffect);
 				}
 			}
+
+			UpdateEffects();
 		}
+
+		public virtual void UpdateEffects() { }
 
 		public override void Update(GameTime gameTime)
 		{
@@ -174,21 +193,6 @@ namespace AwesomeGame
 					effect.World = _partTransformationMatrices[meshPartIndex++] * _initialTranformationMatrix * WorldMatrix;
 					effect.View = viewMatrix;
 					effect.Projection = projectionMatrix;
-
-					effect.EmissiveColor = new Vector3(0.0f, 0.0f, 5.0f);
-					if (mm.MeshParts.IndexOf(mmp) != 0)
-						effect.EmissiveColor = new Vector3(0.1f, 0.1f, 0.1f);
-
-					effect.DiffuseColor = effect.EmissiveColor;
-					effect.SpecularColor = new Vector3(0.2f, 0.2f, 0.2f);
-					effect.SpecularPower = 1.0f;
-
-					effect.DirectionalLight0.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
-					effect.DirectionalLight0.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
-					effect.DirectionalLight0.Direction = new Vector3(1.0f, 0.0f, 0.0f);
-					effect.DirectionalLight0.Enabled = true;
-					effect.LightingEnabled = true;
-					effect.PreferPerPixelLighting = true;
 				}
 			}
 		}
@@ -204,7 +208,7 @@ namespace AwesomeGame
 
 			//graphicsDevice.VertexDeclaration = vertexDeclaration;
 			this.GraphicsDevice.RenderState.CullMode = CullMode.None;
-			this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
+			this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
 			foreach (ModelMesh mm in _model.Meshes)
 			{
 				mm.Draw();
