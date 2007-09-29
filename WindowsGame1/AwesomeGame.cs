@@ -34,13 +34,16 @@ namespace AwesomeGame
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
 			this.Components.Add(new Terrain.SimpleTerrain(this, @"Terrain\Textures\heightmap_128", @"Terrain\Textures\grass"));
 			//this.Components.Add(new Triangle(this));
+
 			GameObject car = new Vehicles.Car(this);
 			this.Components.Add(car);
 			camera.AddViewObject(car);
+
 			GameObject axes = new Mesh(this, @"Models\Axes3", 1, Matrix.Identity);
 			this.Components.Add(axes);
 			camera.AddViewObject(axes);
-			//this.Components.Add(new Mesh(this, @"Models\Axes3", 1, Matrix.Identity));
+			
+			this.Components.Add(new Mesh(this, @"Models\Cone", 1, Matrix.Identity));
 		}
 
 
