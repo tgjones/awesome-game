@@ -22,6 +22,7 @@ namespace AwesomeGame.Vehicles
 				Vector2 controlState = GetControlState(PlayerIndex.One);
 
 				double acceleration = controlState.X * 1.0f;
+				if (acceleration < 0.0f) acceleration *= 3.0f;
 
 				double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
 				speed += acceleration * deltaTime;
