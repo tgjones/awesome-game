@@ -61,7 +61,7 @@ namespace AwesomeGame
 			float aspectRatio = (float) graphicsDevice.Viewport.Width / (float) graphicsDevice.Viewport.Height;
 			position = new Vector3(
 				(float)sumX / viewObjects.Count,
-				(float) Math.Sqrt((float) ((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ) * (aspectRatio * aspectRatio))) * (float) Math.Tan(MathHelper.ToRadians(45f)) + 20 + (sumY / viewObjects.Count) + 30,
+				(float) Math.Sqrt((float) ((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ) * (aspectRatio * aspectRatio))) * (float) Math.Tan(MathHelper.ToRadians(45f)) + 20 + (sumY / viewObjects.Count) + 300,
 				(float)sumZ / viewObjects.Count + 30);
 			lookAt = new Vector3(sumX / viewObjects.Count, sumY / viewObjects.Count, sumZ / viewObjects.Count);
 			cameraUp = new Vector3(0, 0, -1);
@@ -71,7 +71,7 @@ namespace AwesomeGame
 				(float)MathHelper.ToRadians(45),
 				(float)graphicsDevice.Viewport.Width / (float)graphicsDevice.Viewport.Height,
 				1,
-				position.Y - minY + 2000);
+				position.Y - minY + 8000);
 		}
 
 		public void AddViewObject(GameObject viewObject)

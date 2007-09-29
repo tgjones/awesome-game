@@ -87,9 +87,10 @@ namespace AwesomeGame.Terrain
 				int numInternalRows = _size - 2;
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
 
-				//our map is 500 units square
-				_mapScale = new Vector3(500.0f / (float)_size, 0.3f, 500.0f / (float)_size);
-				_mapOffset = new Vector3(-250, 1, -250);	//move to origin
+				//our map is square
+				const int MAPDIMENSION = 2000;
+				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 0.3f, MAPDIMENSION / (float)_size);
+				_mapOffset = new Vector3(-MAPDIMENSION / 2, 1, -MAPDIMENSION / 2);	//move to origin
 
 				//generate texture vertices
 				NormalMap normalMap = new NormalMap(this);

@@ -34,7 +34,7 @@ namespace AwesomeGame
 			this.Services.AddService(typeof(Camera), camera);
 
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
-			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\heightmap_128", @"Terrain\Textures\grass");
+			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\level1_heightmap", @"Terrain\Textures\level1_texture");
 			this.Components.Add(gameTerrain);							//add terrain to component manager
 			this.Services.AddService(typeof(Terrain.SimpleTerrain), gameTerrain);		//make terrain available as a service.
 

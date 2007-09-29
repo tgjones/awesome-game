@@ -145,18 +145,6 @@
       <Processor>EffectProcessor</Processor>
       <Name>SimpleTerrain</Name>
     </Content>
-    <Content Include="Terrain\Textures\grass.bmp">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>TextureImporter</Importer>
-      <Processor>SpriteTextureProcessor</Processor>
-      <Name>grass</Name>
-    </Content>
-    <Content Include="Terrain\Textures\heightmap_128.bmp">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>TextureImporter</Importer>
-      <Processor>SpriteTextureProcessor</Processor>
-      <Name>heightmap_128</Name>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Models\Cone.x">
@@ -221,6 +209,30 @@
     <Content Include="Physics\DanglingRope.xml">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>DanglingRope</Name>
+    </Content>
+    <Content Include="Terrain\Textures\grass.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>grass</Name>
+    </Content>
+    <Content Include="Terrain\Textures\heightmap_128.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>heightmap_128</Name>
+    </Content>
+    <Content Include="Terrain\Textures\level1_heightmap.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>level1_heightmap</Name>
+    </Content>
+    <Content Include="Terrain\Textures\level1_texture.jpg">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>level1_texture</Name>
     </Content>
   </ItemGroup>
   <ItemGroup>
