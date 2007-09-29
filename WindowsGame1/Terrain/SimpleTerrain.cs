@@ -88,7 +88,7 @@ namespace AwesomeGame.Terrain
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
 
 				//our map is 500 units square
-				_mapScale = new Vector3(500.0f / (float)_size, 0.1f, 500.0f / (float)_size);
+				_mapScale = new Vector3(500.0f / (float)_size, 0.3f, 500.0f / (float)_size);
 				_mapOffset = new Vector3(-250, 1, -250);	//move to origin
 
 				//generate texture vertices
@@ -120,7 +120,7 @@ namespace AwesomeGame.Terrain
 					ResourceManagementMode.Automatic);
 				_vertexBuffer.SetData<VertexPositionNormalTexture>(vertices);
 
-				short[] indices = new short[_numIndices]; int indexCounter = 0;
+				int[] indices = new int[_numIndices]; int indexCounter = 0;
 
 				for (int z = 0; z < _size - 1; z++)
 				{
@@ -141,11 +141,11 @@ namespace AwesomeGame.Terrain
 
 				_indexBuffer = new IndexBuffer(
 					this.GraphicsDevice,
-					typeof(short),
+					typeof(int),
 					indices.Length,
 					ResourceUsage.WriteOnly,
 					ResourceManagementMode.Automatic);
-				_indexBuffer.SetData<short>(indices);
+				_indexBuffer.SetData<int>(indices);
 
 				_vertexDeclaration = new VertexDeclaration(
 					this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
@@ -164,9 +164,9 @@ namespace AwesomeGame.Terrain
 			}
 		}
 
-		private short GetIndex(int x, int z)
+		private int GetIndex(int x, int z)
 		{
-			return (short) ((z * _size) + x);
+			return (int) ((z * _size) + x);
 		}
 
 		public override void Update(GameTime gameTime)
