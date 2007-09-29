@@ -25,7 +25,9 @@ namespace AwesomeGame.Vehicles
 		private const float ENGINE_TORQUE = 200;
 		private const float FRONT_BRAKE_TORQUE = 300;
 		private const float REAR_BRAKE_TORQUE = 200;
-		private const float MASS = 500;
+		private const float MAX_GRIP = 15.0f;
+		private const float MASS = 20;
+		private const float AERO_EFFICIENCY = 0.95f;
 
 		private const int WHEEL_FL = 0;
 		private const int WHEEL_FR = 0;
@@ -65,23 +67,57 @@ namespace AwesomeGame.Vehicles
 				float deltaTime = (float) (1.0f / gameTime.ElapsedGameTime.TotalMilliseconds);
 				CarControlState controlState = GetControlState(PlayerIndex.One);
 
+				// Map engine and brake forces
+				Vector3[] wheelForces = new Vector3[4];
+				wheelForces[WHEEL_RL].X += controlState.Accel * ENGINE_TORQUE / 2;
+				wheelForces[WHEEL_RR].X += controlState.Accel * ENGINE_TORQUE / 2;
+				wheelForces[WHEEL_RL].X -= controlState.Brake * ENGINE_TORQUE / 2;
+				wheelForces[WHEEL_RR].X -= controlState.Brake * ENGINE_TORQUE / 2;
+				/*wheelForces[WHEEL_FL].X -= controlState.Brake * FRONT_BRAKE_TORQUE;
+				wheelForces[WHEEL_FR].X -= controlState.Brake * FRONT_BRAKE_TORQUE;
+				wheelForces[WHEEL_RL].X -= controlState.Brake * REAR_BRAKE_TORQUE;
+				wheelForces[WHEEL_RR].X -= controlState.Brake * REAR_BRAKE_TORQUE;*/
+				
+				// Check vehicle is in contact with the ground
 				float groundHeight = GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
-				double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
-				double acceleration = 0;
-
 				if (position.Y <= groundHeight + SUSPENSION_TRAVEL)
 				{
-					acceleration = (controlState.Accel - controlState.Brake) * 3.0f;
-					if (acceleration < 0.0f) acceleration *= 3.0f;
+					// Evaluate the steering effect
+					double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
+					rotation.Y = -controlState.Steer * (float)(speed > 10.0f ? 10.0f : speed) / 200f;
 
-					rotation.Y = controlState.Steer * (float)(speed > 10.0f ? 10.0f : speed) / 200f;
+					// Evaluate sideslip
+					for (int i = 0; i < 4; i++)
+					{
+						float slipVelocity = velocity.X * (float)Math.Sin(orientation.Y) + velocity.Z * (float)Math.Cos(orientation.Y);
+						wheelForces[i].Z -= MASS * slipVelocity;
+					}
 
-					speed += acceleration * deltaTime;
-					velocity.X = (float)(speed * Math.Cos(orientation.Y));
-					velocity.Z = -(float)(speed * Math.Sin(orientation.Y));
+					// Evaluate grip limits
+					for (int i = 0; i < 4; i++)
+					{
+						if (wheelForces[i].Z < -MAX_GRIP * MASS / 4)
+							wheelForces[i].Z = -MAX_GRIP * MASS / 4;
+						if (wheelForces[i].Z > MAX_GRIP * MASS / 4)
+							wheelForces[i].Z = MAX_GRIP * MASS / 4;
+					}
+
+					// Evaluate the total acceleration
+					Vector3 acceleration = new Vector3();
+					for (int i = 0; i < 4; i++)
+						acceleration += wheelForces[i] / MASS;
+
+					velocity.X += deltaTime * (float)
+						(acceleration.X * Math.Cos(orientation.Y) + acceleration.Z * Math.Sin(orientation.Y));
+					velocity.Z += deltaTime * (float)
+						(acceleration.Z * Math.Cos(orientation.Y) - acceleration.X * Math.Sin(orientation.Y));
 				}
 
-				orientation.Y -= rotation.Y;
+				// Deteriorate momentum
+				rotation *= (float)Math.Pow(AERO_EFFICIENCY, deltaTime);
+				velocity *= (float)Math.Pow(AERO_EFFICIENCY, deltaTime);
+
+				orientation.Y += rotation.Y;
 				velocity.Y -= 9.8f * deltaTime; // Gravity
 				position += velocity * deltaTime;
 
