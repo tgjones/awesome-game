@@ -55,13 +55,21 @@ sampler NormalMapSampler = sampler_state
 struct VertexShaderInput
 {
 	float3 Position  : POSITION;
+	float3 Normal    : NORMAL;
 	float2 TexCoords : TEXCOORD;
 };
 
-struct VertexShaderOutput
+struct VertexShaderOutput20
 {
 	float4 Position  : POSITION;
 	float2 TexCoords : TEXCOORD1;
+};
+
+struct VertexShaderOutput11
+{
+	float4 Position  : POSITION;
+	float2 TexCoords : TEXCOORD1;
+	float4 Diffuse   : TEXCOORD2;
 };
 
 struct PixelShaderOutput
@@ -74,11 +82,11 @@ struct PixelShaderOutput
 // functions
 //-----------------------------------------------------------------------------
 
-VertexShaderOutput VertexShader(VertexShaderInput input)
+VertexShaderOutput20 VertexShader20(VertexShaderInput input)
 {
 	float4 inputPos = float4(input.Position, 1);
 	
-	VertexShaderOutput output;
+	VertexShaderOutput20 output;
 	
 	// pass vertex position through as usual
   output.Position = mul(inputPos, WorldViewProjection);
@@ -89,16 +97,37 @@ VertexShaderOutput VertexShader(VertexShaderInput input)
   return output;
 }
 
-PixelShaderOutput PixelShader(VertexShaderOutput input)
+VertexShaderOutput11 VertexShader11(VertexShaderInput input)
 {
-	PixelShaderOutput output;
+	float4 inputPos = float4(input.Position, 1);
 	
+	VertexShaderOutput11 output;
+	
+	// pass vertex position through as usual
+  output.Position = mul(inputPos, WorldViewProjection);
+  
+  // coordinates for texture
+  output.TexCoords = input.TexCoords;
+  
+	output.Diffuse = dot(LightDirection, input.Normal);
+  
+  return output;
+}
+
+PixelShaderOutput PixelShader20(VertexShaderOutput20 input)
+{
+	PixelShaderOutput output;	
 	float3 normal = normalize((tex2D(NormalMapSampler, input.TexCoords) - 0.5f) * 2);
 	float diffuse = dot(LightDirection, normal);
 	output.Colour = saturate((tex2D(GrassSampler, input.TexCoords).rgba * diffuse) + LightAmbient);
-	//output.Colour = diffuse;
-	//output.Colour = tex2D(NormalMapSampler, input.TexCoords);
-	//output.Colour = float4(1, 0, 0, 1);
+	return output;
+}
+
+PixelShaderOutput PixelShader11(VertexShaderOutput11 input)
+{
+	PixelShaderOutput output;
+	float diffuse = input.Diffuse;
+	output.Colour = saturate((tex2D(GrassSampler, input.TexCoords).rgba * diffuse) + LightAmbient);
 	return output;
 }
 
@@ -107,17 +136,17 @@ PixelShaderOutput PixelShader(VertexShaderOutput input)
 // techniques
 //-----------------------------------------------------------------------------
 
-/*technique PerVertexLighting
+technique PerVertexLighting
 {
 	pass Pass0
 	{
 		ZEnable = true;
 		FillMode = SOLID;
 		CullMode = CW;
-		VertexShader = compile vs_1_1 VertexShader();
-		PixelShader = compile ps_1_1 PixelShader();
+		VertexShader = compile vs_1_1 VertexShader11();
+		PixelShader = compile ps_1_1 PixelShader11();
 	}
-}*/
+}
 
 technique PerPixelLighting
 {
@@ -126,7 +155,7 @@ technique PerPixelLighting
 		ZEnable = true;
 		FillMode = SOLID;
 		CullMode = CW;
-		VertexShader = compile vs_1_1 VertexShader();
-		PixelShader = compile ps_2_0 PixelShader();
+		VertexShader = compile vs_1_1 VertexShader20();
+		PixelShader = compile ps_2_0 PixelShader20();
 	}
 }

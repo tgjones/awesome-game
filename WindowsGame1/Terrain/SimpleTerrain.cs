@@ -94,17 +94,18 @@ namespace AwesomeGame.Terrain
 				//generate texture vertices
 				NormalMap normalMap = new NormalMap(this);
 				Color[] normals = new Color[_size * _size];
-				VertexPositionTexture[] vertices = new VertexPositionTexture[_numVertices];
+				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
 				for (int z = 0; z < _size; z++)
 				{
 					for (int x = 0; x < _size; x++)
 					{
-						vertices[GetIndex(x, z)] = new VertexPositionTexture(
+						Vector3 normal = normalMap.GetNormal(x, z);
+						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
 							GetPosition(x, z),
+							normal,
 							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
 							//new Vector2(2.0f * x / _size , 2.0f * z / _size ));
 
-						Vector3 normal = normalMap.GetNormal(x, z);
 						normal /= 2;
 						normal += new Vector3(0.5f);
 						normals[GetIndex(x, z)] = new Color(normal);
@@ -113,11 +114,11 @@ namespace AwesomeGame.Terrain
 
 				_vertexBuffer = new VertexBuffer(
 					this.GraphicsDevice,
-					typeof(VertexPositionTexture),
+					typeof(VertexPositionNormalTexture),
 					vertices.Length,
 					ResourceUsage.WriteOnly,
 					ResourceManagementMode.Automatic);
-				_vertexBuffer.SetData<VertexPositionTexture>(vertices);
+				_vertexBuffer.SetData<VertexPositionNormalTexture>(vertices);
 
 				short[] indices = new short[_numIndices]; int indexCounter = 0;
 
@@ -147,7 +148,7 @@ namespace AwesomeGame.Terrain
 				_indexBuffer.SetData<short>(indices);
 
 				_vertexDeclaration = new VertexDeclaration(
-					this.GraphicsDevice, VertexPositionTexture.VertexElements);
+					this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
 
 				if (_textureAssetName != null)
 				{
@@ -182,7 +183,7 @@ namespace AwesomeGame.Terrain
 		{
 			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
-			this.GraphicsDevice.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionTexture.SizeInBytes);
+			this.GraphicsDevice.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionNormalTexture.SizeInBytes);
 			this.GraphicsDevice.Indices = _indexBuffer;
 
 			_effect.Begin();
