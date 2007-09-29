@@ -12,24 +12,28 @@ namespace AwesomeGame.Terrain
 		private IndexBuffer _indexBuffer;
 		private int _size;
 		private string _textureAssetName;
+		private string _heightMapName;
 		private Texture2D _texture;
+		private int[] _heightMap;
 
 		private Effect _effect;
 
-		private readonly int _numVertices;
-		private readonly int _numIndices;
+		private int _numVertices;
+		private int _numIndices;
 
 		public SimpleTerrain(Game game, int size, string textureAssetName)
 			: base(game)
 		{
 			_size = size;
 
-			_numVertices = _size * _size;
-
-			int numInternalRows = _size - 2;
-			_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
-
 			_textureAssetName = textureAssetName;
+		}
+
+		public SimpleTerrain(Game game, string heightMapAssetName , string textureAssetName)
+			: base(game)
+		{
+			_textureAssetName = textureAssetName;
+			_heightMapName = heightMapAssetName;
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
@@ -38,15 +42,43 @@ namespace AwesomeGame.Terrain
 
 			if (loadAllContent)
 			{
+				//grab a handle on the content manager
+				ContentManager content = (ContentManager)this.Game.Services.GetService(typeof(ContentManager));
+
 				_effect = this.GetService<ContentManager>().Load<Effect>(@"Terrain\SimpleTerrain");
 
+				// if we have a height map, use this for the dimensions
+				if (_heightMapName != null)
+				{
+					//read the height data from the height map
+					Texture2D _heightmapTexture = content.Load<Texture2D>(_heightMapName);
+					//take the size from the height map (we're assuming it is square)
+					_size = _heightmapTexture.Width;
+
+					//get the heights from the height map
+					Color[] heights = new Color[_size * _size];
+					_heightmapTexture.GetData<Color>(heights);
+
+					_heightMap = new int[_size * _size];
+					//take the red values for height data
+					for (int i = 0; i < _size * _size; i++)
+					{
+						_heightMap[i] = heights[i].R;
+					}
+
+				}
+				_numVertices = _size * _size;
+				int numInternalRows = _size - 2;
+				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
+
+				//generate texture vertices
 				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
 				for (int z = 0; z < _size; z++)
 				{
 					for (int x = 0; x < _size; x++)
 					{
-						//float height = GetHeight(x, z);
-						float height = 0;
+						float height = GetHeight(x, z);
+						//float height = 0;
 
 						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
 							new Vector3(x, height, -z), new Vector3(0, 1, 0),
@@ -63,6 +95,7 @@ namespace AwesomeGame.Terrain
 				_vertexBuffer.SetData<VertexPositionNormalTexture>(vertices);
 
 				short[] indices = new short[_numIndices]; int indexCounter = 0;
+
 				for (int z = 0; z < _size - 1; z++)
 				{
 					// insert index for degenerate triangle
@@ -93,7 +126,6 @@ namespace AwesomeGame.Terrain
 
 				if (_textureAssetName != null)
 				{
-					ContentManager content = (ContentManager) this.Game.Services.GetService(typeof(ContentManager));
 					_texture = content.Load<Texture2D>(_textureAssetName);
 				}
 
@@ -112,13 +144,13 @@ namespace AwesomeGame.Terrain
 			base.Update(gameTime);
 
 			Matrix viewMatrix = Matrix.CreateLookAt(
-				new Vector3(0.0f, 10.0f, 1),
+				new Vector3(0.0f, 250.0f, 250),
 				Vector3.Zero,
 				new Vector3(0.0f, 1.0f, 0.0f));
 			Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
 				MathHelper.ToRadians(45),
 				(float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-				1.0f, 200.0f);
+				1.0f, 1000.0f);
 			_effect.Parameters["WorldViewProjection"].SetValue(viewMatrix * projectionMatrix);
 		}
 
@@ -164,11 +196,11 @@ namespace AwesomeGame.Terrain
 
 			return PerlinNoise.Interpolate(i1, i2, fractionalZ);
 		}
-
+*/
 		public float GetHeight(int x, int z)
 		{
-			return 0;
-			return _perlinNoise.GetPerlinNoise(x, z);
-		}*/
+			return _heightMap[GetIndex(x, z)] * 0.2f ;
+			
+		}
 	}
 }

@@ -26,7 +26,8 @@ namespace AwesomeGame
 
 			this.Services.AddService(typeof(ContentManager), content);
 
-			this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
+			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
+			this.Components.Add(new Terrain.SimpleTerrain(this, @"Terrain\Textures\heightmap_128", @"Terrain\Textures\grass"));
 			this.Components.Add(new Triangle(this));
 			this.Components.Add(new Mesh(this, @"Models\Lessblockycar", 0.2f, Matrix.CreateRotationX(MathHelper.ToRadians(45))));
 		}
