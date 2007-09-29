@@ -10,6 +10,7 @@ namespace AwesomeGame
 	public abstract class GameObject : Microsoft.Xna.Framework.DrawableGameComponent
 	{
 		public Vector3 position;
+		public Vector3 orientation;
 
 		public GameObject(Game game)
 			: base(game)
@@ -121,7 +122,7 @@ namespace AwesomeGame
 			//    MathHelper.ToRadians(45),
 			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
 			//    1.0f, 20.0f);
-			_worldMatrix = Matrix.CreateTranslation(position);
+			_worldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
 			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
 			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
 
