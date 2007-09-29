@@ -44,7 +44,11 @@ namespace AwesomeGame
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
-			GameObject axes = new Mesh(this, @"Models\Axes");
+			Mesh checkpointArrow = new Mesh(this, @"Models\DirectionArrow");
+			((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
+			this.Components.Add(checkpointArrow);
+
+			GameObject axes = new Mesh(this, @"Models\Axes", Matrix.CreateTranslation(0f, 60f, 0f));
 			this.Components.Add(axes);
 			//camera.AddViewObject(axes);
 
@@ -54,13 +58,15 @@ namespace AwesomeGame
 			// Get some sort of checkpoint based course going on
 			course = new Course(this);
 			this.Services.AddService(typeof(Course), course);
-			
+
+			course.addCheckpoint(axes);
+
 			Mesh checkpoint;
 			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-20.0f, 15.0f, -2.0f)));
-			course.addCheckpoint(checkpoint);
+			//course.addCheckpoint(checkpoint);
 			this.Components.Add(checkpoint);
 			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(-145.0f, 6.0f, -130.0f)));
-			course.addCheckpoint(checkpoint);
+			//course.addCheckpoint(checkpoint);
 			this.Components.Add(checkpoint);
 
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
