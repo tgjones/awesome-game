@@ -4,26 +4,29 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AwesomeGame.Vehicles
 {
-	public class Car : Mesh
+	public abstract class Car : Mesh
 	{
-		private const int MESHIDX_REAR_AXLE = 5;
-		private const int MESHIDX_FRONT_LEFT_WHEEL = 7;
-		private const int MESHIDX_FRONT_RIGHT_WHEEL = 6;
+		private int MESHIDX_REAR_AXLE;
+		private int MESHIDX_FRONT_LEFT_WHEEL;
+		private int MESHIDX_FRONT_RIGHT_WHEEL;
 
 		private const float WHEELBASE_TRACK = 6;
 		private const float WHEELBASE_LENGTH = 6;
 		private const float FRONT_AXLE_POS = 3;
-		private const float RIDE_HEIGHT = 1.0f;
+		private const float RIDE_HEIGHT = 1;
+		private const float SUSPENSION_TRAVEL = 3;
 		
 		public Vector3 velocity;
 
 		private GameObject nextCheckpoint;
 		private Mesh nextCheckpointArrow;
 
-		public Car(Game game)
-			: base(game, @"Models\Lessblockycar2", Matrix.CreateRotationY(MathHelper.ToRadians(90)))
+		public Car(Game game, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
+			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
 		{
-
+			MESHIDX_FRONT_LEFT_WHEEL = idxFrontLeftWheel;
+			MESHIDX_FRONT_RIGHT_WHEEL = idxFrontRightWheel;
+			MESHIDX_REAR_AXLE = idxRearAxle;
 		}
 
 		public override void Initialize()
@@ -79,19 +82,24 @@ namespace AwesomeGame.Vehicles
 				float frHeight = GetGroundHeight(position, orientation.Y, true, false);
 				float rlHeight = GetGroundHeight(position, orientation.Y, false, true);
 				float rrHeight = GetGroundHeight(position, orientation.Y, false, false);
+				if ((flHeight - frHeight) > SUSPENSION_TRAVEL) frHeight = flHeight - SUSPENSION_TRAVEL;
+				if ((frHeight - flHeight) > SUSPENSION_TRAVEL) flHeight = frHeight - SUSPENSION_TRAVEL;
+				if ((rlHeight - rrHeight) > SUSPENSION_TRAVEL) rrHeight = rlHeight - SUSPENSION_TRAVEL;
+				if ((rrHeight - rlHeight) > SUSPENSION_TRAVEL) rlHeight = rrHeight - SUSPENSION_TRAVEL;
 
-				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - flHeight, controlState.Y, 0.0f);
-				ApplyWheelTransform(MESHIDX_FRONT_RIGHT_WHEEL, position.Y - frHeight, controlState.Y, 0.0f);
+				// Configure the render
+				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - ((flHeight + frHeight) / 2), controlState.Y,
+					(float)Math.Atan((flHeight - frHeight) / WHEELBASE_TRACK));
+				ApplyWheelTransform(MESHIDX_FRONT_RIGHT_WHEEL, position.Y - ((flHeight + frHeight) / 2), controlState.Y,
+					(float)Math.Atan((flHeight - frHeight) / WHEELBASE_TRACK));
 				ApplyWheelTransform(MESHIDX_REAR_AXLE, position.Y - ((rlHeight + rrHeight) / 2), 0.0f,
-					(float)Math.Atan((rlHeight - rrHeight) / WHEELBASE_TRACK / 2));
+					(float)Math.Atan((rlHeight - rrHeight) / WHEELBASE_TRACK));
 				ApplyBodyTransform(
 					Matrix.CreateRotationZ((float)Math.Atan((flHeight + rlHeight - (frHeight + rrHeight)) / WHEELBASE_TRACK / 2)) *
 					Matrix.CreateRotationX((float)Math.Atan((rlHeight + rrHeight - (flHeight + frHeight)) / WHEELBASE_LENGTH / 2)) *
 					Matrix.CreateTranslation(0.0f, RIDE_HEIGHT, 0.0f)
 				);
 			}
-
-			position.Y = this.GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 
 			if (false)
 			{
@@ -124,11 +132,11 @@ namespace AwesomeGame.Vehicles
 
 		private void ApplyBodyTransform(Matrix transform)
 		{
-			_partTransformationMatrices[0] =
-			_partTransformationMatrices[1] =
-			_partTransformationMatrices[2] =
-			_partTransformationMatrices[3] =
-			_partTransformationMatrices[4] = transform;
+			for (int i = 0; i < _partTransformationMatrices.Count; i++)
+				if (i != MESHIDX_REAR_AXLE &&
+					i != MESHIDX_FRONT_LEFT_WHEEL &&
+					i != MESHIDX_FRONT_RIGHT_WHEEL)
+					_partTransformationMatrices[i] = transform;
 		}
 
 		private void ApplyWheelTransform(int index, float height, float steer, float yaw)

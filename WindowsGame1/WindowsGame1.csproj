@@ -12,8 +12,7 @@
     <XnaPlatform>Windows</XnaPlatform>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <XNAGlobalContentPipelineAssemblies>Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll;Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll;Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll;Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</XNAGlobalContentPipelineAssemblies>
-    <XNAProjectContentPipelineAssemblies>
-    </XNAProjectContentPipelineAssemblies>
+    <XNAProjectContentPipelineAssemblies>$(ProjectDir)BoundingBoxProcessor.dll</XNAProjectContentPipelineAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -112,6 +111,10 @@
     <Compile Include="Vehicles\Car.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Car</Name>
+    </Compile>
+    <Compile Include="Vehicles\Cars.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Cars</Name>
     </Compile>
   </ItemGroup>
   <ItemGroup>

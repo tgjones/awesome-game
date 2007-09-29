@@ -40,13 +40,13 @@ namespace AwesomeGame
 
 			//this.Components.Add(new Triangle(this));
 
-			GameObject car = new Vehicles.Car(this);
+			GameObject car = new Vehicles.SchoolBus(this);
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
 			GameObject axes = new Mesh(this, @"Models\Axes");
 			this.Components.Add(axes);
-			camera.AddViewObject(axes);
+			//camera.AddViewObject(axes);
 			
 			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
 			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
