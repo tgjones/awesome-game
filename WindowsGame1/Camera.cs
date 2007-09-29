@@ -53,7 +53,10 @@ namespace AwesomeGame
 					minZ = gameObject.position.Z;
 			}
 
-			position = new Vector3((float)sumX / viewObjects.Count, (float)((maxX-minX) * Math.Tan(MathHelper.ToRadians(45f))) + 20 + (sumY / viewObjects.Count), (float)sumZ / viewObjects.Count);
+			position = new Vector3(
+				(float)sumX / viewObjects.Count,
+				(float)Math.Sqrt((float)((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ))) * (float)Math.Tan(MathHelper.ToRadians(45f)) + 20 + (sumY / viewObjects.Count),
+				(float)sumZ / viewObjects.Count);
 			lookAt = new Vector3(sumX / viewObjects.Count, sumY / viewObjects.Count, sumZ / viewObjects.Count);
 			cameraUp = new Vector3(0, 0, -1);
 
