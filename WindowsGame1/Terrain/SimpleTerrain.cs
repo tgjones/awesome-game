@@ -90,6 +90,7 @@ namespace AwesomeGame.Terrain
 				//our map is square
 				const int MAPDIMENSION = 2000;
 				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 1.0f, MAPDIMENSION / (float)_size);
+				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 1.0f, MAPDIMENSION / (float)_size);
 				_mapOffset = new Vector3(-MAPDIMENSION / 2, 1, -MAPDIMENSION / 2);	//move to origin
 
 				//generate texture vertices
