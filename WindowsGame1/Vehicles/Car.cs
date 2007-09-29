@@ -117,7 +117,31 @@ namespace AwesomeGame.Vehicles
 				);
 			}
 
+			if (false)
+			{
+				// If we hit the checkpoint
+				this.nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint);
+			}
+
+			this.nextCheckpointArrow.position = this.position;
+			Vector3 toCheckpoint = this.nextCheckpoint.position - this.position;
+			this.nextCheckpointArrow.position.Y += 15;
+
+			if (toCheckpoint.Z >=0 )
+				this.nextCheckpointArrow.orientation.Y = (float)Math.Atan(toCheckpoint.X / toCheckpoint.Z);
+			else
+				this.nextCheckpointArrow.orientation.Y = (float)Math.Atan(toCheckpoint.X / toCheckpoint.Z) + MathHelper.ToRadians(180);
+
+			this.nextCheckpointArrow.Update(gameTime);
+
+
 			base.Update(gameTime);
+		}
+
+		public override void Draw(GameTime gameTime)
+		{
+			this.nextCheckpointArrow.Draw(gameTime);
+			base.Draw(gameTime);
 		}
 
 		private float GetGroundHeight(Vector3 pos, float ori, bool front, bool left)
