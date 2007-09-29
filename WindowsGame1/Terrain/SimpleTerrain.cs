@@ -78,8 +78,8 @@ namespace AwesomeGame.Terrain
 				_numIndices = (2 * _size * (1 + numInternalRows)) + (2 * numInternalRows);
 
 				//our map is 500 units square
-				_mapScale = new Vector3(500.0f / (float)_size, 0.02f, 500.0f / (float)_size);
-				_mapOffset = new Vector3(-250, 0, -250);	//move to origin
+				_mapScale = new Vector3(500.0f / (float)_size, 0.1f, 500.0f / (float)_size);
+				_mapOffset = new Vector3(-250, 1, -250);	//move to origin
 
 				//generate texture vertices
 				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
@@ -92,8 +92,8 @@ namespace AwesomeGame.Terrain
 						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
 							(new Vector3((float)x, height, (float)z) * _mapScale) + _mapOffset,
 							new Vector3(0, 1, 0),
-							//new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
-							new Vector2(2.0f * x / _size , 2.0f * z / _size ));
+							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
+							//new Vector2(2.0f * x / _size , 2.0f * z / _size ));
 					}
 				}
 
