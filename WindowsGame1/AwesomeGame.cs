@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
+using AwesomeGame;
 #endregion
 
 namespace AwesomeGame
@@ -19,6 +20,7 @@ namespace AwesomeGame
 		GraphicsDeviceManager graphics;
 		ContentManager content;
 		Camera camera;
+		Course course;
 
 		public AwesomeGame()
 		{
@@ -44,9 +46,22 @@ namespace AwesomeGame
 
 			GameObject axes = new Mesh(this, @"Models\Axes");
 			this.Components.Add(axes);
-			//camera.AddViewObject(axes);
+			camera.AddViewObject(axes);
 			
-			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 0.0f))));
+			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
+			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
+			
+			// Get some sort of checkpoint based course going on
+			course = new Course(this);
+			this.Services.AddService(typeof(Course), course);
+			
+			Mesh checkpoint;
+			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-20.0f, 15.0f, -2.0f)));
+			course.addCheckpoint(checkpoint);
+			this.Components.Add(checkpoint);
+			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(-145.0f, 6.0f, -130.0f)));
+			course.addCheckpoint(checkpoint);
+			this.Components.Add(checkpoint);
 
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Box.xml"));
 		}
