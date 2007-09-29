@@ -19,7 +19,7 @@ namespace AwesomeGame.Vehicles
 		public Vector3 velocity;
 
 		private GameObject nextCheckpoint;
-		private Mesh nextCheckpointArrow;
+		private GameObject nextCheckpointArrow;
 
 		public Car(Game game, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
 			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
@@ -34,7 +34,11 @@ namespace AwesomeGame.Vehicles
 			base.Initialize();
 
 			nextCheckpoint = this.GetService<Course>().getFirstCheckpoint();
-			nextCheckpointArrow = new Mesh(this.Game, @"Models\DirectionArrow");
+		}
+
+		public void setNextCheckpointArrow(GameObject arrow)
+		{
+			this.nextCheckpointArrow = arrow;
 		}
 
 		public override void Update(GameTime gameTime)
@@ -108,6 +112,20 @@ namespace AwesomeGame.Vehicles
 			}
 
 			nextCheckpointArrow.position = this.position;
+			nextCheckpointArrow.position.Y += 15;
+
+			Vector3 toCheckpoint = this.position - nextCheckpoint.position;
+			//nextCheckpointArrow.orientation.Y = (float)Math.Atan(toCheckpoint.Z / toCheckpoint.X);
+			//nextCheckpointArrow.position = Vector3.Lerp(this.position, nextCheckpoint.position, 1f);
+			//nextCheckpointArrow.position = Vector3.Clamp(this.position, nextCheckpointArrow.position + new Vector3(5.0f, 5.0f, 5.0f), nextCheckpointArrow.position - new Vector3(5.0f, 5.0f, 5.0f));
+			nextCheckpointArrow.position = nextCheckpoint.position;
+
+			nextCheckpointArrow.position.Y += 35;
+			//nextCheckpointArrow.position = 
+			//Matrix dif = Matrix.Identity;
+			//dif = Vector3.Transform(this.position, 
+			//nextCheckpointArrow.position.Y = this.position.Y + 15;
+
 			//nextCheckpointArrow.Update(gameTime);
 
 			base.Update(gameTime);
@@ -166,13 +184,6 @@ namespace AwesomeGame.Vehicles
 			if (keyState.IsKeyDown(Keys.Left)) controlState.Y -= 1.0f;
 
 			return controlState;
-		}
-
-		public override void Draw(GameTime gameTime)
-		{
-			base.Draw(gameTime);
-
-			//nextCheckpointArrow.Draw(gameTime);
 		}
 	}
 }
