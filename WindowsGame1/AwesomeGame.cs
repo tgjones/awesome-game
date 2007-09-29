@@ -44,7 +44,7 @@ namespace AwesomeGame
 
 			GameObject axes = new Mesh(this, @"Models\Axes");
 			this.Components.Add(axes);
-			camera.AddViewObject(axes);
+			//camera.AddViewObject(axes);
 			
 			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 0.0f))));
 		}

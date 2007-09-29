@@ -72,6 +72,10 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>AwesomeGame</Name>
     </Compile>
+    <Compile Include="Terrain\NormalMap.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>NormalMap</Name>
+    </Compile>
     <Compile Include="Terrain\SimpleTerrain.cs">
       <SubType>Code</SubType>
       <XNAUseContentPipeline>false</XNAUseContentPipeline>

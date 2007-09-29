@@ -15,7 +15,12 @@ const matrix WorldViewProjection;
 
 const Texture GrassTexture;
 
+const Texture NormalMapTexture;
+
 const float TerrainSize;
+
+const float3 LightDirection = normalize(float3(1, -1, 0));
+const float4 LightAmbient = float4(0.1, 0.1, 0.1, 1);
 
 
 //-----------------------------------------------------------------------------
@@ -32,6 +37,15 @@ sampler GrassSampler = sampler_state
 	AddressV = WRAP;
 };
 
+sampler NormalMapSampler = sampler_state
+{
+	Texture = <NormalMapTexture>;
+	MagFilter = ANISOTROPIC;
+	MinFilter = ANISOTROPIC;
+	MipFilter = ANISOTROPIC;
+	AddressU = WRAP;
+	AddressV = WRAP;
+};
 
 
 //-----------------------------------------------------------------------------
@@ -41,14 +55,13 @@ sampler GrassSampler = sampler_state
 struct VertexShaderInput
 {
 	float3 Position  : POSITION;
-	float3 Normal    : NORMAL;
 	float2 TexCoords : TEXCOORD;
 };
 
 struct VertexShaderOutput
 {
-	float4 Position          : POSITION;
-	float2 TexCoords         : TEXCOORD0;
+	float4 Position  : POSITION;
+	float2 TexCoords : TEXCOORD1;
 };
 
 struct PixelShaderOutput
@@ -79,7 +92,13 @@ VertexShaderOutput VertexShader(VertexShaderInput input)
 PixelShaderOutput PixelShader(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
-	output.Colour = tex2D(GrassSampler, input.TexCoords).rgba;
+	
+	float3 normal = normalize((tex2D(NormalMapSampler, input.TexCoords) - 0.5f) * 2);
+	float diffuse = dot(LightDirection, normal);
+	output.Colour = saturate((tex2D(GrassSampler, input.TexCoords).rgba * diffuse) + LightAmbient);
+	//output.Colour = diffuse;
+	//output.Colour = tex2D(NormalMapSampler, input.TexCoords);
+	//output.Colour = float4(1, 0, 0, 1);
 	return output;
 }
 
@@ -88,7 +107,7 @@ PixelShaderOutput PixelShader(VertexShaderOutput input)
 // techniques
 //-----------------------------------------------------------------------------
 
-technique Normal
+/*technique PerVertexLighting
 {
 	pass Pass0
 	{
@@ -97,5 +116,17 @@ technique Normal
 		CullMode = CW;
 		VertexShader = compile vs_1_1 VertexShader();
 		PixelShader = compile ps_1_1 PixelShader();
+	}
+}*/
+
+technique PerPixelLighting
+{
+	pass Pass0
+	{
+		ZEnable = true;
+		FillMode = SOLID;
+		CullMode = CW;
+		VertexShader = compile vs_1_1 VertexShader();
+		PixelShader = compile ps_2_0 PixelShader();
 	}
 }

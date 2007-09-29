@@ -14,6 +14,7 @@ namespace AwesomeGame.Terrain
 		private string _textureAssetName;
 		private string _heightMapName;
 		private Texture2D _texture;
+		private Texture2D _normalMap;
 		private float[] _heightMap;
 		private Matrix translationMatrix = Matrix.Identity;		//where to put the terrain (so it gets centered)
 		private Effect _effect;
@@ -23,6 +24,11 @@ namespace AwesomeGame.Terrain
 
 		private int _numVertices;
 		private int _numIndices;
+
+		public int Size
+		{
+			get { return _size; }
+		}
 
 		public SimpleTerrain(Game game, int size, string textureAssetName)
 			: base(game)
@@ -37,6 +43,11 @@ namespace AwesomeGame.Terrain
 		{
 			_textureAssetName = textureAssetName;
 			_heightMapName = heightMapAssetName;
+		}
+
+		public Vector3 GetPosition(int x, int z)
+		{
+			return (new Vector3(x, GetHeight(x, z), z) * _mapScale) + _mapOffset;
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
@@ -71,7 +82,6 @@ namespace AwesomeGame.Terrain
 					{
 						_heightMap[i] = heights[i].R;
 					}
-
 				}
 				_numVertices = _size * _size;
 				int numInternalRows = _size - 2;
@@ -82,28 +92,32 @@ namespace AwesomeGame.Terrain
 				_mapOffset = new Vector3(-250, 1, -250);	//move to origin
 
 				//generate texture vertices
-				VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[_numVertices];
+				NormalMap normalMap = new NormalMap(this);
+				Color[] normals = new Color[_size * _size];
+				VertexPositionTexture[] vertices = new VertexPositionTexture[_numVertices];
 				for (int z = 0; z < _size; z++)
 				{
 					for (int x = 0; x < _size; x++)
 					{
-						float height = GetHeight(x, z);
-
-						vertices[GetIndex(x, z)] = new VertexPositionNormalTexture(
-							(new Vector3((float)x, height, (float)z) * _mapScale) + _mapOffset,
-							new Vector3(0, 1, 0),
+						vertices[GetIndex(x, z)] = new VertexPositionTexture(
+							GetPosition(x, z),
 							new Vector2(x / (float) (_size - 1), z / (float) (_size - 1)));
 							//new Vector2(2.0f * x / _size , 2.0f * z / _size ));
+
+						Vector3 normal = normalMap.GetNormal(x, z);
+						normal /= 2;
+						normal += new Vector3(0.5f);
+						normals[GetIndex(x, z)] = new Color(normal);
 					}
 				}
 
 				_vertexBuffer = new VertexBuffer(
 					this.GraphicsDevice,
-					typeof(VertexPositionNormalTexture),
+					typeof(VertexPositionTexture),
 					vertices.Length,
 					ResourceUsage.WriteOnly,
 					ResourceManagementMode.Automatic);
-				_vertexBuffer.SetData<VertexPositionNormalTexture>(vertices);
+				_vertexBuffer.SetData<VertexPositionTexture>(vertices);
 
 				short[] indices = new short[_numIndices]; int indexCounter = 0;
 
@@ -133,7 +147,7 @@ namespace AwesomeGame.Terrain
 				_indexBuffer.SetData<short>(indices);
 
 				_vertexDeclaration = new VertexDeclaration(
-					this.GraphicsDevice, VertexPositionNormalTexture.VertexElements);
+					this.GraphicsDevice, VertexPositionTexture.VertexElements);
 
 				if (_textureAssetName != null)
 				{
@@ -142,6 +156,10 @@ namespace AwesomeGame.Terrain
 
 				_effect.Parameters["GrassTexture"].SetValue(_texture);
 				_effect.Parameters["TerrainSize"].SetValue(_size);
+
+				_normalMap = new Texture2D(this.GraphicsDevice, _size, _size, 0, ResourceUsage.None, SurfaceFormat.Color);
+				_normalMap.SetData<Color>(normals);
+				_effect.Parameters["NormalMapTexture"].SetValue(_normalMap);
 			}
 		}
 
@@ -164,7 +182,7 @@ namespace AwesomeGame.Terrain
 		{
 			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
-			this.GraphicsDevice.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionNormalTexture.SizeInBytes);
+			this.GraphicsDevice.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionTexture.SizeInBytes);
 			this.GraphicsDevice.Indices = _indexBuffer;
 
 			_effect.Begin();
