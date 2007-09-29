@@ -30,6 +30,7 @@ namespace AwesomeGame
 			float sumY = 0;
 			float sumZ = 0;
 			float maxX = 0, minX = 0;
+			float maxY = 0, minY = 0;
 			float maxZ = 0, minZ = 0;
 
 			GameObject[] gameObjects = viewObjects.ToArray();
@@ -44,18 +45,22 @@ namespace AwesomeGame
 
 				if (gameObject.position.X > maxX)
 					maxX = gameObject.position.X;
+				if (gameObject.position.Y > maxY)
+					maxY = gameObject.position.Y;
 				if (gameObject.position.Z > maxZ)
 					maxZ = gameObject.position.Z;
 
 				if (gameObject.position.X < minX)
 					minX = gameObject.position.X;
+				if (gameObject.position.Y < minY)
+					minY = gameObject.position.Y;
 				if (gameObject.position.Z < minZ)
 					minZ = gameObject.position.Z;
 			}
 
 			position = new Vector3(
 				(float)sumX / viewObjects.Count,
-				(float)Math.Sqrt((float)((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ))) * (float)Math.Tan(MathHelper.ToRadians(45f)) + 20 + (sumY / viewObjects.Count),
+				(float)Math.Sqrt((float)((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ))) *  (float)Math.Tan(MathHelper.ToRadians(45f)) + 20 + (sumY / viewObjects.Count),
 				(float)sumZ / viewObjects.Count);
 			lookAt = new Vector3(sumX / viewObjects.Count, sumY / viewObjects.Count, sumZ / viewObjects.Count);
 			cameraUp = new Vector3(0, 0, -1);
@@ -65,7 +70,7 @@ namespace AwesomeGame
 				(float)MathHelper.ToRadians(45),
 				(float)graphicsDevice.Viewport.Width / (float)graphicsDevice.Viewport.Height,
 				1,
-				100);
+				position.Y - minY);
 		}
 
 		public void AddViewObject(GameObject viewObject)
