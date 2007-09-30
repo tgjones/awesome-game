@@ -214,18 +214,6 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>DanglingRope</Name>
     </Content>
-    <Content Include="Terrain\Textures\level1_heightmap.bmp">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>TextureImporter</Importer>
-      <Processor>SpriteTextureProcessor</Processor>
-      <Name>level1_heightmap</Name>
-    </Content>
-    <Content Include="Terrain\Textures\level1_texture.jpg">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>TextureImporter</Importer>
-      <Processor>SpriteTextureProcessor</Processor>
-      <Name>level1_texture</Name>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Models\Sphere0.x">
@@ -246,12 +234,6 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Cone</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Terrain\Textures\level1_gameobjects.bmp">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>TextureImporter</Importer>
-      <Processor>SpriteTextureProcessor</Processor>
-      <Name>level1_gameobjects</Name>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +298,24 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Name>Building8</Name>
+    </Content>
+    <Content Include="Terrain\Textures\level1_gameobjects.png">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>level1_gameobjects</Name>
+    </Content>
+    <Content Include="Terrain\Textures\level1_heightmap.png">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>level1_heightmap</Name>
+    </Content>
+    <Content Include="Terrain\Textures\level1_texture.png">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>level1_texture</Name>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
