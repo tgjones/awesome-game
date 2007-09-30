@@ -347,6 +347,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Sound\Baa.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Baa</Name>
+    </Content>
     <Content Include="Sound\Horns\HornBlocky.wav">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>HornBlocky</Name>
@@ -362,6 +366,10 @@
     <Content Include="Sound\Horns\HornPolice.wav">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>HornPolice</Name>
+    </Content>
+    <Content Include="Sound\Horns\HornTrike.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>HornTrike</Name>
     </Content>
     <Content Include="Sound\Insults\Fuck-off.wav">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
@@ -417,6 +425,72 @@
       <Processor>ModelProcessor</Processor>
       <Name>disc</Name>
     </Content>
+    <Content Include="Models\Numbers\0.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>0</Name>
+    </Content>
+    <Content Include="Models\Numbers\1.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>1</Name>
+    </Content>
+    <Content Include="Models\Numbers\2.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>2</Name>
+    </Content>
+    <Content Include="Models\Numbers\3.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>3</Name>
+    </Content>
+    <Content Include="Models\Numbers\4.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>4</Name>
+    </Content>
+    <Content Include="Models\Numbers\5.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>5</Name>
+    </Content>
+    <Content Include="Models\Numbers\6.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>6</Name>
+    </Content>
+    <Content Include="Models\Numbers\7.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>7</Name>
+    </Content>
+    <Content Include="Models\Numbers\8.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>8</Name>
+    </Content>
+    <Content Include="Models\Numbers\9.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>9</Name>
+    </Content>
+    <Content Include="Models\man.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>man</Name>
+    </Content>
     <Content Include="Models\sheep.x">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>XImporter</Importer>
@@ -440,7 +514,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Sounds\" />
     <Folder Include="Sound\Xbox\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
