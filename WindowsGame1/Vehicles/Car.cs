@@ -44,6 +44,7 @@ namespace AwesomeGame.Vehicles
 		private CarControlState previousControlState;
 		public Vector3 velocity;
 		public Vector3 rotation;
+		private Vector3 respawnLocation;
 
 		private GameObject nextCheckpoint;
 		private GameObject nextCheckpointArrow;
@@ -90,6 +91,12 @@ namespace AwesomeGame.Vehicles
 
 		public override void Update(GameTime gameTime)
 		{
+			if (respawnLocation.Length() == 0)
+				respawnLocation = position;
+
+			if (position.Y < -500.0f)
+				Respawn();
+
 			if (gameTime.ElapsedGameTime > TimeSpan.Zero)
 			{
 				float deltaTime = (float) (1.0f / gameTime.ElapsedGameTime.TotalMilliseconds);
@@ -273,6 +280,7 @@ namespace AwesomeGame.Vehicles
 					// Play a sound!
 					checkpointCheer = Sound.Play("Congrats");
 				}
+				respawnLocation = position;
 			}	
 
 			this.nextCheckpointArrow.position = this.position;
@@ -308,6 +316,13 @@ namespace AwesomeGame.Vehicles
 			}
 
 			_frameCount++;
+		}
+
+		private void Respawn()
+		{
+			rotation = new Vector3();
+			velocity = new Vector3();
+			position = respawnLocation;
 		}
 
 		private long _frameCount;
