@@ -2,6 +2,8 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 
 namespace AwesomeGame.Vehicles
@@ -50,6 +52,10 @@ namespace AwesomeGame.Vehicles
 		protected Cue horn;
 		private Cue insult;
 
+		private SpriteBatch _spriteBatch;
+		private SpriteFont _titleFont;
+		private string _messageToDraw;
+
 		public Car(Game game, PlayerIndex player, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
 			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
 		{
@@ -70,6 +76,16 @@ namespace AwesomeGame.Vehicles
 		public void setNextCheckpointArrow(GameObject arrow)
 		{
 			this.nextCheckpointArrow = arrow;
+		}
+
+		protected override void LoadGraphicsContent(bool loadAllContent)
+		{
+			base.LoadGraphicsContent(loadAllContent);
+			if (loadAllContent)
+			{
+				_spriteBatch = new SpriteBatch(this.GraphicsDevice);
+				_titleFont = GetService<ContentManager>().Load<SpriteFont>(@"Fonts\VictoryFont");
+			}
 		}
 
 		public override void Update(GameTime gameTime)
@@ -242,12 +258,21 @@ namespace AwesomeGame.Vehicles
 			if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)this.nextCheckpoint))
 			{
 				// If we hit the checkpoint
-				this.GetService<Camera>().RemoveViewObject(this.nextCheckpoint);
-				this.nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint);
+				//this.GetService<Camera>().RemoveViewObject(this.nextCheckpoint);
+				bool won = false;
+				this.nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint, out won);
 				//this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
 
-				// Play a sound!
-				checkpointCheer = Sound.Play("Congrats");
+				if (won)
+				{
+					_messageToDraw = "a";
+					Sound.Play("Victory");
+				}
+				else
+				{
+					// Play a sound!
+					checkpointCheer = Sound.Play("Congrats");
+				}
 			}	
 
 			this.nextCheckpointArrow.position = this.position;
@@ -272,6 +297,26 @@ namespace AwesomeGame.Vehicles
 		{
 			this.nextCheckpointArrow.Draw(gameTime);
 			base.Draw(gameTime);
+
+			if (_messageToDraw != null)
+			{
+				_spriteBatch.Begin();
+				_spriteBatch.DrawString(_titleFont, "Congratulations", new Vector2(GetRandomOffset(100), GetRandomOffset(100)), Color.Red);
+				_spriteBatch.DrawString(_titleFont, "Player " + this.playerIndex.ToString(), new Vector2(GetRandomOffset(100), GetRandomOffset(150)), Color.Red);
+				_spriteBatch.DrawString(_titleFont, "You are AWESOME.", new Vector2(GetRandomOffset(100), GetRandomOffset(400)), Color.White);
+				_spriteBatch.End();
+			}
+
+			_frameCount++;
+		}
+
+		private long _frameCount;
+		private int GetRandomOffset(int value)
+		{
+			if (_frameCount % 5 == 0)
+				return value + new Random(Environment.TickCount * 1000 + value).Next(-2, 3);
+			else
+				return value;
 		}
 
 		private float GetGroundHeight(Vector3 pos, float ori, bool front, bool left)

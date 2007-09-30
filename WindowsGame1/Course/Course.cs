@@ -33,8 +33,9 @@ namespace AwesomeGame
 			return true;
 		}
 
-		public GameObject getNextCheckpoint(GameObject currentCheckpoint)
+		public GameObject getNextCheckpoint(GameObject currentCheckpoint, out bool won)
 		{
+			won = false;
 			if (currentCheckpoint == null)
 			{
 				return checkpoints.Find(new Predicate<GameObject>(indexFind));
@@ -44,6 +45,8 @@ namespace AwesomeGame
 				int current = checkpoints.IndexOf(currentCheckpoint);
 				//return checkpoints.FindLast(new Predicate<GameObject>(blah));
 				int newCheckpoint = (current + 1) % checkpoints.Count;
+				if (current + 1 == checkpoints.Count)
+					won = true;
 				return checkpoints[newCheckpoint];
 			}
 		}

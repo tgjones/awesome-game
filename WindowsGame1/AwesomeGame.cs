@@ -33,6 +33,7 @@ namespace AwesomeGame
 		private GamePadState _lastGamePad1State, _lastGamePad2State;
 		private KeyboardState _lastKeyboardState;
 		private bool _justAboutToGoToGameFlag;
+		private string _messageToDraw;
 
 		private Terrain.SimpleTerrain _terrain;
 		private Vehicles.Car _car1, _car2;
