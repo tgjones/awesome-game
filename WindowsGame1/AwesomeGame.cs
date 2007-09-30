@@ -26,6 +26,8 @@ namespace AwesomeGame
 		{
 			graphics = new GraphicsDeviceManager(this);
 			content = new ContentManager(Services);
+
+			//graphics.IsFullScreen = true;
 			
 			this.Services.AddService(typeof(ContentManager), content);
 

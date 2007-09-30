@@ -98,29 +98,37 @@ namespace AwesomeGame.Terrain
 				_mapScale = new Vector3(MAPDIMENSION / (float)_size, 1.0f, MAPDIMENSION / (float)_size);
 				_mapOffset = new Vector3(-MAPDIMENSION / 2, 1, -MAPDIMENSION / 2);	//move to origin
 
-				
 				//get our map objects
 				Texture2D objectMapTexture = content.Load<Texture2D>(_objectMapName);
 				int objectMapSize = objectMapTexture.Width;
 				Color[] objects = new Color[objectMapSize * objectMapSize];
 				objectMapTexture.GetData<Color>(objects);
-				Vector3 objectScale = new Vector3(MAPDIMENSION / (float)objectMapSize, 1.0f, MAPDIMENSION / (float)objectMapSize);
+				Vector3 mapObjectScale = new Vector3(MAPDIMENSION / (float)objectMapSize, 1.0f, MAPDIMENSION / (float)objectMapSize);
+
+				//list which model to use for each object
+				string[] objectModel = new string[256];
+				float[] objectScale = new float[256];
+				objectModel[255] = "Cone";		objectScale[255] = 1.0f;
+				objectModel[254] = "Building1"; objectScale[254] = 4.0f;
+				objectModel[253] = "Building2"; objectScale[253] = 4.0f;
+				objectModel[252] = "Building3"; objectScale[252] = 4.0f;
+				objectModel[251] = "Building4"; objectScale[251] = 5.0f;
+				objectModel[250] = "Building5"; objectScale[250] = 8.0f;
+				objectModel[249] = "Building6"; objectScale[249] = 4.0f;
+				objectModel[248] = "Building7"; objectScale[248] = 4.0f;
+				objectModel[247] = "Building8"; objectScale[247] = 4.0f;
 
 				//take the red values for height data
-				int coneCount = 0;
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
 				{
-					if (objects[i].R == 255 & objects[i].G == 0 && objects[i].B == 0 && coneCount < 50)
+					int objectIndex = objects[i].R;
+					if (objectModel[objectIndex] != null)
 					{
-						//this is a cone
-						Vector3 newCone = new Vector3(i % objectMapSize, 0.0f, (int)(i / objectMapSize));
-						newCone *= objectScale;
-						newCone += _mapOffset;
-
-						//newCone = newCone * 0.3f;
-						newCone.Y = GetHeight(newCone.X, newCone.Z);
-						this.Game.Components.Add(new Mesh(this.Game, @"Models\Cone", Matrix.CreateTranslation(newCone)));
-						++coneCount;
+						Vector3 newObject = new Vector3(i % objectMapSize - 10, 0.0f, (int)(i / objectMapSize) - 10) * mapObjectScale + _mapOffset;
+						newObject.Y = GetHeight(newObject.X, newObject.Z);
+						float rot = MathHelper.ToRadians((float)objects[i].G / 256.0f * 360.0f);
+						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObject);
+						this.Game.Components.Add(new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans));
 					}
 				}
 
