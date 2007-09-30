@@ -125,9 +125,9 @@ namespace AwesomeGame.Terrain
 				objectModel[248] = "Building7"; objectScale[248] = 4.0f;
 				objectModel[247] = "Building8"; objectScale[247] = 4.0f;
 				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f;
-				objectModel[245] = "bridge"; objectScale[246] = 1.0f;
+				objectModel[245] = "bridge";	objectScale[245] = 1.0f;
+				objectModel[244] = "sheep";		objectScale[244] = 1.0f;
 
-				int coneCount = 0;
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
 				{
@@ -142,20 +142,26 @@ namespace AwesomeGame.Terrain
 						GameObject newObject;
 						newObject = CreateMesh(this.Game, objectModel[objects[i].R], trans);
 
-						// attach the cone to a particle system
-						if (objectIndex == 255 && coneCount < 4)
+						if (objectIndex == 255)
 						{
-							Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, @"Physics\Cone.xml");
+							// cone
+							Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Cone, newObjectPos);
 							newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
 							this.Game.Components.Add(newCone);	//the physics need to be added to the components
-							++coneCount;
 						}
+						if (objectIndex == 244)
+						{
+							// sheep
+							Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Sheep, newObjectPos);
+							newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
+							this.Game.Components.Add(newCone);	//the physics need to be added to the components
+						}
+
+						//add the objects to the game components
+						this.Game.Components.Add(newObject);
 
 						//add a checkpoint to the course
 						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint(newObject);
-						
-						//add the objects to the game components
-						this.Game.Components.Add(newObject);
 					}
 				}
 

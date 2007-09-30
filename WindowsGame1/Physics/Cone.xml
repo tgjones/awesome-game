@@ -1,24 +1,18 @@
 ﻿<ParticleSystem>
-	<Transform Translation="5,200,0" Scale="1,1,1" />
+	<Transform Translation="0,0,0" Scale="3,3,3" />
 	<Particles>
-		<Particle Index="0" Position="0,0,0" />
-		<Particle Index="1" Position="1.7,0,0" />
-		<Particle Index="2" Position="1.7,0,-1.7" />
-		<Particle Index="3" Position="0,0,-1.7" />
-		<Particle Index="4" Position="0.85,2.27,-0.85" />
+		<Particle Index="0" Position="0,0,0.66" Mass="10" />
+		<Particle Index="1" Position="0.5,0,-0.33" Mass="10" />
+		<Particle Index="2" Position="-0.5,0,-0.33" Mass="10" />
+		<Particle Index="3" Position="0,1,0" Mass="10" />
 	</Particles>
 	<Constraints>
 		<DistanceConstraint ParticleA="0" ParticleB="1" />
 		<DistanceConstraint ParticleA="1" ParticleB="2" />
-		<DistanceConstraint ParticleA="2" ParticleB="3" />
-		<DistanceConstraint ParticleA="3" ParticleB="0" />
+		<DistanceConstraint ParticleA="2" ParticleB="0" />
 		
-		<DistanceConstraint ParticleA="0" ParticleB="2" />
+		<DistanceConstraint ParticleA="0" ParticleB="3" />
 		<DistanceConstraint ParticleA="1" ParticleB="3" />
-
-		<DistanceConstraint ParticleA="0" ParticleB="4" />
-		<DistanceConstraint ParticleA="1" ParticleB="4" />
-		<DistanceConstraint ParticleA="2" ParticleB="4" />
-		<DistanceConstraint ParticleA="3" ParticleB="4" />
+		<DistanceConstraint ParticleA="2" ParticleB="3" />
 	</Constraints>
 </ParticleSystem>

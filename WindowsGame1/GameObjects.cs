@@ -208,7 +208,11 @@ namespace AwesomeGame
 		{
 			base.Update(gameTime);
 
-			int counter = 0;
+			WorldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
+			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
+			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
+
+			int meshPartIndex = 0; int counter = 0;
 			foreach (ModelMesh mm in _model.Meshes)
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)

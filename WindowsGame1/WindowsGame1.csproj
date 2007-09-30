@@ -417,6 +417,12 @@
       <Processor>ModelProcessor</Processor>
       <Name>disc</Name>
     </Content>
+    <Content Include="Models\sheep.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>sheep</Name>
+    </Content>
     <None Include="Sound\Win\Sound Bank.xsb">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Sound Bank</Name>

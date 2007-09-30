@@ -80,8 +80,8 @@ namespace AwesomeGame
 			course = new Course(this);
 			this.Services.AddService(typeof(Course), course);
 
-			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
-			if (Environment.MachineName != "Xavier")
+			//this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml", new Vector3(0,200,0)));
+			if (Environment.MachineName != "BARNEY-DESKTOP")
 			{
 				this.Components.Add(new Sunlight(this));
 				this.Components.Add(new ShadowMap(this));

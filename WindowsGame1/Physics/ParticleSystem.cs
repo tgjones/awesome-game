@@ -7,6 +7,8 @@ using AwesomeGame.Terrain;
 
 namespace AwesomeGame.Physics
 {
+	public enum enumPhysicsObjects { Cone, Sheep };
+
 	public class ParticleSystem : Microsoft.Xna.Framework.DrawableGameComponent
 	{
 		private List<Particle> _particles;
@@ -15,17 +17,38 @@ namespace AwesomeGame.Physics
 		VertexDeclaration _basicEffectVertexDeclaration;
 		BasicEffect _basicEffect;
 		GameObject _graphicObject;
+		Vector3 _wanderVector = Vector3.Zero;		// vector describing what to wander towards (sheep only)
+
+		enumPhysicsObjects _objectType = enumPhysicsObjects.Cone;
 
 		public readonly int SolverIterations;
 
-		public ParticleSystem(Game game, string configFile)
+		public ParticleSystem(Game game, enumPhysicsObjects objectType, Vector3 position)
 			: base(game)
 		{
 			SolverIterations = 2;
 			_particles = new List<Particle>();
 			_constraints = new List<Constraint>();
 
+			_objectType = objectType;
+			string configFile;
+			switch (_objectType)
+			{
+				case enumPhysicsObjects.Cone:
+					configFile = @"Physics\Cone.xml";
+					break;
+				case enumPhysicsObjects.Sheep:
+					configFile = @"Physics\Cone.xml";
+					break;
+				default:
+					configFile = @"Physics\Cone.xml";
+					break;
+			}
 			LoadParticleSystem(configFile);
+
+			//set the initial position
+			foreach (Particle p in _particles)
+				p.Position += position;
 
 			this.UpdateOrder = 1000;
 		}
@@ -42,7 +65,6 @@ namespace AwesomeGame.Physics
 				return _graphicObject;
 			}
 		}
-
 
 		private void LoadParticleSystem(string configFile)
 		{
@@ -134,6 +156,7 @@ namespace AwesomeGame.Physics
 			float deltaTime = (float) gameTime.ElapsedGameTime.TotalMilliseconds;
 			if (deltaTime == 0)
 				return;
+
 			deltaTime = 1 / deltaTime;
 
 			// line 5
@@ -184,8 +207,37 @@ namespace AwesomeGame.Physics
 			//update the graphic object if it exists
 			if (_graphicObject != null)
 			{
+				//we need the base position and the object axis.
 				//assume it is a cone...
-				_graphicObject.position = _particles[0].Position;
+					//the base is the average of coords 0..2
+					Vector3 basePos = (_particles[0].Position + _particles[1].Position + _particles[2].Position) / 3;
+					//get the axis of our particle system
+					Vector3 psAxis = _particles[3].Position - basePos;
+
+				//test
+				psAxis = new Vector3(1, 1, 0);
+
+				////first rotate into XZ plane
+
+				////rotation axis into XZ plane is cross product of psAxis and Y axis
+				//Vector3 rotationAxisXZ = Vector3.Cross(psAxis, Vector3.UnitY);
+				////angle to rotate is defined by cos A = (v.w) / (|v| |w|)
+				//float rotationAngleXZ = -(float)Math.Acos( Vector3.Dot(psAxis, Vector3.UnitY) / (psAxis.Length()));
+				////now make the transform.
+				//Quaternion trans = Quaternion.CreateFromAxisAngle(rotationAxisXZ, rotationAngleXZ);
+				////apply transformation
+				////Vector3 psAxisXZ = Vector3.Transform(Vector3.UnitY * psAxis.Length(), trans);
+
+				
+				////next rotate in XZ plane
+				//Vector3 rotationAxisY = Vector3.UnitY;
+				//float rotationAngleY = -(float)Math.Acos( Vector3.Dot(psAxisXZ, 
+
+				//test the result = we should get psAxis if we apply the quaternion to the Z axis
+				//Vector3 test = Vector3.Transform(Vector3.UnitY * psAxis.Length(), trans);
+
+				_graphicObject.position = basePos;
+	
 			}
 
 		}
