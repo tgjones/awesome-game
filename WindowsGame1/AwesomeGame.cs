@@ -43,7 +43,7 @@ namespace AwesomeGame
 
 			// Add first car
 			GameObject car = new Vehicles.Police(this, PlayerIndex.One);
-			car.position.Y = 110.0f;
+			car.position.Y = 150.0f;
 			car.position.Z = -10.0f;
 			car.collidable = true;
 			car.moveable = true;
@@ -60,7 +60,7 @@ namespace AwesomeGame
 			{
 				// Add second car
 				car = new Vehicles.Trike(this, PlayerIndex.Two);
-				car.position.Y = 110.0f;
+				car.position.Y = 150.0f;
 				car.position.Z = 10.0f;
 				car.collidable = true;
 				car.moveable = true;
