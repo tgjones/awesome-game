@@ -17,7 +17,7 @@ namespace AwesomeGame.Physics
 
 		public bool WasInvolvedInCollision;
 
-		private Mesh _mesh;
+		//private Mesh _mesh;
 
 		public Vector3 Position
 		{
@@ -25,7 +25,7 @@ namespace AwesomeGame.Physics
 			set
 			{
 				_position = value;
-				_mesh.InitialTransformationMatrix = Matrix.CreateScale(0.08f) * Matrix.CreateTranslation(_position);
+				//_mesh.InitialTransformationMatrix = Matrix.CreateScale(0.08f) * Matrix.CreateTranslation(_position);
 			}
 		}
 
@@ -50,8 +50,8 @@ namespace AwesomeGame.Physics
 
 		public Particle(Vector3 position, float mass, Game game)
 		{
-			_mesh = new Mesh(game, @"Models\Sphere0");
-			game.Components.Add(_mesh);
+			//_mesh = new Mesh(game, @"Models\Sphere0");
+			//game.Components.Add(_mesh);
 
 			Position = position;
 			Velocity = Vector3.Zero;

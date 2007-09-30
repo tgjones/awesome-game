@@ -14,6 +14,7 @@ namespace AwesomeGame.Physics
 
 		VertexDeclaration _basicEffectVertexDeclaration;
 		BasicEffect _basicEffect;
+		GameObject _graphicObject;
 
 		public readonly int SolverIterations;
 
@@ -28,6 +29,20 @@ namespace AwesomeGame.Physics
 
 			this.UpdateOrder = 1000;
 		}
+
+		public GameObject graphicObject
+		{
+			//if a graphic object is specified, we position this instead of displaying the particle system
+			set
+			{
+				_graphicObject = value;
+			}
+			get
+			{
+				return _graphicObject;
+			}
+		}
+
 
 		private void LoadParticleSystem(string configFile)
 		{
@@ -165,6 +180,14 @@ namespace AwesomeGame.Physics
 			_basicEffect.World = Matrix.Identity;
 			_basicEffect.View = camera.ViewMatrix;
 			_basicEffect.Projection = camera.ProjectionMatrix;
+
+			//update the graphic object if it exists
+			if (_graphicObject != null)
+			{
+				//assume it is a cone...
+				_graphicObject.position = _particles[0].Position;
+			}
+
 		}
 
 		private void GenerateCollisionConstraints(Particle p, List<Constraint> collisionConstraints)
@@ -184,7 +207,7 @@ namespace AwesomeGame.Physics
 			// collide with meshes
 			foreach (GameComponent gameComponent in this.Game.Components)
 			{
-				if (gameComponent is Mesh)
+				if (gameComponent is Mesh && gameComponent != _graphicObject)
 				{
 					Mesh mesh = (Mesh) gameComponent;
 					if (mesh.BoundingSphere.Contains(p.CandidatePosition) == ContainmentType.Contains)
@@ -278,52 +301,55 @@ namespace AwesomeGame.Physics
 
 		public override void Draw(GameTime gameTime)
 		{
-			// create particle vertices
-			VertexPositionColor[] pointList = new VertexPositionColor[_particles.Count];
-			int index = 0;
-			foreach (Particle p in _particles)
-				pointList[index++] = new VertexPositionColor(p.Position, Color.Red);
-
-			// create constraint indices
-			List<short> lineListIndices = new List<short>();
-			foreach (Constraint c in _constraints)
+			if (_graphicObject == null)
 			{
-				if (c is DistanceConstraint)
+				// create particle vertices
+				VertexPositionColor[] pointList = new VertexPositionColor[_particles.Count];
+				int index = 0;
+				foreach (Particle p in _particles)
+					pointList[index++] = new VertexPositionColor(p.Position, Color.Red);
+
+				// create constraint indices
+				List<short> lineListIndices = new List<short>();
+				foreach (Constraint c in _constraints)
 				{
-					DistanceConstraint dc = (DistanceConstraint) c;
-					lineListIndices.Add((short) _particles.IndexOf(dc.ParticleA));
-					lineListIndices.Add((short) _particles.IndexOf(dc.ParticleB));
+					if (c is DistanceConstraint)
+					{
+						DistanceConstraint dc = (DistanceConstraint)c;
+						lineListIndices.Add((short)_particles.IndexOf(dc.ParticleA));
+						lineListIndices.Add((short)_particles.IndexOf(dc.ParticleB));
+					}
 				}
+
+				//this.GraphicsDevice.RenderState.PointSize = 10;
+				this.GraphicsDevice.VertexDeclaration = _basicEffectVertexDeclaration;
+
+				_basicEffect.Begin();
+				foreach (EffectPass pass in _basicEffect.CurrentTechnique.Passes)
+				{
+					pass.Begin();
+
+					/*// draw particles
+					this.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+						PrimitiveType.PointList,
+						pointList,
+						0,  // index of the first vertex to draw
+						pointList.Length); // number of primitives*/
+
+					// draw constraints
+					this.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(
+						PrimitiveType.LineList,
+						pointList,
+						0,  // vertex buffer offset to add to each element of the index buffer
+						pointList.Length, // number of vertices in pointList
+						lineListIndices.ToArray(), // the index buffer
+						0,  // first index element to read
+						lineListIndices.Count / 2); // number of primitives to draw
+
+					pass.End();
+				}
+				_basicEffect.End();
 			}
-
-			//this.GraphicsDevice.RenderState.PointSize = 10;
-			this.GraphicsDevice.VertexDeclaration = _basicEffectVertexDeclaration;
-
-			_basicEffect.Begin();
-			foreach (EffectPass pass in _basicEffect.CurrentTechnique.Passes)
-			{
-				pass.Begin();
-
-				/*// draw particles
-				this.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-					PrimitiveType.PointList,
-					pointList,
-					0,  // index of the first vertex to draw
-					pointList.Length); // number of primitives*/
-
-				// draw constraints
-				this.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(
-					PrimitiveType.LineList,
-					pointList,
-					0,  // vertex buffer offset to add to each element of the index buffer
-					pointList.Length, // number of vertices in pointList
-					lineListIndices.ToArray(), // the index buffer
-					0,  // first index element to read
-					lineListIndices.Count / 2); // number of primitives to draw
-
-				pass.End();
-			}
-			_basicEffect.End();
 		}
 	}
 }

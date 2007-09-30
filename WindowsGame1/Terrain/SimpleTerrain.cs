@@ -120,6 +120,7 @@ namespace AwesomeGame.Terrain
 				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f;
 				objectModel[245] = "bridge"; objectScale[246] = 1.0f;
 
+				int coneCount = 0;
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
 				{
@@ -131,18 +132,23 @@ namespace AwesomeGame.Terrain
 						float rot = MathHelper.ToRadians((float)objects[i].G / 256.0f * 360.0f);
 						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObjectPos);
 
-						IGameComponent newObject;
-						if (objectIndex == 255)
+						GameObject newObject;
+						newObject = new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans);
+
+						// attach the cone to a particle system
+						if (objectIndex == 255 && coneCount < 4)
 						{
-							newObject = new Physics.ParticleSystem(this.Game, @"Physics\Cone.xml");
+							Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, @"Physics\Cone.xml");
+							newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
+							this.Game.Components.Add(newCone);	//the physics need to be added to the components
+							++coneCount;
 						}
-						else
-						{
-							newObject = new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans);
-						}
-						this.Game.Components.Add(newObject);
+
+						//add a checkpoint to the course
+						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint(newObject);
 						
-						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint((GameObject)newObject);
+						//add the objects to the game components
+						this.Game.Components.Add(newObject);
 					}
 				}
 
