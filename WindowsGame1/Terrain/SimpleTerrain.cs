@@ -365,7 +365,7 @@ namespace AwesomeGame.Terrain
 			else
 			{
 				// car is off the map
-				return 0;
+				return -1000.0f;
 			}	
 		}
 
