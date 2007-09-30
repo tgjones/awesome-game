@@ -241,5 +241,11 @@ namespace AwesomeGame.Vehicles
 				}
 			}
 		}
+
+		public override void PlayHorn()
+		{
+			if ((this.horn == null) || (!this.horn.IsPlaying))
+				this.horn = Sound.Play("HornTrike");
+		}
 	}
 }
