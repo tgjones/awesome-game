@@ -37,7 +37,8 @@ namespace AwesomeGame.Vehicles
 		private const int WHEEL_FR = 0;
 		private const int WHEEL_RL = 0;
 		private const int WHEEL_RR = 0;
-		
+
+		private PlayerIndex playerIndex;
 		public Vector3 velocity;
 		public Vector3 rotation;
 
@@ -48,12 +49,13 @@ namespace AwesomeGame.Vehicles
 		protected Cue horn;
 		private Cue insult;
 
-		public Car(Game game, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
+		public Car(Game game, PlayerIndex player, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
 			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
 		{
 			MESHIDX_FRONT_LEFT_WHEEL = idxFrontLeftWheel;
 			MESHIDX_FRONT_RIGHT_WHEEL = idxFrontRightWheel;
 			MESHIDX_REAR_AXLE = idxRearAxle;
+			playerIndex = player;
 		}
 
 		public override void Initialize()
@@ -61,7 +63,7 @@ namespace AwesomeGame.Vehicles
 			base.Initialize();
 
 			nextCheckpoint = this.GetService<Course>().getFirstCheckpoint();
-			this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
+			//this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
 		}
 
 		public void setNextCheckpointArrow(GameObject arrow)
@@ -74,7 +76,7 @@ namespace AwesomeGame.Vehicles
 			if (gameTime.ElapsedGameTime > TimeSpan.Zero)
 			{
 				float deltaTime = (float) (1.0f / gameTime.ElapsedGameTime.TotalMilliseconds);
-				CarControlState controlState = GetControlState(PlayerIndex.One);
+				CarControlState controlState = GetControlState(playerIndex);
 
 				// Map engine and brake forces
 				Vector3[] wheelForces = new Vector3[4];
@@ -207,7 +209,7 @@ namespace AwesomeGame.Vehicles
 				// If we hit the checkpoint
 				this.GetService<Camera>().RemoveViewObject(this.nextCheckpoint);
 				this.nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint);
-				this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
+				//this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
 
 				// Play a sound!
 				checkpointCheer = Sound.Play("Congrats");
@@ -282,21 +284,44 @@ namespace AwesomeGame.Vehicles
 			// Left-trigger or keyboard-down to brake
 			controlState.Accel = padState.Triggers.Right;
 			controlState.Brake = padState.Triggers.Left;
-			if (keyState.IsKeyDown(Keys.Up)) controlState.Accel = 1.0f;
-			if (keyState.IsKeyDown(Keys.Down)) controlState.Brake = 1.0f;
+			if (playerIndex == PlayerIndex.One)
+			{
+				if (keyState.IsKeyDown(Keys.Up)) controlState.Accel = 1.0f;
+				if (keyState.IsKeyDown(Keys.Down)) controlState.Brake = 1.0f;
+			}
+			else
+			{
+				if (keyState.IsKeyDown(Keys.W)) controlState.Accel = 1.0f;
+				if (keyState.IsKeyDown(Keys.S)) controlState.Brake = 1.0f;
+			}
 
 			// Left-stick or keyboard left-right arrows to steer
 			controlState.Steer = padState.ThumbSticks.Left.X;
-			if (keyState.IsKeyDown(Keys.Right)) controlState.Steer += 1.0f;
-			if (keyState.IsKeyDown(Keys.Left)) controlState.Steer -= 1.0f;
+			if (playerIndex == PlayerIndex.One)
+			{
+				if (keyState.IsKeyDown(Keys.Right)) controlState.Steer += 1.0f;
+				if (keyState.IsKeyDown(Keys.Left)) controlState.Steer -= 1.0f;
+			}
+			else
+			{
+				if (keyState.IsKeyDown(Keys.D)) controlState.Steer += 1.0f;
+				if (keyState.IsKeyDown(Keys.A)) controlState.Steer -= 1.0f;
+			}
 
 			// Horn on button B or right control
-			controlState.Horn = padState.Buttons.B == ButtonState.Pressed;
-			if (keyState.IsKeyDown(Keys.RightControl)) controlState.Horn = true;
-
 			// Insult on button Y or End
+			controlState.Horn = padState.Buttons.B == ButtonState.Pressed;
 			controlState.Insult = padState.Buttons.RightShoulder == ButtonState.Pressed;
-			if (keyState.IsKeyDown(Keys.End)) controlState.Insult = true;
+			if (playerIndex == PlayerIndex.One)
+			{
+				if (keyState.IsKeyDown(Keys.RightControl)) controlState.Horn = true;
+				if (keyState.IsKeyDown(Keys.End)) controlState.Insult = true;
+			}
+			else
+			{
+				if (keyState.IsKeyDown(Keys.LeftShift)) controlState.Horn = true;
+				if (keyState.IsKeyDown(Keys.D3)) controlState.Insult = true;
+			}
 
 			return controlState;
 		}

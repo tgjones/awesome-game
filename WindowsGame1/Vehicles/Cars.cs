@@ -8,7 +8,7 @@ namespace AwesomeGame.Vehicles
 {
 	public class Blocky : Car
 	{
-		public Blocky(Game game) : base(game, @"Models\Lessblockycar2", 5, 7, 6) { }
+		public Blocky(Game game, PlayerIndex player) : base(game, player, @"Models\Lessblockycar2", 5, 7, 6) { }
 
 		public override void UpdateEffects()
 		{
@@ -57,7 +57,7 @@ namespace AwesomeGame.Vehicles
 
 	public class Curvy : Car
 	{
-		public Curvy(Game game) : base(game, @"Models\Curvycar", 6, 3, 0) { }
+		public Curvy(Game game, PlayerIndex player) : base(game, player, @"Models\Curvycar", 6, 3, 0) { }
 
 		public override void UpdateEffects()
 		{
@@ -108,7 +108,7 @@ namespace AwesomeGame.Vehicles
 
 	public class SchoolBus : Car
 	{
-		public SchoolBus(Game game) : base(game, @"Models\Schoolbus", 6, 5, 4) { }
+		public SchoolBus(Game game, PlayerIndex player) : base(game, player, @"Models\Schoolbus", 6, 5, 4) { }
 
 		public override void UpdateEffects()
 		{
@@ -157,7 +157,7 @@ namespace AwesomeGame.Vehicles
 
 	public class Police : Car
 	{
-		public Police(Game game) : base(game, @"Models\Police", 1, 5, 6) { }
+		public Police(Game game, PlayerIndex player) : base(game, player, @"Models\Police", 1, 5, 6) { }
 
 		public override void UpdateEffects()
 		{
@@ -206,7 +206,7 @@ namespace AwesomeGame.Vehicles
 
 	public class Trike : Car
 	{
-		public Trike(Game game) : base(game, @"Models\Trike", 1, 2, 2) { }
+		public Trike(Game game, PlayerIndex player) : base(game, player, @"Models\Trike", 1, 2, 2) { }
 
 		public override void UpdateEffects()
 		{
