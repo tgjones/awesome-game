@@ -156,8 +156,7 @@ namespace AwesomeGame.Vehicles
 								}
 
 								// Bounce off
-								//velocity = Vector3.Reflect(velocity, direction);
-								velocity *= -0.75f;
+								velocity = Vector3.Reflect(velocity, Vector3.Normalize(direction));
 							}
 						}
 					}
