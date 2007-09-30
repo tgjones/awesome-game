@@ -17,6 +17,7 @@ namespace AwesomeGame.Vehicles
 			public float Steer;
 			public bool Horn;
 			public bool Insult;
+			public bool Respawn;
 		}
 		
 		private int MESHIDX_REAR_AXLE;
@@ -91,6 +92,8 @@ namespace AwesomeGame.Vehicles
 
 		public override void Update(GameTime gameTime)
 		{
+			
+
 			if (respawnLocation.Length() == 0)
 				respawnLocation = position;
 
@@ -101,6 +104,9 @@ namespace AwesomeGame.Vehicles
 			{
 				float deltaTime = (float) (1.0f / gameTime.ElapsedGameTime.TotalMilliseconds);
 				CarControlState controlState = GetControlState(playerIndex, deltaTime);
+
+				if (controlState.Respawn)
+					Respawn();
 
 				// Map engine and brake forces
 				Vector3[] wheelForces = new Vector3[4];
@@ -138,7 +144,10 @@ namespace AwesomeGame.Vehicles
 					// Evaluate grip limits
 					for (int i = 0; i < 4; i++)
 						if (wheelForces[i].Length() > MAX_GRIP * MASS / 4)
+						{
 							wheelForces[i] *= MAX_GRIP * MASS / 4 / wheelForces[i].Length();
+							//Sound.Play("Skid");
+						}
 
 					// Evaluate the total acceleration
 					for (int i = 0; i < 4; i++)
@@ -421,6 +430,13 @@ namespace AwesomeGame.Vehicles
 				if (keyState.IsKeyDown(Keys.LeftShift)) controlState.Horn = true;
 				if (keyState.IsKeyDown(Keys.D3)) controlState.Insult = true;
 			}
+
+			if (padState.Buttons.LeftShoulder == ButtonState.Pressed)
+				controlState.Respawn = true;
+			if (playerIndex == PlayerIndex.One)
+				if (keyState.IsKeyDown(Keys.Home)) controlState.Respawn = true;
+			if (playerIndex == PlayerIndex.Two)
+				if (keyState.IsKeyDown(Keys.Tab)) controlState.Respawn = true;
 
 			previousControlState = controlState;
 			return controlState;
