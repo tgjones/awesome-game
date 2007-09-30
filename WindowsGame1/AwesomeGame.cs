@@ -43,19 +43,20 @@ namespace AwesomeGame
 			//this.Components.Add(new Triangle(this));
 
 			GameObject car = new Vehicles.Blocky(this);
+			car.position.Y = 100.0f;
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
-			Mesh checkpointArrow = new Mesh(this, @"Models\DirectionArrow");
+			Mesh checkpointArrow = new Models.CheckpointArrow(this);
 			((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
 			this.Components.Add(checkpointArrow);
 
 			GameObject axes = new Mesh(this, @"Models\Axes", Matrix.CreateTranslation(0f, 60f, 0f));
 			this.Components.Add(axes);
-			//camera.AddViewObject(axes);
+			camera.AddViewObject(axes);
 
-			//this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
-			//this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
+			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
+			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
 			
 			// Get some sort of checkpoint based course going on
 			course = new Course(this);
