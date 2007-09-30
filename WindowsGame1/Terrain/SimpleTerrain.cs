@@ -29,6 +29,8 @@ namespace AwesomeGame.Terrain
 		private int _numVertices;
 		private int _numIndices;
 
+		private Matrix _textureScaleAndOffsetMatrix;
+
 		public int Size
 		{
 			get { return _size; }
@@ -222,6 +224,20 @@ namespace AwesomeGame.Terrain
 				_normalMap = new Texture2D(this.GraphicsDevice, _size, _size, 0, ResourceUsage.None, SurfaceFormat.Color);
 				_normalMap.SetData<Color>(normals);
 				_effect.Parameters["NormalMapTexture"].SetValue(_normalMap);
+
+				ShadowMap shadowMap = GetService<ShadowMap>();
+				if (shadowMap != null)
+				{
+					_effect.Parameters["ShadowMapSize"].SetValue(shadowMap.ShadowMapSize);
+					_effect.Parameters["ShadowMapSizeInverse"].SetValue(1.0f / (float) shadowMap.ShadowMapSize);
+
+					float offset = 0.5f + (0.5f / (float) shadowMap.ShadowMapSize);
+					_textureScaleAndOffsetMatrix = new Matrix(
+						0.5f, 0.0f, 0.0f, 0.0f,
+						0.0f, -0.5f, 0.0f, 0.0f,
+						0.0f, 0.0f, 1.0f, 0.0f,
+						offset, offset, 0.0f, 1.0f);
+				}
 			}
 		}
 
@@ -242,6 +258,13 @@ namespace AwesomeGame.Terrain
 
 		public override void Draw(GameTime gameTime)
 		{
+			Sunlight light = GetService<Sunlight>();
+			_effect.Parameters["ShadowMapProjector"].SetValue(light.ViewMatrix * light.ProjectionMatrix * _textureScaleAndOffsetMatrix);
+
+			// render geometry with shadow
+			ShadowMap shadowMap = GetService<ShadowMap>();
+			_effect.Parameters["ShadowMap"].SetValue(shadowMap.ShadowMapTexture);
+
 			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
 			this.GraphicsDevice.Vertices[0].SetSource(_vertexBuffer, 0, VertexPositionNormalTexture.SizeInBytes);

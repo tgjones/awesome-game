@@ -104,6 +104,14 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>AwesomeGame</Name>
     </Compile>
+    <Compile Include="ShadowMap.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>ShadowMap</Name>
+    </Compile>
+    <Compile Include="Sunlight.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Sunlight</Name>
+    </Compile>
     <Compile Include="Terrain\NormalMap.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>NormalMap</Name>
@@ -320,6 +328,14 @@
       <Importer>TextureImporter</Importer>
       <Processor>SpriteTextureProcessor</Processor>
       <Name>level1_texture</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Shaders\ShadowMapping.fx">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Name>ShadowMapping</Name>
     </Content>
   </ItemGroup>
   <ItemGroup>

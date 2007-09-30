@@ -49,6 +49,7 @@ namespace AwesomeGame
 
 			Mesh checkpointArrow = new Models.CheckpointArrow(this);
 			((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
+			checkpointArrow.CastsShadow = false;
 			this.Components.Add(checkpointArrow);
 
 			GameObject axes = new Mesh(this, @"Models\Axes", Matrix.CreateTranslation(0f, 60f, 0f));
@@ -77,6 +78,9 @@ namespace AwesomeGame
 			//this.Components.Add(checkpoint);
 
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
+
+			this.Components.Add(new Sunlight(this));
+			this.Components.Add(new ShadowMap(this));
 		}
 
 		public bool CheckForCollisions(Mesh object1, Mesh object2 )

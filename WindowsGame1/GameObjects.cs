@@ -99,6 +99,9 @@ namespace AwesomeGame
 		protected List<BoundingBox> _partBoundingBoxes;
 		protected List<BasicEffect> _modelMeshPartEffects;
 		private Matrix _initialTranformationMatrix;
+		private List<Effect> _shadowEffects;
+
+		public bool CastsShadow = true;
 
 		public Matrix InitialTransformationMatrix
 		{
@@ -130,11 +133,14 @@ namespace AwesomeGame
 			_partTransformationMatrices = new List<Matrix>();
 			_partBoundingBoxes = new List<BoundingBox>();
 			_modelMeshPartEffects = new List<BasicEffect>();
+			_shadowEffects = new List<Effect>();
 
 			Vector3 scale;
 			Quaternion rotation;
 			initialTransformationMatrix.Decompose(out scale, out rotation, out position);
 			_initialTranformationMatrix = Matrix.CreateFromQuaternion(rotation) * Matrix.CreateScale(scale);
+
+			this.DrawOrder = 5;
 		}
 
 		protected override void LoadGraphicsContent(bool loadAllContent)
@@ -143,8 +149,12 @@ namespace AwesomeGame
 
 			_model = this.GetService<ContentManager>().Load<Model>(_modelAssetName);
 
+			Effect shadowEffect = GetService<ContentManager>().Load<Effect>(@"Shaders\ShadowMapping");
+			shadowEffect.CurrentTechnique = shadowEffect.Techniques[0];
+
 			_partTransformationMatrices.Clear();
 			_modelMeshPartEffects.Clear();
+			_shadowEffects.Clear();
 			foreach (ModelMesh mesh in _model.Meshes)
 			{
 				foreach (ModelMeshPart part in mesh.MeshParts)
@@ -163,10 +173,31 @@ namespace AwesomeGame
 
 					_modelMeshPartEffects.Add(effect);
 					_partTransformationMatrices.Add(Matrix.Identity);
+					_shadowEffects.Add(shadowEffect.Clone(this.GraphicsDevice));
 				}
 			}
 
 			UpdateEffects();
+		}
+
+		public void DrawShadowMap(GameTime gameTime)
+		{
+			if (CastsShadow)
+			{
+				WorldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
+				Sunlight light = GetService<Sunlight>();
+				this.GraphicsDevice.RenderState.CullMode = CullMode.CullClockwiseFace;
+
+				int counter = 0;
+				foreach (ModelMesh mm in _model.Meshes)
+					foreach (ModelMeshPart mmp in mm.MeshParts)
+					{
+						mmp.Effect = _shadowEffects[counter];
+						mmp.Effect.Parameters["LightWorldViewProjection"].SetValue(_partTransformationMatrices[counter++] * _initialTranformationMatrix * WorldMatrix * light.ViewMatrix * light.ProjectionMatrix);
+					}
+
+				DrawComponent();
+			}
 		}
 
 		public virtual void UpdateEffects() { }
@@ -175,24 +206,12 @@ namespace AwesomeGame
 		{
 			base.Update(gameTime);
 
-			//Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(0.0f, 0.0f, 10.0f), Vector3.Zero, new Vector3(0.0f, 1.0f, 0.0f));
-			//Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-			//    MathHelper.ToRadians(45),
-			//    (float) this.GraphicsDevice.Viewport.Width / (float) this.GraphicsDevice.Viewport.Height,
-			//    1.0f, 20.0f);
-			WorldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
-			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
-			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
-
-			int meshPartIndex = 0; int counter = 0;
+			int counter = 0;
 			foreach (ModelMesh mm in _model.Meshes)
 			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
 					BasicEffect effect = _modelMeshPartEffects[counter++];
-					effect.World = _partTransformationMatrices[meshPartIndex++] * _initialTranformationMatrix * WorldMatrix;
-					effect.View = viewMatrix;
-					effect.Projection = projectionMatrix;
 				}
 			}
 		}
@@ -201,18 +220,32 @@ namespace AwesomeGame
 		{
 			base.Draw(gameTime);
 
+			WorldMatrix = Matrix.CreateRotationY(orientation.Y) * Matrix.CreateTranslation(position);
+			Matrix viewMatrix = this.GetService<Camera>().ViewMatrix;
+			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
+
 			int counter = 0;
 			foreach (ModelMesh mm in _model.Meshes)
 				foreach (ModelMeshPart mmp in mm.MeshParts)
-					mmp.Effect = _modelMeshPartEffects[counter++];
+				{
+					BasicEffect effect = _modelMeshPartEffects[counter];
+					effect.World = _partTransformationMatrices[counter++] * _initialTranformationMatrix * WorldMatrix;
+					effect.View = viewMatrix;
+					effect.Projection = projectionMatrix;
+					mmp.Effect = effect;
+				}
 
+			this.GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
+			DrawComponent();
+		}
+
+		private void DrawComponent()
+		{
 			//graphicsDevice.VertexDeclaration = vertexDeclaration;
-			this.GraphicsDevice.RenderState.CullMode = CullMode.None;
-			this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
+			//this.GraphicsDevice.RenderState.CullMode = CullMode.None;
+			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 			foreach (ModelMesh mm in _model.Meshes)
-			{
 				mm.Draw();
-			}
 		}
 	}
 }
