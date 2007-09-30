@@ -143,9 +143,20 @@ namespace AwesomeGame.Vehicles
 						{
 							if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)anObject))
 							{
-								// We've found an object in the lost if things,
+								// We've found an object in the list if things,
 								// We've hit it
 								// It can be hit
+								Vector3 direction = this.position - ((Mesh)anObject).BoundingSphere.Center;
+								if (((Mesh)anObject).BoundingSphere.Contains(this.BoundingSphere) > 0)
+								{
+									// Help!  We're stuck inside the bounding sphere!  Get us out!
+									direction.Normalize();
+									direction *= ((Mesh)anObject).BoundingSphere.Radius + this.BoundingSphere.Radius;
+									this.position = ((Mesh)anObject).BoundingSphere.Center + direction;
+								}
+
+								// Bounce off
+								//velocity = Vector3.Reflect(velocity, direction);
 								velocity *= -0.75f;
 							}
 						}

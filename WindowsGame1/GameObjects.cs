@@ -103,6 +103,8 @@ namespace AwesomeGame
 		private Matrix _initialTranformationMatrix;
 		private List<Effect> _shadowEffects;
 
+		private BoundingSphere _boundingSphere;
+
 		public bool CastsShadow = true;
 
 		public Matrix InitialTransformationMatrix
@@ -115,8 +117,15 @@ namespace AwesomeGame
 		{
 			get
 			{
-				BoundingSphere boundingSphere = new BoundingSphere(this.position, 4.5f);
-				return boundingSphere;
+				//BoundingSphere boundingSphere = new BoundingSphere();
+				//foreach (ModelMesh mm in _model.Meshes)
+				//	boundingSphere = BoundingSphere.CreateMerged(boundingSphere, mm.BoundingSphere);
+				//boundingSphere = new BoundingSphere(this.position, boundingSphere.Radius);
+				//return boundingSphere;
+
+				//return new BoundingSphere(this.position, 4.5f);
+
+				return _boundingSphere;
 			}
 		}
 
@@ -136,6 +145,7 @@ namespace AwesomeGame
 			_partBoundingBoxes = new List<BoundingBox>();
 			_modelMeshPartEffects = new List<BasicEffect>();
 			_shadowEffects = new List<Effect>();
+			_boundingSphere = new BoundingSphere();
 
 			Vector3 scale;
 			Quaternion rotation;
@@ -231,7 +241,9 @@ namespace AwesomeGame
 			Matrix projectionMatrix = this.GetService<Camera>().ProjectionMatrix;
 
 			int counter = 0;
+			BoundingSphere newBoundingSphere = new BoundingSphere();
 			foreach (ModelMesh mm in _model.Meshes)
+			{
 				foreach (ModelMeshPart mmp in mm.MeshParts)
 				{
 					BasicEffect effect = _modelMeshPartEffects[counter];
@@ -240,6 +252,23 @@ namespace AwesomeGame
 					effect.Projection = projectionMatrix;
 					mmp.Effect = effect;
 				}
+				if (this._boundingSphere.Radius == 0.0f)
+				{
+					newBoundingSphere = BoundingSphere.CreateMerged(newBoundingSphere, mm.BoundingSphere);
+				}
+				if (newBoundingSphere.Radius == 0.0f)
+				{
+					newBoundingSphere = mm.BoundingSphere;
+				}
+			}
+
+			if (this._boundingSphere.Radius == 0.0f)
+				this._boundingSphere = new BoundingSphere(this.position, newBoundingSphere.Radius);
+
+			this._boundingSphere.Center = this.position;
+			//foreach (ModelMesh mm in _model.Meshes)
+			//	boundingSphere = BoundingSphere.CreateMerged(boundingSphere, mm.BoundingSphere);
+			//boundingSphere = new BoundingSphere(this.position, boundingSphere.Radius);
 
 			this.GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
 			DrawComponent();

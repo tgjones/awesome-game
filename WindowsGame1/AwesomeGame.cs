@@ -84,19 +84,14 @@ namespace AwesomeGame
 			for (int i = 0; i < object1._model.Meshes.Count; i++)
 			{
 				// Check whether the bounding boxes of the two cubes intersect.
-				BoundingSphere object1BoundingSphere = object1._model.Meshes[i].BoundingSphere;
-				object1BoundingSphere.Center += object1.position;
+				BoundingSphere object1BoundingSphere = object1.BoundingSphere;
 
 				for (int j = 0; j < object2._model.Meshes.Count; j++)
 				{
-					BoundingSphere object2BoundingSphere = object2._model.Meshes[j].BoundingSphere;
-					object2BoundingSphere.Center += object2.position;
+					BoundingSphere object2BoundingSphere = object2.BoundingSphere;
 
 					if (object1BoundingSphere.Intersects(object2BoundingSphere))
 					{
-						//c2.ReverseVelocity();
-						//c1.Backup();
-						//c1.ReverseVelocity();
 						return true;
 					}
 				}
