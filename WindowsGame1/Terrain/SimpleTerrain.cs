@@ -117,6 +117,8 @@ namespace AwesomeGame.Terrain
 				objectModel[249] = "Building6"; objectScale[249] = 4.0f;
 				objectModel[248] = "Building7"; objectScale[248] = 4.0f;
 				objectModel[247] = "Building8"; objectScale[247] = 4.0f;
+				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f;
+				objectModel[245] = "bridge"; objectScale[246] = 1.0f;
 
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
@@ -124,11 +126,15 @@ namespace AwesomeGame.Terrain
 					int objectIndex = objects[i].R;
 					if (objectModel[objectIndex] != null)
 					{
-						Vector3 newObject = new Vector3(i % objectMapSize - 10, 0.0f, (int)(i / objectMapSize) - 10) * mapObjectScale + _mapOffset;
-						newObject.Y = GetHeight(newObject.X, newObject.Z);
+						Vector3 newObjectPos = new Vector3(i % objectMapSize - 10, 0.0f, (int)(i / objectMapSize) - 10) * mapObjectScale + _mapOffset;
+						newObjectPos.Y = GetHeight(newObjectPos.X, newObjectPos.Z);
 						float rot = MathHelper.ToRadians((float)objects[i].G / 256.0f * 360.0f);
-						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObject);
-						this.Game.Components.Add(new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans));
+						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObjectPos);
+
+						GameObject newObject = new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans);
+						this.Game.Components.Add(newObject);
+						
+						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint(newObject);
 					}
 				}
 

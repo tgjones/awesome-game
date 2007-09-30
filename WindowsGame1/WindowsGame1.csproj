@@ -67,6 +67,10 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>GameObjects</Name>
     </Compile>
+    <Compile Include="Models\Models.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Models</Name>
+    </Compile>
     <Compile Include="Physics\Constraint.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Constraint</Name>
@@ -316,6 +320,14 @@
       <Importer>TextureImporter</Importer>
       <Processor>SpriteTextureProcessor</Processor>
       <Name>level1_texture</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\bridge.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>bridge</Name>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

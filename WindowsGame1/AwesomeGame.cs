@@ -53,7 +53,7 @@ namespace AwesomeGame
 
 			GameObject axes = new Mesh(this, @"Models\Axes", Matrix.CreateTranslation(0f, 60f, 0f));
 			this.Components.Add(axes);
-			camera.AddViewObject(axes);
+			//camera.AddViewObject(axes);
 
 			this.Components.Add(new Mesh(this, @"Models\Cone", Matrix.CreateTranslation(new Vector3(5.0f, 0.0f, 5.0f))));
 			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
@@ -66,16 +66,15 @@ namespace AwesomeGame
 
 			Mesh checkpoint;
 			// Lower down the hill
-			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-63f,148f,300f)));
-			course.addCheckpoint(checkpoint);
-			//camera.AddViewObject(checkpoint);
+			//checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-63f,148f,300f)));
+			//course.addCheckpoint(checkpoint);
 
-			this.Components.Add(checkpoint);
+			//this.Components.Add(checkpoint);
 
 			// On top of the hill
-			checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(230f, 230f, 68f)));
-			course.addCheckpoint(checkpoint);
-			this.Components.Add(checkpoint);
+			//checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(230f, 230f, 68f)));
+			//course.addCheckpoint(checkpoint);
+			//this.Components.Add(checkpoint);
 
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
 		}
