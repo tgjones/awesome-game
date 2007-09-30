@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections;
 
 namespace AwesomeGame
 {
@@ -19,6 +20,7 @@ namespace AwesomeGame
 		public void addCheckpoint(GameObject checkpoint)
 		{
 			checkpoints.Add(checkpoint);
+			randomiseCheckpoints();
 		}
 
 		public GameObject getFirstCheckpoint()
@@ -41,9 +43,27 @@ namespace AwesomeGame
 			{
 				int current = checkpoints.IndexOf(currentCheckpoint);
 				//return checkpoints.FindLast(new Predicate<GameObject>(blah));
-				int newCheckpoint =  (current + 1) % checkpoints.Count;
+				int newCheckpoint = (current + 1) % checkpoints.Count;
 				return checkpoints[newCheckpoint];
-				
+			}
+		}
+
+		public void randomiseCheckpoints()
+		{
+			checkpoints.Sort(new CheckpointRandomiser());
+		}
+	}
+
+	public class CheckpointRandomiser : IComparer<GameObject>
+	{
+		public int Compare(GameObject cp1, GameObject cp2)
+		{
+			if (cp1 == cp2)
+				return 0;
+			else
+			{
+				Random random = new Random();
+				return random.Next(-1, +1);
 			}
 		}
 	}
