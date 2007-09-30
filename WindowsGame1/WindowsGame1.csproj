@@ -363,6 +363,18 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>HornPolice</Name>
     </Content>
+    <Content Include="Sound\Insults\Fuck-off.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Fuck-off</Name>
+    </Content>
+    <Content Include="Sound\Insults\Wanker.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Wanker</Name>
+    </Content>
+    <Content Include="Sound\Insults\You Nobber.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>You Nobber</Name>
+    </Content>
     <Content Include="Sound\Sound.xap">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>XactImporter</Importer>
@@ -386,6 +398,24 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Name>Trike</Name>
+    </Content>
+    <Content Include="Models\Dial.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>Dial</Name>
+    </Content>
+    <Content Include="Models\DialArrow.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>DialArrow</Name>
+    </Content>
+    <Content Include="Models\disc.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>disc</Name>
     </Content>
     <None Include="Sound\Win\Sound Bank.xsb">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>

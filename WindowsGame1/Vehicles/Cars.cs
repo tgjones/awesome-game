@@ -50,7 +50,8 @@ namespace AwesomeGame.Vehicles
 
 		public override void PlayHorn()
 		{
-			this.horn = Sound.Play("HornBlocky");
+			if ((this.horn == null) || (!this.horn.IsPlaying))
+				this.horn = Sound.Play("HornBlocky");
 		}
 	}
 
@@ -100,7 +101,8 @@ namespace AwesomeGame.Vehicles
 
 		public override void PlayHorn()
 		{
-			this.horn = Sound.Play("HornCurvy");
+			if ((this.horn == null) || (!this.horn.IsPlaying))
+				this.horn = Sound.Play("HornCurvy");
 		}
 	}
 
@@ -148,7 +150,8 @@ namespace AwesomeGame.Vehicles
 
 		public override void PlayHorn()
 		{
-			this.horn = Sound.Play("HornBus");
+			if ((this.horn == null) || (!this.horn.IsPlaying))
+				this.horn = Sound.Play("HornBus");
 		}
 	}
 
@@ -192,6 +195,12 @@ namespace AwesomeGame.Vehicles
 					effect.SpecularPower = 1.0f;
 				}
 			}
+		}
+
+		public override void PlayHorn()
+		{
+			if ((this.horn == null) || (!this.horn.IsPlaying))
+				this.horn = Sound.Play("HornPolice");
 		}
 	}
 

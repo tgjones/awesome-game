@@ -14,6 +14,7 @@ namespace AwesomeGame.Vehicles
 			public float Brake;
 			public float Steer;
 			public bool Horn;
+			public bool Insult;
 		}
 		
 		private int MESHIDX_REAR_AXLE;
@@ -45,6 +46,7 @@ namespace AwesomeGame.Vehicles
 
 		private Cue checkpointCheer;
 		protected Cue horn;
+		private Cue insult;
 
 		public Car(Game game, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
 			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
@@ -177,6 +179,27 @@ namespace AwesomeGame.Vehicles
 
 				if (controlState.Horn)
 					this.PlayHorn();
+
+				if (controlState.Insult)
+				{
+					if ((this.insult == null) || (!this.insult.IsPlaying))
+					{
+						Random random = new Random(gameTime.TotalRealTime.Milliseconds);
+						int whichInsult = random.Next(1, 3);
+						switch (whichInsult)
+						{
+							case 1:
+								this.insult = Sound.Play("Fuck-off");
+								break;
+							case 2:
+								this.insult = Sound.Play("Wanker");
+								break;
+							case 3:
+								this.insult = Sound.Play("You Nobber");
+								break;
+						}
+					}
+				}
 			}
 
 			if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)this.nextCheckpoint))
@@ -270,6 +293,10 @@ namespace AwesomeGame.Vehicles
 			// Horn on button B or right control
 			controlState.Horn = padState.Buttons.B == ButtonState.Pressed;
 			if (keyState.IsKeyDown(Keys.RightControl)) controlState.Horn = true;
+
+			// Insult on button Y or End
+			controlState.Insult = padState.Buttons.RightShoulder == ButtonState.Pressed;
+			if (keyState.IsKeyDown(Keys.End)) controlState.Insult = true;
 
 			return controlState;
 		}

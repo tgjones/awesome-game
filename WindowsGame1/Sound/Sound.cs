@@ -15,7 +15,14 @@ namespace AwesomeGame
 		public static Cue Play(string name)
 		{
 			Cue returnValue = soundbank.GetCue(name);
-			returnValue.Play();
+			try
+			{
+				returnValue.Play();
+			}
+			catch (InstancePlayLimitException)
+			{
+				// already playing, do nothing
+			}
 			return returnValue;
 		}
 
