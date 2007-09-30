@@ -27,6 +27,7 @@ namespace AwesomeGame
 		private SpriteBatch _spriteBatch;
 		private SpriteFont _titleFont, _font;
 		private List<string> _availableCars;
+		private List<Texture2D> _carPictures;
 		private int _selectedCarIndex1, _selectedCarIndex2;
 		private bool _player1Ready, _player2Ready;
 		private GamePadState _lastGamePad1State, _lastGamePad2State;
@@ -131,6 +132,13 @@ namespace AwesomeGame
 				_spriteBatch = new SpriteBatch(this.graphics.GraphicsDevice);
 				_titleFont = content.Load<SpriteFont>(@"Fonts\TitleFont");
 				_font = content.Load<SpriteFont>(@"Fonts\MenuFont");
+
+				_carPictures = new List<Texture2D>();
+				_carPictures.Add(content.Load<Texture2D>(@"Graphics\Blocky"));
+				_carPictures.Add(content.Load<Texture2D>(@"Graphics\Curvy"));
+				_carPictures.Add(content.Load<Texture2D>(@"Graphics\Police"));
+				_carPictures.Add(content.Load<Texture2D>(@"Graphics\Bus"));
+				_carPictures.Add(content.Load<Texture2D>(@"Graphics\Trike"));
 
 				/*// TODO: Load any ResourceManagementMode.Automatic content
 				blockyCarModel = content.Load<Model>(@"Models\blocky car");
@@ -325,21 +333,23 @@ namespace AwesomeGame
 			{
 				case GameState.ChooseCar :
 					_spriteBatch.Begin();
-					_spriteBatch.DrawString(_titleFont, "AWESOME GAME", new Vector2(40, 100), Color.Blue);
+					_spriteBatch.DrawString(_titleFont, "AWESOME GAME", new Vector2(40, 20), Color.Blue);
 					
-					_spriteBatch.DrawString(_font, "Player One", new Vector2(50, 170), Color.Green);
-					int currentY = 200; int delta = 25; int counter = 0;
+					_spriteBatch.DrawString(_font, "Player One", new Vector2(50, 90), Color.Green);
+					int currentY = 110; int delta = 25; int counter = 0;
 					foreach (string carName in _availableCars)
 						DrawString(carName, GetRandomOffset(currentY += delta), 50, (counter++ == _selectedCarIndex1));
+					_spriteBatch.Draw(_carPictures[_selectedCarIndex1], new Vector2(50, currentY += delta + 25), Color.White);
 					if (_player1Ready)
-						DrawString("PLAYER ONE READY!", currentY += delta + 25, 50, Color.Yellow);
+						DrawString("PLAYER ONE READY!", currentY += delta + 250, 50, Color.Yellow);
 
-					_spriteBatch.DrawString(_font, "Player Two", new Vector2(450, 170), Color.Green);
-					currentY = 200; counter = 0;
+					_spriteBatch.DrawString(_font, "Player Two", new Vector2(450, 90), Color.Green);
+					currentY = 110; counter = 0;
 					foreach (string carName in _availableCars)
 						DrawString(carName, GetRandomOffset(currentY += delta), 450, (counter++ == _selectedCarIndex2));
+					_spriteBatch.Draw(_carPictures[_selectedCarIndex2], new Vector2(450, currentY += delta + 25), Color.White);
 					if (_player2Ready)
-						DrawString("PLAYER TWO READY!", currentY += delta + 25, 450, Color.Yellow);
+						DrawString("PLAYER TWO READY!", currentY += delta + 250, 450, Color.Yellow);
 
 					_spriteBatch.End();
 

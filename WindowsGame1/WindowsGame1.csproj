@@ -347,6 +347,36 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Graphics\Blocky.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>Blocky</Name>
+    </Content>
+    <Content Include="Graphics\Bus.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>Bus</Name>
+    </Content>
+    <Content Include="Graphics\Curvy.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>Curvy</Name>
+    </Content>
+    <Content Include="Graphics\Police.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>Police</Name>
+    </Content>
+    <Content Include="Graphics\Trike.bmp">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>TextureImporter</Importer>
+      <Processor>SpriteTextureProcessor</Processor>
+      <Name>Trike</Name>
+    </Content>
     <Content Include="Sound\Baa.wav">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Baa</Name>
