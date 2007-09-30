@@ -141,7 +141,7 @@ namespace AwesomeGame.Vehicles
 								// We've found an object in the lost if things,
 								// We've hit it
 								// It can be hit
-								velocity = Vector3.Zero;
+								velocity = -velocity;
 							}
 						}
 					}
