@@ -544,6 +544,12 @@
       <Processor>FontDescriptionProcessor</Processor>
       <Name>TitleFont</Name>
     </Content>
+    <Content Include="Fonts\VictoryFont.spritefont">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Name>VictoryFont</Name>
+    </Content>
     <None Include="Sound\Win\Sound Bank.xsb">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Sound Bank</Name>
