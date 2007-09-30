@@ -1,6 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
+
 
 namespace AwesomeGame.Vehicles
 {
@@ -40,6 +42,8 @@ namespace AwesomeGame.Vehicles
 		private GameObject nextCheckpoint;
 		private GameObject nextCheckpointArrow;
 
+		static Cue checkpointCheer;
+
 		public Car(Game game, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
 			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
 		{
@@ -53,6 +57,7 @@ namespace AwesomeGame.Vehicles
 			base.Initialize();
 
 			nextCheckpoint = this.GetService<Course>().getFirstCheckpoint();
+			this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
 		}
 
 		public void setNextCheckpointArrow(GameObject arrow)
@@ -172,7 +177,12 @@ namespace AwesomeGame.Vehicles
 			if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)this.nextCheckpoint))
 			{
 				// If we hit the checkpoint
+				this.GetService<Camera>().RemoveViewObject(this.nextCheckpoint);
 				this.nextCheckpoint = this.GetService<Course>().getNextCheckpoint(nextCheckpoint);
+				this.GetService<Camera>().AddViewObject(this.nextCheckpoint);
+
+				// Play a sound!
+				checkpointCheer = Sound.Play("Congrats");
 			}
 
 			this.nextCheckpointArrow.position = this.position;

@@ -118,6 +118,7 @@ namespace AwesomeGame
 		protected override void Initialize()
 		{
 			camera.Initialize();
+			Sound.Initialize();
 			base.Initialize();
 		}
 
@@ -178,6 +179,8 @@ namespace AwesomeGame
 
 			//update the camera
 			camera.Update(gameTime, graphics.GraphicsDevice);
+
+			Sound.Update();
 
 			base.Update(gameTime);
 		}
