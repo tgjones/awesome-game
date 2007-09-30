@@ -27,8 +27,9 @@ namespace AwesomeGame
 		private SpriteBatch _spriteBatch;
 		private SpriteFont _titleFont, _font;
 		private List<string> _availableCars;
-		private int _selectedCarIndex;
-		private GamePadState _lastGamePad1State;
+		private int _selectedCarIndex1, _selectedCarIndex2;
+		private bool _player1Ready, _player2Ready;
+		private GamePadState _lastGamePad1State, _lastGamePad2State;
 		private KeyboardState _lastKeyboardState;
 
 		private Terrain.SimpleTerrain _terrain;
@@ -173,26 +174,59 @@ namespace AwesomeGame
 		{
 			KeyboardState keyboardState = Keyboard.GetState();
 			GamePadState gamePad1State = GamePad.GetState(PlayerIndex.One);
+			GamePadState gamePad2State = GamePad.GetState(PlayerIndex.Two);
 
 			switch (_gameState)
 			{
 				case GameState.ChooseCar :
-					if (gamePad1State.DPad.Down == ButtonState.Pressed && (_lastGamePad1State == null || _lastGamePad1State.DPad.Down == ButtonState.Released))
-						_selectedCarIndex = Math.Min(_selectedCarIndex + 1, _availableCars.Count - 1);
-					if (gamePad1State.DPad.Up == ButtonState.Pressed && (_lastGamePad1State == null || _lastGamePad1State.DPad.Up == ButtonState.Released))
-						_selectedCarIndex = Math.Max(_selectedCarIndex - 1, 0);
-					if (keyboardState.IsKeyDown(Keys.Down) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.Down)))
-						_selectedCarIndex = Math.Min(_selectedCarIndex + 1, _availableCars.Count - 1);
-					if (keyboardState.IsKeyDown(Keys.Up) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.Up)))
-						_selectedCarIndex = Math.Max(_selectedCarIndex + 1, 0);
+					if (!_player1Ready)
+					{
+						int originalSelectedIndex = _selectedCarIndex1;
+						if (gamePad1State.DPad.Down == ButtonState.Pressed && (_lastGamePad1State == null || _lastGamePad1State.DPad.Down == ButtonState.Released))
+							_selectedCarIndex1 = Math.Min(_selectedCarIndex1 + 1, _availableCars.Count - 1);
+						if (gamePad1State.DPad.Up == ButtonState.Pressed && (_lastGamePad1State == null || _lastGamePad1State.DPad.Up == ButtonState.Released))
+							_selectedCarIndex1 = Math.Max(_selectedCarIndex1 - 1, 0);
+						if (keyboardState.IsKeyDown(Keys.Down) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.Down)))
+							_selectedCarIndex1 = Math.Min(_selectedCarIndex1 + 1, _availableCars.Count - 1);
+						if (keyboardState.IsKeyDown(Keys.Up) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.Up)))
+							_selectedCarIndex1 = Math.Max(_selectedCarIndex1 - 1, 0);
+						if (_selectedCarIndex1 != originalSelectedIndex)
+							Sound.Play("Chk");
 
-					if (gamePad1State.Buttons.A == ButtonState.Pressed || gamePad1State.Buttons.Start == ButtonState.Pressed
-						|| keyboardState.IsKeyDown(Keys.Enter))
+						if (gamePad1State.Buttons.A == ButtonState.Pressed || gamePad1State.Buttons.Start == ButtonState.Pressed
+							|| keyboardState.IsKeyDown(Keys.Enter))
+						{
+							_player1Ready = true;
+						}
+					}
+
+					if (!_player2Ready)
+					{
+						int originalSelectedIndex = _selectedCarIndex2;
+						if (gamePad2State.DPad.Down == ButtonState.Pressed && (_lastGamePad2State == null || _lastGamePad2State.DPad.Down == ButtonState.Released))
+							_selectedCarIndex2 = Math.Min(_selectedCarIndex2 + 1, _availableCars.Count - 1);
+						if (gamePad2State.DPad.Up == ButtonState.Pressed && (_lastGamePad2State == null || _lastGamePad2State.DPad.Up == ButtonState.Released))
+							_selectedCarIndex2 = Math.Max(_selectedCarIndex2 - 1, 0);
+						if (keyboardState.IsKeyDown(Keys.S) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.S)))
+							_selectedCarIndex2 = Math.Min(_selectedCarIndex2 + 1, _availableCars.Count - 1);
+						if (keyboardState.IsKeyDown(Keys.W) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.W)))
+							_selectedCarIndex2 = Math.Max(_selectedCarIndex2 - 1, 0);
+						if (_selectedCarIndex2 != originalSelectedIndex)
+							Sound.Play("Chk");
+
+						if ((gamePad2State.Buttons.A == ButtonState.Pressed) || gamePad2State.Buttons.Start == ButtonState.Pressed
+							|| (keyboardState.IsKeyDown(Keys.Space) && !_lastKeyboardState.IsKeyDown(Keys.Space)))
+						{
+							_player2Ready = true;
+						}
+					}
+
+					if (_player1Ready && _player2Ready)
 					{
 						this.Components.Add(_terrain);							//add terrain to component manager
 
 						// Add first car
-						_car1 = CreateCar(_selectedCarIndex, PlayerIndex.One);
+						_car1 = CreateCar(_selectedCarIndex1, PlayerIndex.One);
 						_car1.position.Y = 110.0f;
 						_car1.position.Z = -10.0f;
 						_car1.collidable = true;
@@ -206,10 +240,10 @@ namespace AwesomeGame
 						_checkpointArrow1.collidable = false;
 						this.Components.Add(_checkpointArrow1);
 
-						if (false)
+						if (true)
 						{
 							// Add second car
-							_car2 = new Vehicles.Trike(this, PlayerIndex.Two);
+							_car2 = CreateCar(_selectedCarIndex2, PlayerIndex.Two);
 							_car2.position.Y = 110.0f;
 							_car2.position.Z = 10.0f;
 							_car2.collidable = true;
@@ -234,15 +268,16 @@ namespace AwesomeGame
 
 						_gameState = GameState.Game;
 					}
+
 					break;
 				case GameState.Game :
 					//update the camera
 					camera.Update(gameTime, graphics.GraphicsDevice);
 
-					Sound.Update();
-
 					break;
 			}
+
+			Sound.Update();
 
 			// Allows the game to exit
 			if (gamePad1State.Buttons.Back == ButtonState.Pressed)
@@ -252,6 +287,7 @@ namespace AwesomeGame
 				this.Exit();
 
 			_lastGamePad1State = gamePad1State;
+			_lastGamePad2State = gamePad2State;
 			_lastKeyboardState = keyboardState;
 
 			base.Update(gameTime);
@@ -290,9 +326,21 @@ namespace AwesomeGame
 				case GameState.ChooseCar :
 					_spriteBatch.Begin();
 					_spriteBatch.DrawString(_titleFont, "AWESOME GAME", new Vector2(40, 100), Color.Blue);
-					int currentY = 160; int delta = 25; int counter = 0;
+					
+					_spriteBatch.DrawString(_font, "Player One", new Vector2(50, 170), Color.Green);
+					int currentY = 200; int delta = 25; int counter = 0;
 					foreach (string carName in _availableCars)
-						DrawString(carName, GetRandomOffset(currentY += delta), (counter++ == _selectedCarIndex));
+						DrawString(carName, GetRandomOffset(currentY += delta), 50, (counter++ == _selectedCarIndex1));
+					if (_player1Ready)
+						DrawString("PLAYER ONE READY!", currentY += delta + 25, 50, Color.Yellow);
+
+					_spriteBatch.DrawString(_font, "Player Two", new Vector2(450, 170), Color.Green);
+					currentY = 200; counter = 0;
+					foreach (string carName in _availableCars)
+						DrawString(carName, GetRandomOffset(currentY += delta), 450, (counter++ == _selectedCarIndex2));
+					if (_player2Ready)
+						DrawString("PLAYER TWO READY!", currentY += delta + 25, 450, Color.Yellow);
+
 					_spriteBatch.End();
 
 					break;
@@ -310,9 +358,14 @@ namespace AwesomeGame
 				return value;
 		}
 
-		private void DrawString(string value, int y, bool selected)
+		private void DrawString(string value, int y, int x, bool selected)
 		{
-			_spriteBatch.DrawString(_font, value, new Vector2(GetRandomOffset(50), y), (selected) ? Color.Red : Color.White);
+			DrawString(value, y, x, (selected) ? Color.Red : Color.White);
+		}
+
+		private void DrawString(string value, int y, int x, Color colour)
+		{
+			_spriteBatch.DrawString(_font, value, new Vector2(GetRandomOffset(x), y), colour);
 		}
 	}
 
