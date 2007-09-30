@@ -127,7 +127,9 @@ namespace AwesomeGame.Terrain
 				objectModel[248] = "Building7"; objectScale[248] = 4.0f; objectCollideable[248] = true; objectMoveable[248] = false;
 				objectModel[247] = "Building8"; objectScale[247] = 4.0f; objectCollideable[247] = true; objectMoveable[247] = false;
 				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f; objectCollideable[246] = false;
-				objectModel[245] = "bridge"; objectScale[246] = 1.0f; objectCollideable[245] = false;
+				objectModel[245] = "bridge";	objectScale[245] = 5.0f; objectCollideable[245] = false;
+
+				objectModel[243] = "sheep"; objectScale[243] = 3.0f; objectCollideable[243] = true; objectMoveable[243] = true;
 
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
@@ -153,12 +155,12 @@ namespace AwesomeGame.Terrain
 							newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
 							this.Game.Components.Add(newCone);	//the physics need to be added to the components
 						}
-						if (objectIndex == 244)
+						if (objectIndex == 243)
 						{
 							// sheep
-							Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Sheep, newObjectPos);
-							newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
-							this.Game.Components.Add(newCone);	//the physics need to be added to the components
+							Physics.ParticleSystem newSheep = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Sheep, newObjectPos);
+							newSheep.graphicObject = newObject;	//tell it to use the new graphics object for display
+							this.Game.Components.Add(newSheep);	//the physics need to be added to the components
 						}
 
 						//add the objects to the game components

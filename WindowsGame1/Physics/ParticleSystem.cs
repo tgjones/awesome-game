@@ -157,6 +157,16 @@ namespace AwesomeGame.Physics
 			if (deltaTime == 0)
 				return;
 
+			if (_objectType == enumPhysicsObjects.Sheep)
+			{
+				//do a random walk (sometimes(
+				Random random = new Random((int)gameTime.ElapsedGameTime.TotalMilliseconds + (int)_particles[0].Position.X);
+				if (random.Next(0, 1000) == 0 || _wanderVector == Vector3.Zero)
+				{
+					_wanderVector = Vector3.Transform(new Vector3(0.2f,0,0), Matrix.CreateRotationY(MathHelper.ToRadians((float)random.Next(0, 360))));
+				}
+			}
+
 			deltaTime = 1 / deltaTime;
 
 			// line 5
@@ -274,7 +284,9 @@ namespace AwesomeGame.Physics
 		private static Vector3 CalculateExternalForces(Particle p)
 		{
 			// not efficient at all
-			return new Vector3(0, -1f * p.Mass, 0);
+			Vector3 force = new Vector3(0, -1f * p.Mass, 0);
+
+			return force;
 		}
 
 		private void DampVelocities()
@@ -345,8 +357,11 @@ namespace AwesomeGame.Physics
 			{
 				if (p.WasInvolvedInCollision)
 				{
-					p.Velocity.X *= DAMPING;
-					p.Velocity.Z *= DAMPING;
+					//p.Velocity.X *= DAMPING;
+					//p.Velocity.Z *= DAMPING;
+
+					//tend towards _wandervector (usually zero, but might be a random walk)
+					p.Velocity = ((p.Velocity - _wanderVector) * DAMPING) + _wanderVector;
 				}
 			}
 		}
