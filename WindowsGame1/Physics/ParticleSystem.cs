@@ -20,6 +20,8 @@ namespace AwesomeGame.Physics
 		GameObject _graphicObject;
 		Vector3 _wanderVector = Vector3.Zero;		// vector describing what to wander towards (sheep only)
 
+		private bool _collidedWithMesh;				//collided with mesh (not the map)
+
 		enumPhysicsObjects _objectType = enumPhysicsObjects.Cone;
 
 		public readonly int SolverIterations;
@@ -212,6 +214,13 @@ namespace AwesomeGame.Physics
 			foreach (Particle p in _particles)
 				p.WasInvolvedInCollision = false;
 
+			if (_collidedWithMesh == true)
+			{
+				_collidedWithMesh = false;
+				_wanderVector = Vector3.Zero;
+				Sound.Play("Baa");
+			}
+
 			Camera camera = (Camera) this.Game.Services.GetService(typeof(Camera));
 			_basicEffect.World = Matrix.Identity;
 			_basicEffect.View = camera.ViewMatrix;
@@ -307,6 +316,7 @@ namespace AwesomeGame.Physics
 					{
 						collisionConstraints.Add(new SphereCollisionConstraint(this, p, mesh.BoundingSphere));
 						p.WasInvolvedInCollision = true;
+						this._collidedWithMesh = true;
 					}
 				}
 			}
