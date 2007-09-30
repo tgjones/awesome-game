@@ -39,6 +39,7 @@ namespace AwesomeGame.Vehicles
 		private const int WHEEL_RR = 3;
 
 		private PlayerIndex playerIndex;
+		private CarControlState previousControlState;
 		public Vector3 velocity;
 		public Vector3 rotation;
 
@@ -76,7 +77,7 @@ namespace AwesomeGame.Vehicles
 			if (gameTime.ElapsedGameTime > TimeSpan.Zero)
 			{
 				float deltaTime = (float) (1.0f / gameTime.ElapsedGameTime.TotalMilliseconds);
-				CarControlState controlState = GetControlState(playerIndex);
+				CarControlState controlState = GetControlState(playerIndex, deltaTime);
 
 				// Map engine and brake forces
 				Vector3[] wheelForces = new Vector3[4];
@@ -308,7 +309,7 @@ namespace AwesomeGame.Vehicles
 				Matrix.CreateTranslation(steer != 0 ? FRONT_AXLE_POS : 0, -height, 0);
 		}
 
-		private CarControlState GetControlState(PlayerIndex playerIndex)
+		private CarControlState GetControlState(PlayerIndex playerIndex, float deltaTime)
 		{
 			CarControlState controlState = new CarControlState();
 			GamePadState padState = GamePad.GetState(playerIndex);
@@ -330,18 +331,21 @@ namespace AwesomeGame.Vehicles
 			}
 
 			// Left-stick or keyboard left-right arrows to steer
-			controlState.Steer = padState.ThumbSticks.Left.X;
+			float steer = padState.ThumbSticks.Left.X;
 			if (playerIndex == PlayerIndex.One)
 			{
-				if (keyState.IsKeyDown(Keys.Right)) controlState.Steer += 1.0f;
-				if (keyState.IsKeyDown(Keys.Left)) controlState.Steer -= 1.0f;
+				if (keyState.IsKeyDown(Keys.Right)) steer += 1.0f;
+				if (keyState.IsKeyDown(Keys.Left)) steer -= 1.0f;
 			}
 			else
 			{
-				if (keyState.IsKeyDown(Keys.D)) controlState.Steer += 1.0f;
-				if (keyState.IsKeyDown(Keys.A)) controlState.Steer -= 1.0f;
+				if (keyState.IsKeyDown(Keys.D)) steer += 1.0f;
+				if (keyState.IsKeyDown(Keys.A)) steer -= 1.0f;
 			}
-			controlState.Steer *= 0.2f;
+			steer *= 0.3f;
+
+			controlState.Steer = previousControlState.Steer +
+				(steer - previousControlState.Steer) * Math.Min(deltaTime * 2.0f, 1.0f);
 
 			// Horn on button B or right control
 			// Insult on button Y or End
@@ -358,6 +362,7 @@ namespace AwesomeGame.Vehicles
 				if (keyState.IsKeyDown(Keys.D3)) controlState.Insult = true;
 			}
 
+			previousControlState = controlState;
 			return controlState;
 		}
 	}
