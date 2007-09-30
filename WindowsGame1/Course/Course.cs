@@ -63,7 +63,7 @@ namespace AwesomeGame
 			else
 			{
 				Random random = new Random();
-				return random.Next(-1, +1);
+				return random.Next(-1, +2);
 			}
 		}
 	}

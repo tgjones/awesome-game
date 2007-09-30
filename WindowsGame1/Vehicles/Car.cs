@@ -185,7 +185,7 @@ namespace AwesomeGame.Vehicles
 					if ((this.insult == null) || (!this.insult.IsPlaying))
 					{
 						Random random = new Random(gameTime.TotalRealTime.Milliseconds);
-						int whichInsult = random.Next(1, 3);
+						int whichInsult = random.Next(1, 4);
 						switch (whichInsult)
 						{
 							case 1:
