@@ -80,8 +80,6 @@ namespace AwesomeGame.Vehicles
 
 				// Map engine and brake forces
 				Vector3[] wheelForces = new Vector3[4];
-				//wheelForces[WHEEL_FL].X += controlState.Accel * ENGINE_TORQUE / 4;
-				//wheelForces[WHEEL_FR].X += controlState.Accel * ENGINE_TORQUE / 4;
 				wheelForces[WHEEL_RL].X += controlState.Accel * ENGINE_TORQUE / 2;
 				wheelForces[WHEEL_RR].X += controlState.Accel * ENGINE_TORQUE / 2;
 				wheelForces[WHEEL_FL].X -= controlState.Brake * ENGINE_TORQUE / 4;
@@ -197,9 +195,9 @@ namespace AwesomeGame.Vehicles
 
 				// Locate body
 				orientation.Z = (float)Math.Atan((flHeight + rlHeight - (frHeight + rrHeight)) / WHEELBASE_TRACK / 2)
-					+ (float)Math.Asin(-acceleration.Z / MASS / WHEELBASE_TRACK);
+					+ 3.0f * (float)Math.Asin(-acceleration.Z / MASS / WHEELBASE_TRACK);
 				orientation.X = (float)Math.Atan((rlHeight + rrHeight - (flHeight + frHeight)) / WHEELBASE_LENGTH / 2)
-					+ (float)Math.Asin(-acceleration.X / MASS / WHEELBASE_LENGTH);
+					+ 3.0f * (float)Math.Asin(-acceleration.X / MASS / WHEELBASE_LENGTH);
 
 				// Configure the render
 				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - ((flHeight + frHeight) / 2), controlState.Steer,
