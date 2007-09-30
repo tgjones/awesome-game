@@ -128,6 +128,25 @@ namespace AwesomeGame.Vehicles
 				rotation *= (float)Math.Pow(AERO_EFFICIENCY, deltaTime);
 				velocity *= (float)Math.Pow(AERO_EFFICIENCY, deltaTime);
 
+				foreach (GameComponent anObject in this.Game.Components)
+				{
+					if (anObject.Equals(this))
+						continue;
+					if (anObject is GameObject)
+					{
+						if (((GameObject)anObject).collidable)
+						{
+							if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)anObject))
+							{
+								// We've found an object in the lost if things,
+								// We've hit it
+								// It can be hit
+								velocity = Vector3.Zero;
+							}
+						}
+					}
+				}
+
 				orientation.Y += rotation.Y;
 				velocity.Y -= 9.8f * deltaTime; // Gravity
 				position += velocity * deltaTime;
@@ -202,6 +221,7 @@ namespace AwesomeGame.Vehicles
 						}
 					}
 				}
+			// End if some time has lapsed
 			}
 
 			if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)this.nextCheckpoint))
@@ -213,7 +233,7 @@ namespace AwesomeGame.Vehicles
 
 				// Play a sound!
 				checkpointCheer = Sound.Play("Congrats");
-			}
+			}	
 
 			this.nextCheckpointArrow.position = this.position;
 			Vector3 toCheckpoint = this.nextCheckpoint.position - this.position;

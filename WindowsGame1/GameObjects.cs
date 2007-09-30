@@ -11,6 +11,8 @@ namespace AwesomeGame
 	{
 		public Vector3 position;
 		public Vector3 orientation;
+		public bool collidable;
+		public bool moveable;
 
 		public GameObject(Game game)
 			: base(game)

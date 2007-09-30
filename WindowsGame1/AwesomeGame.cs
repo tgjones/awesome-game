@@ -37,6 +37,7 @@ namespace AwesomeGame
 
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
 			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\level1_heightmap", @"Terrain\Textures\level1_texture", @"Terrain\Textures\level1_gameobjects");
+			gameTerrain.collidable = false;
 			this.Components.Add(gameTerrain);							//add terrain to component manager
 			this.Services.AddService(typeof(Terrain.SimpleTerrain), gameTerrain);		//make terrain available as a service.
 
@@ -44,12 +45,15 @@ namespace AwesomeGame
 			GameObject car = new Vehicles.Police(this, PlayerIndex.One);
 			car.position.Y = 110.0f;
 			car.position.Z = -10.0f;
+			car.collidable = true;
+			car.moveable = true;
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
 			Mesh checkpointArrow = new Models.CheckpointArrow(this);
 			((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
 			checkpointArrow.CastsShadow = false;
+			checkpointArrow.collidable = false;
 			this.Components.Add(checkpointArrow);
 
 			if (true)
@@ -58,12 +62,15 @@ namespace AwesomeGame
 				car = new Vehicles.Trike(this, PlayerIndex.Two);
 				car.position.Y = 110.0f;
 				car.position.Z = 10.0f;
+				car.collidable = true;
+				car.moveable = true;
 				this.Components.Add(car);
 				camera.AddViewObject(car);
 
 				checkpointArrow = new Models.CheckpointArrow(this);
 				((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
 				checkpointArrow.CastsShadow = false;
+				checkpointArrow.collidable = false;
 				this.Components.Add(checkpointArrow);
 			}
 
