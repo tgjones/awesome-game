@@ -125,8 +125,8 @@ namespace AwesomeGame.Vehicles
 				groundHeight = GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 				if (groundHeight > position.Y)
 				{
+					velocity.Y += (groundHeight - position.Y) / deltaTime;
 					position.Y = groundHeight;
-					velocity.Y = 0;
 				}
 
 				// Locate wheels
