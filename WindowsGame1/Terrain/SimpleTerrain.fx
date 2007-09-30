@@ -77,13 +77,7 @@ struct VertexShaderInput
 	float2 TexCoords : TEXCOORD;
 };
 
-struct VertexShaderOutput20
-{
-	float4 Position  : POSITION;
-	float2 TexCoords : TEXCOORD1;
-};
-
-struct VertexShaderOutput11
+struct VertexShaderOutput
 {
 	float4 Position  : POSITION;
 	float2 TexCoords : TEXCOORD1;
@@ -101,11 +95,11 @@ struct PixelShaderOutput
 // functions
 //-----------------------------------------------------------------------------
 
-VertexShaderOutput11 VertexShader11(VertexShaderInput input)
+VertexShaderOutput VertexShader(VertexShaderInput input)
 {
 	float4 inputPos = float4(input.Position, 1);
 	
-	VertexShaderOutput11 output;
+	VertexShaderOutput output;
 	
 	// pass vertex position through as usual
   output.Position = mul(inputPos, WorldViewProjection);
@@ -115,13 +109,31 @@ VertexShaderOutput11 VertexShader11(VertexShaderInput input)
   
 	output.Diffuse = LightDiffuse * saturate(dot(LightDirection, input.Normal));
 	
+	output.ShadowTexCoords = 0;
+  
+  return output;
+}
+
+VertexShaderOutput VertexShaderShadowed(VertexShaderInput input)
+{
+	VertexShaderOutput output = VertexShader(input);
+	
 	// coordinates for shadowmap
+	float4 inputPos = float4(input.Position, 1);
   output.ShadowTexCoords = mul(inputPos, ShadowMapProjector);
   
   return output;
 }
 
-PixelShaderOutput PixelShader11(VertexShaderOutput11 input)
+PixelShaderOutput PixelShader(VertexShaderOutput input)
+{	
+	PixelShaderOutput output;
+	output.Colour = saturate(input.Diffuse + LightAmbient) * tex2D(GrassSampler, input.TexCoords);
+	output.Colour.a = 1;
+	return output;
+}
+
+PixelShaderOutput PixelShaderShadowed(VertexShaderOutput input)
 {
 	float fTexelSize = 1.0f / ShadowMapSize;
 
@@ -143,13 +155,9 @@ PixelShaderOutput PixelShader11(VertexShaderOutput11 input)
 
 	// multiply diffuse with shadowmap lookup value
 	input.Diffuse *= lightingFactor;
-	//input.Diffuse.a = 0.1;
 	
-	PixelShaderOutput output;
-	output.Colour = saturate(input.Diffuse + LightAmbient) * tex2D(GrassSampler, input.TexCoords);
-	//output.Colour = input.Diffuse;
-	output.Colour.a = 1;
-	//output.Colour = float4(tex2D(ShadowMapSampler, shadowTexCoords).r, 0, 0, 1);
+	// final colour
+	PixelShaderOutput output = PixelShader(input);
 	return output;
 }
 
@@ -158,14 +166,27 @@ PixelShaderOutput PixelShader11(VertexShaderOutput11 input)
 // techniques
 //-----------------------------------------------------------------------------
 
-technique PerVertexLighting
+technique Shadowed
 {
 	pass Pass0
 	{
 		ZEnable = true;
 		FillMode = SOLID;
 		CullMode = CW;
-		VertexShader = compile vs_1_1 VertexShader11();
-		PixelShader = compile ps_2_0 PixelShader11();
+		VertexShader = compile vs_1_1 VertexShaderShadowed();
+		PixelShader = compile ps_2_0 PixelShaderShadowed();
 	}
 }
+
+technique Normal
+{
+	pass Pass0
+	{
+		ZEnable = true;
+		FillMode = SOLID;
+		CullMode = CW;
+		VertexShader = compile vs_1_1 VertexShader();
+		PixelShader = compile ps_1_1 PixelShader();
+	}
+}
+

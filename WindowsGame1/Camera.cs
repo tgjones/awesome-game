@@ -71,7 +71,7 @@ namespace AwesomeGame
 				(float)MathHelper.ToRadians(45),
 				(float)graphicsDevice.Viewport.Width / (float)graphicsDevice.Viewport.Height,
 				1,
-				position.Y - minY + 8000);
+				position.Y - minY + 1000);
 		}
 
 		public void AddViewObject(GameObject viewObject)

@@ -67,6 +67,11 @@ namespace AwesomeGame.Terrain
 				ContentManager content = (ContentManager)this.Game.Services.GetService(typeof(ContentManager));
 
 				_effect = this.GetService<ContentManager>().Load<Effect>(@"Terrain\SimpleTerrain");
+				foreach (EffectTechnique technique in _effect.Techniques.GetValidTechniques())
+				{
+					_effect.CurrentTechnique = technique;
+					break;
+				}
 
 				// if we have a height map, use this for the dimensions
 				if (_heightMapName != null)
@@ -269,11 +274,13 @@ namespace AwesomeGame.Terrain
 		public override void Draw(GameTime gameTime)
 		{
 			Sunlight light = GetService<Sunlight>();
-			_effect.Parameters["ShadowMapProjector"].SetValue(light.ViewMatrix * light.ProjectionMatrix * _textureScaleAndOffsetMatrix);
+			if (light != null)
+				_effect.Parameters["ShadowMapProjector"].SetValue(light.ViewMatrix * light.ProjectionMatrix * _textureScaleAndOffsetMatrix);
 
 			// render geometry with shadow
 			ShadowMap shadowMap = GetService<ShadowMap>();
-			_effect.Parameters["ShadowMap"].SetValue(shadowMap.ShadowMapTexture);
+			if (shadowMap != null)
+				_effect.Parameters["ShadowMap"].SetValue(shadowMap.ShadowMapTexture);
 
 			//this.GraphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 			this.GraphicsDevice.VertexDeclaration = _vertexDeclaration;

@@ -74,8 +74,11 @@ namespace AwesomeGame
 			this.Services.AddService(typeof(Course), course);
 
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
-			this.Components.Add(new Sunlight(this));
-			this.Components.Add(new ShadowMap(this));
+			if (Environment.MachineName != "Xavier")
+			{
+				this.Components.Add(new Sunlight(this));
+				this.Components.Add(new ShadowMap(this));
+			}
 		}
 
 		public bool CheckForCollisions(Mesh object1, Mesh object2 )

@@ -60,8 +60,9 @@ namespace AwesomeGame
 			foreach (GameComponent gameComponent in this.Game.Components)
 				if (gameComponent is Vehicles.Car)
 				{
-					positions.Add(((GameObject) gameComponent).position - new Vector3(10, 10, 10));
-					positions.Add(((GameObject) gameComponent).position + new Vector3(10, 10, 10));
+					const int FUDGE_SHADOW_SIZE = 50;
+					positions.Add(((GameObject) gameComponent).position - new Vector3(FUDGE_SHADOW_SIZE));
+					positions.Add(((GameObject) gameComponent).position + new Vector3(FUDGE_SHADOW_SIZE));
 				}
 			BoundingBox sceneBoundingBox = BoundingBox.CreateFromPoints(positions);
 			Vector3[] boundingBoxCorners = sceneBoundingBox.GetCorners();
