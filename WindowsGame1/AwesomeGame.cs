@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using AwesomeGame;
+using System.Collections.Specialized;
 #endregion
 
 namespace AwesomeGame
@@ -21,6 +22,21 @@ namespace AwesomeGame
 		ContentManager content;
 		Camera camera;
 		Course course;
+		GameState _gameState = GameState.ChooseCar;
+
+		private SpriteBatch _spriteBatch;
+		private SpriteFont _titleFont, _font;
+		private List<string> _availableCars;
+		private int _selectedCarIndex;
+		private GamePadState _lastGamePad1State;
+		private KeyboardState _lastKeyboardState;
+
+		private Terrain.SimpleTerrain _terrain;
+		private Vehicles.Car _car1, _car2;
+		private Mesh _checkpointArrow1, _checkpointArrow2;
+		private Mesh _barrel;
+		private Sunlight _sunlight;
+		private ShadowMap _shadowMap;
 
 		public AwesomeGame()
 		{
@@ -36,46 +52,12 @@ namespace AwesomeGame
 			this.Services.AddService(typeof(Camera), camera);
 
 			//this.Components.Add(new Terrain.SimpleTerrain(this, 8, @"Terrain\Textures\grass"));
-			Terrain.SimpleTerrain gameTerrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\level1_heightmap", @"Terrain\Textures\level1_texture", @"Terrain\Textures\level1_gameobjects");
-			gameTerrain.collidable = false;
-			this.Components.Add(gameTerrain);							//add terrain to component manager
-			this.Services.AddService(typeof(Terrain.SimpleTerrain), gameTerrain);		//make terrain available as a service.
+			_terrain = new Terrain.SimpleTerrain(this, @"Terrain\Textures\level1_heightmap", @"Terrain\Textures\level1_texture", @"Terrain\Textures\level1_gameobjects");
+			_terrain.collidable = false;
+			this.Services.AddService(typeof(Terrain.SimpleTerrain), _terrain);		//make terrain available as a service.
 
-			// Add first car
-			GameObject car = new Vehicles.Police(this, PlayerIndex.One);
-			car.position.Y = 150.0f;
-			car.position.Z = -10.0f;
-			car.collidable = true;
-			car.moveable = true;
-			this.Components.Add(car);
-			camera.AddViewObject(car);
+			_barrel = new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f)));
 
-			Mesh checkpointArrow = new Models.CheckpointArrow(this);
-			((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
-			checkpointArrow.CastsShadow = false;
-			checkpointArrow.collidable = false;
-			this.Components.Add(checkpointArrow);
-
-			if (true)
-			{
-				// Add second car
-				car = new Vehicles.Trike(this, PlayerIndex.Two);
-				car.position.Y = 150.0f;
-				car.position.Z = 10.0f;
-				car.collidable = true;
-				car.moveable = true;
-				this.Components.Add(car);
-				camera.AddViewObject(car);
-
-				checkpointArrow = new Models.CheckpointArrow(this);
-				((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
-				checkpointArrow.CastsShadow = false;
-				checkpointArrow.collidable = false;
-				this.Components.Add(checkpointArrow);
-			}
-
-			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
-			
 			// Get some sort of checkpoint based course going on
 			course = new Course(this);
 			this.Services.AddService(typeof(Course), course);
@@ -83,9 +65,16 @@ namespace AwesomeGame
 			//this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml", new Vector3(0,200,0)));
 			if (Environment.MachineName != "BARNEY-DESKTOP")
 			{
-				this.Components.Add(new Sunlight(this));
-				this.Components.Add(new ShadowMap(this));
+				_sunlight = new Sunlight(this);
+				_shadowMap = new ShadowMap(this);
 			}
+
+			_availableCars = new List<string>();
+			_availableCars.Add("Less Blocky Car 2");
+			_availableCars.Add("Curvy Car");
+			_availableCars.Add("Police Car");
+			_availableCars.Add("Schoolbus");
+			_availableCars.Add("Trike");
 		}
 
 		public bool CheckForCollisions(Mesh object1, Mesh object2 )
@@ -138,6 +127,10 @@ namespace AwesomeGame
 		{
 			if (loadAllContent)
 			{
+				_spriteBatch = new SpriteBatch(this.graphics.GraphicsDevice);
+				_titleFont = content.Load<SpriteFont>(@"Fonts\TitleFont");
+				_font = content.Load<SpriteFont>(@"Fonts\MenuFont");
+
 				/*// TODO: Load any ResourceManagementMode.Automatic content
 				blockyCarModel = content.Load<Model>(@"Models\blocky car");
 
@@ -178,21 +171,110 @@ namespace AwesomeGame
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime gameTime)
 		{
+			KeyboardState keyboardState = Keyboard.GetState();
+			GamePadState gamePad1State = GamePad.GetState(PlayerIndex.One);
+
+			switch (_gameState)
+			{
+				case GameState.ChooseCar :
+					if (gamePad1State.DPad.Down == ButtonState.Pressed && (_lastGamePad1State == null || _lastGamePad1State.DPad.Down == ButtonState.Released))
+						_selectedCarIndex = Math.Min(_selectedCarIndex + 1, _availableCars.Count - 1);
+					if (gamePad1State.DPad.Up == ButtonState.Pressed && (_lastGamePad1State == null || _lastGamePad1State.DPad.Up == ButtonState.Released))
+						_selectedCarIndex = Math.Max(_selectedCarIndex - 1, 0);
+					if (keyboardState.IsKeyDown(Keys.Down) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.Down)))
+						_selectedCarIndex = Math.Min(_selectedCarIndex + 1, _availableCars.Count - 1);
+					if (keyboardState.IsKeyDown(Keys.Up) && (_lastKeyboardState == null || !_lastKeyboardState.IsKeyDown(Keys.Up)))
+						_selectedCarIndex = Math.Max(_selectedCarIndex + 1, 0);
+
+					if (gamePad1State.Buttons.A == ButtonState.Pressed || gamePad1State.Buttons.Start == ButtonState.Pressed
+						|| keyboardState.IsKeyDown(Keys.Enter))
+					{
+						this.Components.Add(_terrain);							//add terrain to component manager
+
+						// Add first car
+						_car1 = CreateCar(_selectedCarIndex, PlayerIndex.One);
+						_car1.position.Y = 110.0f;
+						_car1.position.Z = -10.0f;
+						_car1.collidable = true;
+						_car1.moveable = true;
+						this.Components.Add(_car1);
+						camera.AddViewObject(_car1);
+
+						_checkpointArrow1 = new Models.CheckpointArrow(this);
+						_car1.setNextCheckpointArrow(_checkpointArrow1);
+						_checkpointArrow1.CastsShadow = false;
+						_checkpointArrow1.collidable = false;
+						this.Components.Add(_checkpointArrow1);
+
+						if (false)
+						{
+							// Add second car
+							_car2 = new Vehicles.Trike(this, PlayerIndex.Two);
+							_car2.position.Y = 110.0f;
+							_car2.position.Z = 10.0f;
+							_car2.collidable = true;
+							_car2.moveable = true;
+							this.Components.Add(_car2);
+							camera.AddViewObject(_car2);
+
+							_checkpointArrow2 = new Models.CheckpointArrow(this);
+							_car2.setNextCheckpointArrow(_checkpointArrow2);
+							_checkpointArrow2.CastsShadow = false;
+							_checkpointArrow2.collidable = false;
+							this.Components.Add(_checkpointArrow2);
+						}
+
+						this.Components.Add(_barrel);
+
+						if (_sunlight != null)
+							this.Components.Add(_sunlight);
+
+						if (_shadowMap != null)
+							this.Components.Add(_shadowMap);
+
+						_gameState = GameState.Game;
+					}
+					break;
+				case GameState.Game :
+					//update the camera
+					camera.Update(gameTime, graphics.GraphicsDevice);
+
+					Sound.Update();
+
+					break;
+			}
+
 			// Allows the game to exit
-			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+			if (gamePad1State.Buttons.Back == ButtonState.Pressed)
 				this.Exit();
 
-			if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+			if (keyboardState.IsKeyDown(Keys.Escape))
 				this.Exit();
 
-			//update the camera
-			camera.Update(gameTime, graphics.GraphicsDevice);
-
-			Sound.Update();
+			_lastGamePad1State = gamePad1State;
+			_lastKeyboardState = keyboardState;
 
 			base.Update(gameTime);
 		}
 
+		private Vehicles.Car CreateCar(int selectedIndex, PlayerIndex player)
+		{
+			switch (selectedIndex)
+			{
+				case 0:
+					return new Vehicles.Blocky(this, player);
+				case 1:
+					return new Vehicles.Curvy(this, player);
+				case 2:
+					return new Vehicles.Police(this, player);
+				case 3:
+					return new Vehicles.SchoolBus(this, player);
+				case 4:
+					return new Vehicles.Trike(this, player);
+				default :
+					throw new NotImplementedException();
+			}
+		}
 
 		/// <summary>
 		/// This is called when the game should draw itself.
@@ -200,8 +282,43 @@ namespace AwesomeGame
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
+			_frameCount++;
+
 			graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
+			switch (_gameState)
+			{
+				case GameState.ChooseCar :
+					_spriteBatch.Begin();
+					_spriteBatch.DrawString(_titleFont, "AWESOME GAME", new Vector2(40, 100), Color.Blue);
+					int currentY = 160; int delta = 25; int counter = 0;
+					foreach (string carName in _availableCars)
+						DrawString(carName, GetRandomOffset(currentY += delta), (counter++ == _selectedCarIndex));
+					_spriteBatch.End();
+
+					break;
+			}
 			base.Draw(gameTime);
 		}
+
+		private long _frameCount;
+
+		private int GetRandomOffset(int value)
+		{
+			if (_frameCount % 5 == 0)
+				return value + new Random(Environment.TickCount * 1000 + value).Next(-2, 3);
+			else
+				return value;
+		}
+
+		private void DrawString(string value, int y, bool selected)
+		{
+			_spriteBatch.DrawString(_font, value, new Vector2(GetRandomOffset(50), y), (selected) ? Color.Red : Color.White);
+		}
+	}
+
+	public enum GameState
+	{
+		ChooseCar,
+		Game
 	}
 }

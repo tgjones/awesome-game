@@ -497,6 +497,18 @@
       <Processor>ModelProcessor</Processor>
       <Name>sheep</Name>
     </Content>
+    <Content Include="Fonts\MenuFont.spritefont">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Name>MenuFont</Name>
+    </Content>
+    <Content Include="Fonts\TitleFont.spritefont">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Name>TitleFont</Name>
+    </Content>
     <None Include="Sound\Win\Sound Bank.xsb">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Sound Bank</Name>

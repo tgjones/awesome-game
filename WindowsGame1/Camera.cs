@@ -61,8 +61,8 @@ namespace AwesomeGame
 			float aspectRatio = (float) graphicsDevice.Viewport.Width / (float) graphicsDevice.Viewport.Height;
 			position = new Vector3(
 				(float)sumX / viewObjects.Count,
-				(float) Math.Sqrt((float) ((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ) * (aspectRatio * aspectRatio))) * (float) Math.Tan(MathHelper.ToRadians(45f)) + 20 + maxY + 150,
-				(float)sumZ / viewObjects.Count + 30);
+				(float) Math.Sqrt((float) ((maxX - minX) * (maxX - minX)) + ((maxZ - minZ) * (maxZ - minZ) * (aspectRatio * aspectRatio))) * (float) Math.Tan(MathHelper.ToRadians(45f)) + 20 + maxY + 50,
+				(float)sumZ / viewObjects.Count + 60);
 			lookAt = new Vector3(sumX / viewObjects.Count, maxY, sumZ / viewObjects.Count);
 			cameraUp = new Vector3(0, 0, -1);
 
