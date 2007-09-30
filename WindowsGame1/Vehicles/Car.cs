@@ -125,7 +125,16 @@ namespace AwesomeGame.Vehicles
 				groundHeight = GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 				if (groundHeight > position.Y)
 				{
+					// Work out the vector length
+					double speed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
+					speed = Math.Sqrt(speed * speed + velocity.Y * velocity.Y);
+					
+					// Redirect the vector to compensate for the collision
 					velocity.Y += (groundHeight - position.Y) / deltaTime;
+					double newSpeed = Math.Sqrt(velocity.X * velocity.X + velocity.Z * velocity.Z);
+					newSpeed = Math.Sqrt(newSpeed * newSpeed + velocity.Y * velocity.Y);
+					velocity *= (float)(speed / newSpeed);
+
 					position.Y = groundHeight;
 				}
 
