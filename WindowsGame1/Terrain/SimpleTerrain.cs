@@ -135,7 +135,7 @@ namespace AwesomeGame.Terrain
 						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObjectPos);
 
 						GameObject newObject;
-						newObject = new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans);
+						newObject = CreateMesh(this.Game, objectModel[objects[i].R], trans);
 
 						// attach the cone to a particle system
 						if (objectIndex == 255 && coneCount < 4)
@@ -241,6 +241,14 @@ namespace AwesomeGame.Terrain
 			}
 		}
 
+		private Mesh CreateMesh(Game game, string filename, Matrix trans)
+		{
+			if (filename == "Cone")
+				return new Models.Cone(game, trans);
+			else
+				return new Mesh(game, @"Models\" + filename, trans);
+		}
+
 		private int GetIndex(int x, int z)
 		{
 			return (int) ((z * _size) + x);
@@ -331,8 +339,12 @@ namespace AwesomeGame.Terrain
 			{
 				// car is off the map
 				return 0;
-			}
-			
+			}	
+		}
+
+		public Vector3 GetNormal(float x, float z)
+		{
+			return new NormalMap(this).GetNormal((int)x, (int)z);
 		}
 	}
 }
