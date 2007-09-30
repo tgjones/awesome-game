@@ -20,7 +20,7 @@ namespace AwesomeGame.Physics
 		public ParticleSystem(Game game, string configFile)
 			: base(game)
 		{
-			SolverIterations = 20;
+			SolverIterations = 2;
 			_particles = new List<Particle>();
 			_constraints = new List<Constraint>();
 

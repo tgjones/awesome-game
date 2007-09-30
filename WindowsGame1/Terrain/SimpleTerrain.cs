@@ -131,10 +131,18 @@ namespace AwesomeGame.Terrain
 						float rot = MathHelper.ToRadians((float)objects[i].G / 256.0f * 360.0f);
 						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObjectPos);
 
-						GameObject newObject = new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans);
+						IGameComponent newObject;
+						if (objectIndex == 255)
+						{
+							newObject = new Physics.ParticleSystem(this.Game, @"Physics\Cone.xml");
+						}
+						else
+						{
+							newObject = new Mesh(this.Game, @"Models\" + objectModel[objects[i].R], trans);
+						}
 						this.Game.Components.Add(newObject);
 						
-						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint(newObject);
+						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint((GameObject)newObject);
 					}
 				}
 
