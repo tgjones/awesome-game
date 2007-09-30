@@ -115,18 +115,19 @@ namespace AwesomeGame.Terrain
 				//list which model to use for each object
 				string[] objectModel = new string[256];
 				float[] objectScale = new float[256];
-				objectModel[255] = "Cone";		objectScale[255] = 1.0f;
-				objectModel[254] = "Building1"; objectScale[254] = 4.0f;
-				objectModel[253] = "Building2"; objectScale[253] = 4.0f;
-				objectModel[252] = "Building3"; objectScale[252] = 4.0f;
-				objectModel[251] = "Building4"; objectScale[251] = 5.0f;
-				objectModel[250] = "Building5"; objectScale[250] = 8.0f;
-				objectModel[249] = "Building6"; objectScale[249] = 4.0f;
-				objectModel[248] = "Building7"; objectScale[248] = 4.0f;
-				objectModel[247] = "Building8"; objectScale[247] = 4.0f;
-				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f;
-				objectModel[245] = "bridge";	objectScale[245] = 1.0f;
-				objectModel[244] = "sheep";		objectScale[244] = 1.0f;
+				bool[] objectCollideable = new bool[256];
+				bool[] objectMoveable = new bool[256];
+				objectModel[255] = "Cone"; objectScale[255] = 1.0f; objectCollideable[255] = true; objectMoveable[255] = true;
+				objectModel[254] = "Building1"; objectScale[254] = 4.0f; objectCollideable[254] = true; objectMoveable[254] = false;
+				objectModel[253] = "Building2"; objectScale[253] = 4.0f; objectCollideable[253] = true; objectMoveable[253] = false;
+				objectModel[252] = "Building3"; objectScale[252] = 4.0f; objectCollideable[252] = true; objectMoveable[252] = false;
+				objectModel[251] = "Building4"; objectScale[251] = 5.0f; objectCollideable[251] = true; objectMoveable[251] = false;
+				objectModel[250] = "Building5"; objectScale[250] = 8.0f; objectCollideable[250] = true; objectMoveable[250] = false;
+				objectModel[249] = "Building6"; objectScale[249] = 4.0f; objectCollideable[249] = true; objectMoveable[249] = false;
+				objectModel[248] = "Building7"; objectScale[248] = 4.0f; objectCollideable[248] = true; objectMoveable[248] = false;
+				objectModel[247] = "Building8"; objectScale[247] = 4.0f; objectCollideable[247] = true; objectMoveable[247] = false;
+				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f; objectCollideable[246] = false;
+				objectModel[245] = "bridge"; objectScale[246] = 1.0f; objectCollideable[245] = false;
 
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
@@ -141,6 +142,9 @@ namespace AwesomeGame.Terrain
 
 						GameObject newObject;
 						newObject = CreateMesh(this.Game, objectModel[objects[i].R], trans);
+
+						newObject.collidable = objectCollideable[objectIndex];
+						newObject.moveable = objectMoveable[objectIndex];
 
 						if (objectIndex == 255)
 						{
