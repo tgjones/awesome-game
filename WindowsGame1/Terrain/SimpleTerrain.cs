@@ -245,6 +245,8 @@ namespace AwesomeGame.Terrain
 		{
 			if (filename == "Cone")
 				return new Models.Cone(game, trans);
+			else if (filename == "Checkpoint")
+				return new Models.Checkpoint(game, trans);
 			else
 				return new Mesh(game, @"Models\" + filename, trans);
 		}
