@@ -375,6 +375,18 @@
       <Processor>EffectProcessor</Processor>
       <Name>ShadowMapping</Name>
     </Content>
+    <Content Include="Models\Police.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>Police</Name>
+    </Content>
+    <Content Include="Models\Trike.x">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Name>Trike</Name>
+    </Content>
     <None Include="Sound\Win\Sound Bank.xsb">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Sound Bank</Name>

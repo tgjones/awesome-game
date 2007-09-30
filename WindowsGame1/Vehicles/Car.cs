@@ -13,6 +13,7 @@ namespace AwesomeGame.Vehicles
 			public float Accel;
 			public float Brake;
 			public float Steer;
+			public bool Horn;
 		}
 		
 		private int MESHIDX_REAR_AXLE;
@@ -173,6 +174,9 @@ namespace AwesomeGame.Vehicles
 					Matrix.CreateRotationX(orientation.X) *
 					Matrix.CreateTranslation(0.0f, RIDE_HEIGHT, 0.0f)
 				);
+
+				if (controlState.Horn)
+					this.PlayHorn();
 			}
 
 			if (((AwesomeGame)this.Game).CheckForCollisions((Mesh)this, (Mesh)this.nextCheckpoint))
@@ -196,7 +200,6 @@ namespace AwesomeGame.Vehicles
 				this.nextCheckpointArrow.orientation.Y = (float)Math.Atan(toCheckpoint.X / toCheckpoint.Z) + MathHelper.ToRadians(180);
 
 			this.nextCheckpointArrow.Update(gameTime);
-
 
 			base.Update(gameTime);
 		}
@@ -263,6 +266,10 @@ namespace AwesomeGame.Vehicles
 			controlState.Steer = padState.ThumbSticks.Left.X;
 			if (keyState.IsKeyDown(Keys.Right)) controlState.Steer += 1.0f;
 			if (keyState.IsKeyDown(Keys.Left)) controlState.Steer -= 1.0f;
+
+			// Horn on button B or right control
+			controlState.Horn = padState.Buttons.B == ButtonState.Pressed;
+			if (keyState.IsKeyDown(Keys.RightControl)) controlState.Horn = true;
 
 			return controlState;
 		}

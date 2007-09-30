@@ -97,6 +97,11 @@ namespace AwesomeGame.Vehicles
 				}
 			}
 		}
+
+		public override void PlayHorn()
+		{
+			this.horn = Sound.Play("HornCurvy");
+		}
 	}
 
 	public class SchoolBus : Car
@@ -139,6 +144,11 @@ namespace AwesomeGame.Vehicles
 					effect.SpecularPower = 1.0f;
 				}
 			}
+		}
+
+		public override void PlayHorn()
+		{
+			this.horn = Sound.Play("HornBus");
 		}
 	}
 }
