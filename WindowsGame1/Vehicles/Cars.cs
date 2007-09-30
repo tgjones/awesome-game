@@ -151,4 +151,47 @@ namespace AwesomeGame.Vehicles
 			this.horn = Sound.Play("HornBus");
 		}
 	}
+
+	public class Police : Car
+	{
+		public Police(Game game) : base(game, @"Models\Police", 1, 5, 6) { }
+
+		public override void UpdateEffects()
+		{
+			base.UpdateEffects();
+
+			for (int i = 0; i < _modelMeshPartEffects.Count; i++)
+			{
+				BasicEffect effect = _modelMeshPartEffects[i];
+				if (i == 8)
+				{
+					effect.DiffuseColor = new Vector3(0.8f, 0.8f, 0.8f);
+					effect.SpecularColor = new Vector3(0.2f, 0.2f, 0.2f);
+					effect.SpecularPower = 1000.0f;
+				}
+				else if (i == 4)
+				{
+					effect.DiffuseColor =
+					effect.EmissiveColor = new Vector3(0.0f, 0.0f, 5.0f);
+				}
+				else if (i == 3)
+				{
+					effect.DiffuseColor =
+					effect.EmissiveColor = new Vector3(1.0f, 0.0f, 0.0f);
+				}
+				else if (i == 0 || i == 2)
+				{
+					effect.DiffuseColor = new Vector3(0.5f, 0.5f, 0.5f);
+					effect.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
+					effect.SpecularPower = 1000.0f;
+				}
+				else
+				{
+					effect.DiffuseColor = new Vector3(0.02f, 0.02f, 0.02f);
+					effect.SpecularColor = new Vector3(0.15f, 0.15f, 0.15f);
+					effect.SpecularPower = 1.0f;
+				}
+			}
+		}
+	}
 }
