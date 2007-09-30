@@ -266,6 +266,18 @@ namespace AwesomeGame.Physics
 				//Vector3 test = Vector3.Transform(Vector3.UnitY * psAxis.Length(), trans);
 
 				_graphicObject.position = basePos;
+				if (_wanderVector != Vector3.Zero)
+				{
+					graphicObject.orientation.Y = (float)Math.Atan(_wanderVector.X / _wanderVector.Z);
+					if (_wanderVector.Z >= 0)
+					{
+						graphicObject.orientation.Y = +MathHelper.ToRadians(270);
+					}
+					else
+					{
+						graphicObject.orientation.Y =+ MathHelper.ToRadians(90);
+					}
+				}
 	
 			}
 

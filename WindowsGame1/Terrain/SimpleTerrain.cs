@@ -114,7 +114,7 @@ namespace AwesomeGame.Terrain
 
 				//list which model to use for each object
 				InGameObject[] inGameObject = new InGameObject[256];
-				inGameObject[255] = new InGameObject("Cone", 1.5f, false, false, 25);
+				inGameObject[255] = new InGameObject("Cone", 1.5f, false, false, 50);
 				inGameObject[254] = new InGameObject("Building1", 4.0f, true, false, 5);
 				inGameObject[253] = new InGameObject("Building2", 4.0f, true, false, 5);
 				inGameObject[252] = new InGameObject("Building3", 4.0f, true, false, 5);
