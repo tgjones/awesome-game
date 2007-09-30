@@ -347,6 +347,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Physics\Simple.xml">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Simple</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Graphics\Blocky.bmp">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>TextureImporter</Importer>

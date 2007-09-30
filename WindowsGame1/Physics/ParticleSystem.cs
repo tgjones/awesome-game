@@ -11,6 +11,7 @@ namespace AwesomeGame.Physics
 
 	public class ParticleSystem : Microsoft.Xna.Framework.DrawableGameComponent
 	{
+		private const float GRAVITY = 9.8f;
 		private List<Particle> _particles;
 		private List<Constraint> _constraints;
 
@@ -35,13 +36,14 @@ namespace AwesomeGame.Physics
 			switch (_objectType)
 			{
 				case enumPhysicsObjects.Cone:
-					configFile = @"Physics\Cone.xml";
+					//configFile = @"Physics\Cone.xml";
+					configFile = @"Physics\Simple.xml";
 					break;
 				case enumPhysicsObjects.Sheep:
-					configFile = @"Physics\Cone.xml";
+					configFile = @"Physics\Simple.xml";
 					break;
 				default:
-					configFile = @"Physics\Cone.xml";
+					configFile = @"Physics\Simple.xml";
 					break;
 			}
 			LoadParticleSystem(configFile);
@@ -159,11 +161,12 @@ namespace AwesomeGame.Physics
 
 			if (_objectType == enumPhysicsObjects.Sheep)
 			{
-				//do a random walk (sometimes(
+				//do a random walk (sometimes)
 				Random random = new Random((int)gameTime.ElapsedGameTime.TotalMilliseconds + (int)_particles[0].Position.X);
 				if (random.Next(0, 1000) == 0 || _wanderVector == Vector3.Zero)
 				{
-					_wanderVector = Vector3.Transform(new Vector3(0.2f,0,0), Matrix.CreateRotationY(MathHelper.ToRadians((float)random.Next(0, 360))));
+					const float sheepVelocity = 0.5f;
+					_wanderVector = Vector3.Transform(new Vector3(sheepVelocity,0,0), Matrix.CreateRotationY(MathHelper.ToRadians((float)random.Next(0, 360))));
 				}
 			}
 
@@ -217,12 +220,28 @@ namespace AwesomeGame.Physics
 			//update the graphic object if it exists
 			if (_graphicObject != null)
 			{
+				Vector3 basePos;
+				Vector3 psAxis;
 				//we need the base position and the object axis.
-				//assume it is a cone...
-					//the base is the average of coords 0..2
-					Vector3 basePos = (_particles[0].Position + _particles[1].Position + _particles[2].Position) / 3;
-					//get the axis of our particle system
-					Vector3 psAxis = _particles[3].Position - basePos;
+				switch (_objectType)
+				{
+					case enumPhysicsObjects.Cone:
+					//    //the base is the average of coords 0..2
+					//    basePos = (_particles[0].Position + _particles[1].Position + _particles[2].Position) / 3;
+					//    //get the axis of our particle system
+					//    psAxis = _particles[3].Position - basePos;
+						basePos = _particles[0].Position;
+						psAxis = Vector3.UnitY;
+					    break;
+					case enumPhysicsObjects.Sheep:
+						basePos = _particles[0].Position;
+						psAxis = Vector3.UnitY;
+						break;
+					default:
+						basePos = Vector3.Zero;
+						psAxis = Vector3.UnitY;
+						break;
+				}
 
 				//test
 				psAxis = new Vector3(1, 1, 0);
@@ -284,7 +303,7 @@ namespace AwesomeGame.Physics
 		private static Vector3 CalculateExternalForces(Particle p)
 		{
 			// not efficient at all
-			Vector3 force = new Vector3(0, -1f * p.Mass, 0);
+			Vector3 force = new Vector3(0, -GRAVITY * p.Mass, 0);
 
 			return force;
 		}

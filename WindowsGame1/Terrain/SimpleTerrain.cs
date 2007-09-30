@@ -113,61 +113,67 @@ namespace AwesomeGame.Terrain
 				Vector3 mapObjectScale = new Vector3(MAPDIMENSION / (float)objectMapSize, 1.0f, MAPDIMENSION / (float)objectMapSize);
 
 				//list which model to use for each object
-				string[] objectModel = new string[256];
-				float[] objectScale = new float[256];
-				bool[] objectCollideable = new bool[256];
-				bool[] objectMoveable = new bool[256];
-				objectModel[255] = "Cone"; objectScale[255] = 1.0f; objectCollideable[255] = true; objectMoveable[255] = true;
-				objectModel[254] = "Building1"; objectScale[254] = 4.0f; objectCollideable[254] = true; objectMoveable[254] = false;
-				objectModel[253] = "Building2"; objectScale[253] = 4.0f; objectCollideable[253] = true; objectMoveable[253] = false;
-				objectModel[252] = "Building3"; objectScale[252] = 4.0f; objectCollideable[252] = true; objectMoveable[252] = false;
-				objectModel[251] = "Building4"; objectScale[251] = 5.0f; objectCollideable[251] = true; objectMoveable[251] = false;
-				objectModel[250] = "Building5"; objectScale[250] = 8.0f; objectCollideable[250] = true; objectMoveable[250] = false;
-				objectModel[249] = "Building6"; objectScale[249] = 4.0f; objectCollideable[249] = true; objectMoveable[249] = false;
-				objectModel[248] = "Building7"; objectScale[248] = 4.0f; objectCollideable[248] = true; objectMoveable[248] = false;
-				objectModel[247] = "Building8"; objectScale[247] = 4.0f; objectCollideable[247] = true; objectMoveable[247] = false;
-				objectModel[246] = "Checkpoint"; objectScale[246] = 1.0f; objectCollideable[246] = false;
-				objectModel[245] = "bridge";	objectScale[245] = 5.0f; objectCollideable[245] = false;
+				InGameObject[] inGameObject = new InGameObject[256];
+				inGameObject[255] = new InGameObject("Cone", 1.5f, false, false, 5);
+				inGameObject[254] = new InGameObject("Building1", 4.0f, true, false, 5);
+				inGameObject[253] = new InGameObject("Building2", 4.0f, true, false, 5);
+				inGameObject[252] = new InGameObject("Building3", 4.0f, true, false, 5);
+				inGameObject[251] = new InGameObject("Building4", 5.0f, true, false, 5);
+				inGameObject[250] = new InGameObject("Building5", 8.0f, true, false, 5);
+				inGameObject[249] = new InGameObject("Building6", 4.0f, true, false, 5);
+				inGameObject[248] = new InGameObject("Building7", 4.0f, true, false, 5);
+				inGameObject[247] = new InGameObject("Building8", 4.0f, true, false, 5);
+				inGameObject[246] = new InGameObject("Checkpoint", 1.0f, false, false, 5);
+				inGameObject[245] = new InGameObject("bridge", 7.0f, true, false, 5);
 
-				objectModel[243] = "sheep"; objectScale[243] = 3.0f; objectCollideable[243] = true; objectMoveable[243] = true;
+				inGameObject[243] = new InGameObject("sheep", 3.0f, false, false, 5);
 
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
 				{
+					//extract object info from colours
 					int objectIndex = objects[i].R;
-					if (objectModel[objectIndex] != null)
+					float objectRotation = (float)objects[i].G / 256.0f * 360.0f;
+					if (inGameObject[objectIndex] != null)
 					{
-						Vector3 newObjectPos = new Vector3(i % objectMapSize - 10, 0.0f, (int)(i / objectMapSize) - 10) * mapObjectScale + _mapOffset;
-						newObjectPos.Y = GetHeight(newObjectPos.X, newObjectPos.Z);
-						float rot = MathHelper.ToRadians((float)objects[i].G / 256.0f * 360.0f);
-						Matrix trans = Matrix.CreateRotationY(rot) * Matrix.CreateScale(objectScale[objectIndex]) * Matrix.CreateTranslation(newObjectPos);
-
-						GameObject newObject;
-						newObject = CreateMesh(this.Game, objectModel[objects[i].R], trans);
-
-						newObject.collidable = objectCollideable[objectIndex];
-						newObject.moveable = objectMoveable[objectIndex];
-
-						if (objectIndex == 255)
+						if (inGameObject[objectIndex].createdInstances < inGameObject[objectIndex].maxInstances)
 						{
-							// cone
-							Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Cone, newObjectPos);
-							newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
-							this.Game.Components.Add(newCone);	//the physics need to be added to the components
-						}
-						if (objectIndex == 243)
-						{
-							// sheep
-							Physics.ParticleSystem newSheep = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Sheep, newObjectPos);
-							newSheep.graphicObject = newObject;	//tell it to use the new graphics object for display
-							this.Game.Components.Add(newSheep);	//the physics need to be added to the components
-						}
+							Vector3 newObjectPos = new Vector3(i % objectMapSize - 10, 0.0f, (int)(i / objectMapSize) - 10) * mapObjectScale + _mapOffset;
+							newObjectPos.Y = GetHeight(newObjectPos.X, newObjectPos.Z);
+							Matrix trans = Matrix.CreateRotationY(MathHelper.ToRadians(objectRotation)) * Matrix.CreateScale(inGameObject[objectIndex].scale) * Matrix.CreateTranslation(newObjectPos);
 
-						//add the objects to the game components
-						this.Game.Components.Add(newObject);
+							GameObject newObject;
+							newObject = CreateMesh(this.Game, inGameObject[objectIndex].model, trans);
 
-						//add a checkpoint to the course
-						if (objectIndex == 246) ((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint(newObject);
+							newObject.collidable = inGameObject[objectIndex].collideable;
+							newObject.moveable = inGameObject[objectIndex].moveable;
+
+							if (objectIndex == 255)
+							{
+								// cone
+								Physics.ParticleSystem newCone = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Cone, newObjectPos);
+								newCone.graphicObject = newObject;	//tell it to use the new graphics object for display
+								this.Game.Components.Add(newCone);	//the physics need to be added to the components
+							}
+							if (objectIndex == 243)
+							{
+								// sheep
+								Physics.ParticleSystem newSheep = new Physics.ParticleSystem(this.Game, global::AwesomeGame.Physics.enumPhysicsObjects.Sheep, newObjectPos);
+								newSheep.graphicObject = newObject;	//tell it to use the new graphics object for display
+								this.Game.Components.Add(newSheep);	//the physics need to be added to the components
+							}
+							if (objectIndex == 246)
+							{
+								//add a checkpoint to the course
+								((Course)this.Game.Services.GetService(typeof(Course))).addCheckpoint(newObject);
+							}
+
+							//add the objects to the game components
+							this.Game.Components.Add(newObject);
+
+							//increment the count of this number of objects
+							inGameObject[objectIndex].createdInstances++;
+						}
 					}
 				}
 
@@ -370,6 +376,25 @@ namespace AwesomeGame.Terrain
 			z = (z - _mapOffset.Z) / _mapScale.Z;
 
 			return new NormalMap(this).GetNormal((int)x, (int)z);
+		}
+
+		private class InGameObject
+		{
+			public string model ="";
+			public float scale = 1.0f;
+			public bool collideable =false;
+			public bool moveable = false;
+			public int maxInstances = 100;
+			public int createdInstances =0;
+
+			public InGameObject(string model, float scale, bool collideable, bool moveable, int maxInstances)
+			{
+				this.model = model;
+				this.scale = scale;
+				this.collideable = collideable;
+				this.moveable = moveable;
+				this.maxInstances = maxInstances;
+			}
 		}
 	}
 }
