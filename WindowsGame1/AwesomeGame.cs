@@ -187,6 +187,7 @@ namespace AwesomeGame
 			switch (_gameState)
 			{
 				case GameState.ChooseCar :
+					bool onePlayerOnly = false;
 					if (!_player1Ready)
 					{
 						int originalSelectedIndex = _selectedCarIndex1;
@@ -229,7 +230,12 @@ namespace AwesomeGame
 						}
 					}
 
-					if (_player1Ready && _player2Ready)
+					if (keyboardState.IsKeyDown(Keys.End))
+					{
+						onePlayerOnly = true;
+					}
+
+					if (_player1Ready && (_player2Ready || onePlayerOnly))
 					{
 						this.Components.Add(_terrain);							//add terrain to component manager
 
@@ -248,7 +254,7 @@ namespace AwesomeGame
 						_checkpointArrow1.collidable = false;
 						this.Components.Add(_checkpointArrow1);
 
-						if (true)
+						if (!onePlayerOnly)
 						{
 							// Add second car
 							_car2 = CreateCar(_selectedCarIndex2, PlayerIndex.Two);
