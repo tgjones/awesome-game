@@ -182,6 +182,9 @@ namespace AwesomeGame
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
 				this.Exit();
 
+			if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+				this.Exit();
+
 			//update the camera
 			camera.Update(gameTime, graphics.GraphicsDevice);
 
