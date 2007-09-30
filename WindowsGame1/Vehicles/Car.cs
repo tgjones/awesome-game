@@ -156,12 +156,17 @@ namespace AwesomeGame.Vehicles
 				if (groundHeight > position.Y)
 				{
 					// Work out the change the normal force would have produced
+					float speed = velocity.Length();
 					Vector3 normal = GetService<Terrain.SimpleTerrain>().GetNormal(position.X, position.Z);
 					Vector3 positionChange = normal * (groundHeight - position.Y) / normal.Y;
 
 					// Apply the change retrospectively
 					velocity += positionChange / deltaTime;
 					position += positionChange;
+
+					// Limit the effect of this when on unrealistic inclines
+					if (velocity.Length() > speed)
+						velocity *= speed / velocity.Length();
 				}
 
 				// Locate wheels
