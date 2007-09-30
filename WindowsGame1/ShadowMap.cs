@@ -67,20 +67,20 @@ namespace AwesomeGame
 			base.Update(gameTime);
 		}
 
-		public override void Draw(GameTime gameTime)
-		{
-			this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
+		//public override void Draw(GameTime gameTime)
+		//{
+		//    this.GraphicsDevice.RenderState.FillMode = FillMode.Solid;
 
-			// render sprites with textures
-			_spriteBatch.Begin();
+		//    // render sprites with textures
+		//    _spriteBatch.Begin();
 
-			const int size = 256;
-			Rectangle rectangle = new Rectangle(20, this.Game.Window.ClientBounds.Height - size - 20, size, size);
-			_spriteBatch.Draw(_shadowMapTexture, rectangle, Color.White);
+		//    const int size = 256;
+		//    Rectangle rectangle = new Rectangle(20, this.Game.Window.ClientBounds.Height - size - 20, size, size);
+		//    _spriteBatch.Draw(_shadowMapTexture, rectangle, Color.White);
 
-			_spriteBatch.End();
+		//    _spriteBatch.End();
 
-			base.Draw(gameTime);
-		}
+		//    base.Draw(gameTime);
+		//}
 	}
 }

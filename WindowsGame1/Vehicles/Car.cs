@@ -42,7 +42,8 @@ namespace AwesomeGame.Vehicles
 		private GameObject nextCheckpoint;
 		private GameObject nextCheckpointArrow;
 
-		static Cue checkpointCheer;
+		private Cue checkpointCheer;
+		protected Cue horn;
 
 		public Car(Game game, string modelName, int idxRearAxle, int idxFrontLeftWheel, int idxFrontRightWheel)
 			: base(game, modelName, Matrix.CreateRotationY(MathHelper.ToRadians(90)))
@@ -198,6 +199,10 @@ namespace AwesomeGame.Vehicles
 
 
 			base.Update(gameTime);
+		}
+
+		public virtual void PlayHorn()
+		{
 		}
 
 		public override void Draw(GameTime gameTime)

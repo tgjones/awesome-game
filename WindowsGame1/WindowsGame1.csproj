@@ -108,6 +108,10 @@
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>ShadowMap</Name>
     </Compile>
+    <Compile Include="Sound\Sound.cs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Sound</Name>
+    </Compile>
     <Compile Include="Sunlight.cs">
       <XNAUseContentPipeline>false</XNAUseContentPipeline>
       <Name>Sunlight</Name>
@@ -331,20 +335,65 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Shaders\ShadowMapping.fx">
-      <XNAUseContentPipeline>true</XNAUseContentPipeline>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-      <Name>ShadowMapping</Name>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Models\bridge.x">
       <XNAUseContentPipeline>true</XNAUseContentPipeline>
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Name>bridge</Name>
     </Content>
+    <Content Include="Sound\Congrats.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Congrats</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sound\Horns\HornBlocky.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>HornBlocky</Name>
+    </Content>
+    <Content Include="Sound\Horns\HornBus.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>HornBus</Name>
+    </Content>
+    <Content Include="Sound\Horns\HornCurvy.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>HornCurvy</Name>
+    </Content>
+    <Content Include="Sound\Horns\HornPolice.wav">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>HornPolice</Name>
+    </Content>
+    <Content Include="Sound\Sound.xap">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>XactImporter</Importer>
+      <Processor>XactProcessor</Processor>
+      <Name>Sound</Name>
+    </Content>
+    <Content Include="Shaders\ShadowMapping.fx">
+      <XNAUseContentPipeline>true</XNAUseContentPipeline>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Name>ShadowMapping</Name>
+    </Content>
+    <None Include="Sound\Win\Sound Bank.xsb">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Sound Bank</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Sound\Win\Sound.xgs">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Sound</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Sound\Win\Wave Bank.xwb">
+      <XNAUseContentPipeline>false</XNAUseContentPipeline>
+      <Name>Wave Bank</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sounds\" />
+    <Folder Include="Sound\Xbox\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA\Game Studio Express\v1.0\Microsoft.Xna.ContentPipeline.targets" />

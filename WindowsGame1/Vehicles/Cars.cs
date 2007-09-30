@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace AwesomeGame.Vehicles
 {
@@ -45,6 +46,11 @@ namespace AwesomeGame.Vehicles
 					effect.SpecularPower = 1.0f;
 				}
 			}
+		}
+
+		public override void PlayHorn()
+		{
+			this.horn = Sound.Play("HornBlocky");
 		}
 	}
 
