@@ -363,6 +363,10 @@ namespace AwesomeGame.Terrain
 
 		public Vector3 GetNormal(float x, float z)
 		{
+			//convert to heightmap coordinate space
+			x = (x - _mapOffset.X) / _mapScale.X;
+			z = (z - _mapOffset.Z) / _mapScale.Z;
+
 			return new NormalMap(this).GetNormal((int)x, (int)z);
 		}
 	}
