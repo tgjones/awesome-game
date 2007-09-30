@@ -40,10 +40,10 @@ namespace AwesomeGame
 			this.Components.Add(gameTerrain);							//add terrain to component manager
 			this.Services.AddService(typeof(Terrain.SimpleTerrain), gameTerrain);		//make terrain available as a service.
 
-			//this.Components.Add(new Triangle(this));
-
-			GameObject car = new Vehicles.Police(this);
-			car.position.Y = 100.0f;
+			// Add first car
+			GameObject car = new Vehicles.Police(this, PlayerIndex.One);
+			car.position.Y = 110.0f;
+			car.position.Z = -10.0f;
 			this.Components.Add(car);
 			camera.AddViewObject(car);
 
@@ -52,33 +52,28 @@ namespace AwesomeGame
 			checkpointArrow.CastsShadow = false;
 			this.Components.Add(checkpointArrow);
 
-			GameObject axes = new Mesh(this, @"Models\Axes", Matrix.CreateTranslation(0f, 60f, 0f));
-			this.Components.Add(axes);
-			//camera.AddViewObject(axes);
+			if (true)
+			{
+				// Add second car
+				car = new Vehicles.Trike(this, PlayerIndex.Two);
+				car.position.Y = 110.0f;
+				car.position.Z = 10.0f;
+				this.Components.Add(car);
+				camera.AddViewObject(car);
 
-			this.Components.Add(new Models.Cone(this, Matrix.Identity));
+				checkpointArrow = new Models.CheckpointArrow(this);
+				((Vehicles.Car)car).setNextCheckpointArrow(checkpointArrow);
+				checkpointArrow.CastsShadow = false;
+				this.Components.Add(checkpointArrow);
+			}
+
 			this.Components.Add(new Mesh(this, @"Models\Barrel", Matrix.CreateTranslation(new Vector3(10.0f, 0.0f, 10.0f))));
 			
 			// Get some sort of checkpoint based course going on
 			course = new Course(this);
 			this.Services.AddService(typeof(Course), course);
 
-			//course.addCheckpoint(axes);
-
-			Mesh checkpoint;
-			// Lower down the hill
-			//checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateTranslation(new Vector3(-63f,148f,300f)));
-			//course.addCheckpoint(checkpoint);
-
-			//this.Components.Add(checkpoint);
-
-			// On top of the hill
-			//checkpoint = new Mesh(this, @"Models\Checkpoint", Matrix.CreateRotationY(MathHelper.ToRadians(-70)) * Matrix.CreateTranslation(new Vector3(230f, 230f, 68f)));
-			//course.addCheckpoint(checkpoint);
-			//this.Components.Add(checkpoint);
-
 			this.Components.Add(new Physics.ParticleSystem(this, @"Physics\Cone.xml"));
-
 			this.Components.Add(new Sunlight(this));
 			this.Components.Add(new ShadowMap(this));
 		}
