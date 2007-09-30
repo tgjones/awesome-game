@@ -237,7 +237,8 @@ namespace AwesomeGame
 
 						// Add first car
 						_car1 = CreateCar(_selectedCarIndex1, PlayerIndex.One);
-						_car1.position.Y = 110.0f;
+						//_car1.position.Y = 20.0f;
+						_car1.position.X = -950.0f;
 						_car1.position.Z = -10.0f;
 						_car1.collidable = true;
 						_car1.moveable = true;
@@ -254,8 +255,8 @@ namespace AwesomeGame
 						{
 							// Add second car
 							_car2 = CreateCar(_selectedCarIndex2, PlayerIndex.Two);
-							_car2.position.Y = 110.0f;
 							_car2.position.Z = 10.0f;
+							_car2.position.X = -955.0f;
 							_car2.collidable = true;
 							_car2.moveable = true;
 							this.Components.Add(_car2);

@@ -114,7 +114,7 @@ namespace AwesomeGame.Terrain
 
 				//list which model to use for each object
 				InGameObject[] inGameObject = new InGameObject[256];
-				inGameObject[255] = new InGameObject("Cone", 1.5f, false, false, 5);
+				inGameObject[255] = new InGameObject("Cone", 1.5f, false, false, 25);
 				inGameObject[254] = new InGameObject("Building1", 4.0f, true, false, 5);
 				inGameObject[253] = new InGameObject("Building2", 4.0f, true, false, 5);
 				inGameObject[252] = new InGameObject("Building3", 4.0f, true, false, 5);
@@ -126,7 +126,7 @@ namespace AwesomeGame.Terrain
 				inGameObject[246] = new InGameObject("Checkpoint", 1.0f, false, false, 5);
 				inGameObject[245] = new InGameObject("bridge", 7.0f, true, false, 5);
 
-				inGameObject[243] = new InGameObject("sheep", 3.0f, false, false, 5);
+				inGameObject[243] = new InGameObject("sheep", 3.0f, false, false, 25);
 
 				//take the red values for height data
 				for (int i = 0; i < objectMapSize * objectMapSize; i++)
