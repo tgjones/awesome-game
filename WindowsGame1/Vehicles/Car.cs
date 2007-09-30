@@ -20,7 +20,7 @@ namespace AwesomeGame.Vehicles
 		private const float WHEELBASE_TRACK = 6;
 		private const float WHEELBASE_LENGTH = 6;
 		private const float FRONT_AXLE_POS = 3;
-		private const float RIDE_HEIGHT = 1;
+		private const float RIDE_HEIGHT = 0.5f;
 		private const float SUSPENSION_TRAVEL = 1.5f;
 		private const float ENGINE_TORQUE = 200;
 		private const float FRONT_BRAKE_TORQUE = 300;
@@ -79,6 +79,7 @@ namespace AwesomeGame.Vehicles
 				wheelForces[WHEEL_RR].X -= controlState.Brake * REAR_BRAKE_TORQUE;*/
 				
 				// Check vehicle is in contact with the ground
+				Vector3 acceleration = new Vector3();
 				float groundHeight = GetService<Terrain.SimpleTerrain>().GetHeight(position.X, position.Z);
 				if (position.Y <= groundHeight + SUSPENSION_TRAVEL)
 				{
@@ -103,7 +104,6 @@ namespace AwesomeGame.Vehicles
 					}
 
 					// Evaluate the total acceleration
-					Vector3 acceleration = new Vector3();
 					for (int i = 0; i < 4; i++)
 						acceleration += wheelForces[i] / MASS;
 
@@ -130,14 +130,21 @@ namespace AwesomeGame.Vehicles
 				}
 
 				// Locate wheels
+				bool[] freeWheels = new bool[4];
 				float flHeight = GetGroundHeight(position, orientation.Y, true, true);
 				float frHeight = GetGroundHeight(position, orientation.Y, true, false);
 				float rlHeight = GetGroundHeight(position, orientation.Y, false, true);
 				float rrHeight = GetGroundHeight(position, orientation.Y, false, false);
-				if ((position.Y - frHeight) > SUSPENSION_TRAVEL) frHeight = position.Y - SUSPENSION_TRAVEL;
-				if ((position.Y - flHeight) > SUSPENSION_TRAVEL) flHeight = position.Y - SUSPENSION_TRAVEL;
-				if ((position.Y - rrHeight) > SUSPENSION_TRAVEL) rrHeight = position.Y - SUSPENSION_TRAVEL;
-				if ((position.Y - rlHeight) > SUSPENSION_TRAVEL) rlHeight = position.Y - SUSPENSION_TRAVEL;
+				if (freeWheels[WHEEL_FR] = (position.Y - frHeight) > SUSPENSION_TRAVEL) frHeight = position.Y - SUSPENSION_TRAVEL;
+				if (freeWheels[WHEEL_FL] = (position.Y - flHeight) > SUSPENSION_TRAVEL) flHeight = position.Y - SUSPENSION_TRAVEL;
+				if (freeWheels[WHEEL_RR] = (position.Y - rrHeight) > SUSPENSION_TRAVEL) rrHeight = position.Y - SUSPENSION_TRAVEL;
+				if (freeWheels[WHEEL_RL] = (position.Y - rlHeight) > SUSPENSION_TRAVEL) rlHeight = position.Y - SUSPENSION_TRAVEL;
+
+				// Locate body
+				orientation.Z = (float)Math.Atan((flHeight + rlHeight - (frHeight + rrHeight)) / WHEELBASE_TRACK / 2)
+					+ (float)Math.Asin(-acceleration.Z / MASS / WHEELBASE_TRACK);
+				orientation.X = (float)Math.Atan((rlHeight + rrHeight - (flHeight + frHeight)) / WHEELBASE_LENGTH / 2)
+					+ (float)Math.Asin(-acceleration.X / MASS / WHEELBASE_LENGTH);
 
 				// Configure the render
 				ApplyWheelTransform(MESHIDX_FRONT_LEFT_WHEEL, position.Y - ((flHeight + frHeight) / 2), controlState.Steer,
@@ -147,8 +154,8 @@ namespace AwesomeGame.Vehicles
 				ApplyWheelTransform(MESHIDX_REAR_AXLE, position.Y - ((rlHeight + rrHeight) / 2), 0.0f,
 					(float)Math.Atan((rlHeight - rrHeight) / WHEELBASE_TRACK));
 				ApplyBodyTransform(
-					Matrix.CreateRotationZ((float)Math.Atan((flHeight + rlHeight - (frHeight + rrHeight)) / WHEELBASE_TRACK / 2)) *
-					Matrix.CreateRotationX((float)Math.Atan((rlHeight + rrHeight - (flHeight + frHeight)) / WHEELBASE_LENGTH / 2)) *
+					Matrix.CreateRotationZ(orientation.Z) *
+					Matrix.CreateRotationX(orientation.X) *
 					Matrix.CreateTranslation(0.0f, RIDE_HEIGHT, 0.0f)
 				);
 			}
