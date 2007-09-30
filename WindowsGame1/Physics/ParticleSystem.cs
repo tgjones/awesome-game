@@ -217,8 +217,11 @@ namespace AwesomeGame.Physics
 			if (_collidedWithMesh == true)
 			{
 				_collidedWithMesh = false;
-				_wanderVector = Vector3.Zero;
-				Sound.Play("Baa");
+				if (_objectType == enumPhysicsObjects.Sheep)
+				{
+					_wanderVector = Vector3.Zero;
+					Sound.Play("Baa");
+				}
 			}
 
 			Camera camera = (Camera) this.Game.Services.GetService(typeof(Camera));
