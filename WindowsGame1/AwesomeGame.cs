@@ -32,6 +32,7 @@ namespace AwesomeGame
 		private bool _player1Ready, _player2Ready;
 		private GamePadState _lastGamePad1State, _lastGamePad2State;
 		private KeyboardState _lastKeyboardState;
+		private bool _justAboutToGoToGameFlag;
 
 		private Terrain.SimpleTerrain _terrain;
 		private Vehicles.Car _car1, _car2;
@@ -230,7 +231,7 @@ namespace AwesomeGame
 						onePlayerOnly = true;
 					}
 
-					if (_player1Ready && (_player2Ready || onePlayerOnly))
+					if (_justAboutToGoToGameFlag)
 					{
 						this.Components.Add(_terrain);							//add terrain to component manager
 
@@ -276,6 +277,11 @@ namespace AwesomeGame
 							this.Components.Add(_shadowMap);
 
 						_gameState = GameState.Game;
+					}
+
+					if (!_justAboutToGoToGameFlag && _player1Ready && (_player2Ready || onePlayerOnly))
+					{
+						_justAboutToGoToGameFlag = true;
 					}
 
 					break;
