@@ -1,6 +1,0 @@
-﻿<ParticleSystem>
-	<Transform Translation="0,0,0" Scale="3,3,3" />
-	<Particles>
-		<Particle Index="0" Position="0,0,0" Mass="1" />
-	</Particles>
-</ParticleSystem>
